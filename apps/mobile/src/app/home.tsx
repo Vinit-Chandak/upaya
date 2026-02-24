@@ -82,13 +82,15 @@ export default function HomeScreen() {
   };
 
   const handleChipPress = (chipKey: string) => {
-    // Future: create chat session and navigate to chat
-    console.log('Selected problem:', chipKey);
+    router.push({ pathname: '/chat', params: { problem: chipKey } });
   };
 
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;
-    console.log('Message sent:', inputValue);
+    router.push({
+      pathname: '/chat',
+      params: { problem: 'something_else', message: inputValue.trim() },
+    });
     setInputValue('');
   };
 
