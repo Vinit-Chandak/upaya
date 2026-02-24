@@ -1,0 +1,385 @@
+/* ============================================
+   Upaya Landing Page — Fully Responsive Styles
+   ============================================ */
+
+.main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+/* ============================================
+   HERO / SPLASH
+   ============================================ */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(12rem, 30vh, 20rem);
+  background: var(--gradient-splash);
+  color: var(--color-neutral-white);
+  text-align: center;
+  padding: var(--space-section-gap) var(--space-page-x);
+}
+
+.heroContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-inline-gap);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-inline-gap);
+}
+
+.logoSymbol {
+  font-size: var(--text-xl);
+  color: var(--color-accent-gold);
+}
+
+.logoText {
+  font-size: var(--text-4xl);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--color-neutral-white);
+}
+
+.tagline {
+  font-size: var(--text-lg);
+  font-weight: 400;
+  opacity: 0.95;
+  font-family: var(--font-devanagari);
+}
+
+.taglineEn {
+  font-size: var(--text-sm);
+  font-weight: 400;
+  opacity: 0.75;
+}
+
+/* ============================================
+   LANGUAGE SELECTION
+   ============================================ */
+.languageSection {
+  padding: var(--space-section-gap) 0;
+  background: var(--color-neutral-cream);
+}
+
+.container {
+  width: 100%;
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+  padding: 0 var(--space-page-x);
+}
+
+.languageTitle {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  text-align: center;
+}
+
+.namaste {
+  font-size: var(--text-2xl);
+}
+
+.languageSubtitle {
+  font-size: var(--text-lg);
+  text-align: center;
+  color: var(--color-neutral-grey-700);
+  margin-top: var(--space-inline-gap);
+  font-family: var(--font-devanagari);
+}
+
+.languageSubtitleEn {
+  font-size: var(--text-sm);
+  text-align: center;
+  color: var(--color-neutral-grey-500);
+  margin-top: 0.25rem;
+}
+
+.languageOptions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: var(--space-component-gap);
+  margin-top: var(--space-section-gap);
+  max-width: 40rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.languageCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-component-gap);
+  padding: var(--space-card-padding);
+  background: var(--color-neutral-white);
+  border: 2px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.languageCard:hover {
+  border-color: var(--color-primary-saffron);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.languageCard:active {
+  transform: scale(0.98);
+}
+
+.languageCardDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.languageCardDisabled:hover {
+  border-color: var(--color-neutral-grey-200);
+  box-shadow: none;
+  transform: none;
+}
+
+.languageFlag {
+  font-size: var(--text-2xl);
+  flex-shrink: 0;
+}
+
+.languageInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.languageName {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.languageSub {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-500);
+}
+
+.changeAnytime {
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-400);
+  margin-top: var(--space-component-gap);
+}
+
+/* ============================================
+   PROBLEM CHIPS
+   ============================================ */
+.problemsSection {
+  padding: var(--space-section-gap) 0;
+}
+
+.sectionHeading {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  text-align: center;
+  font-family: var(--font-devanagari);
+}
+
+.sectionSubHeading {
+  font-size: var(--text-sm);
+  text-align: center;
+  color: var(--color-neutral-grey-500);
+  margin-top: 0.25rem;
+}
+
+.chipGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
+  gap: var(--space-component-gap);
+  margin-top: var(--space-section-gap);
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: var(--space-card-padding);
+  background: var(--color-neutral-white);
+  border: 1.5px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+  text-align: center;
+}
+
+.chip:hover {
+  border-color: var(--color-primary-saffron-light);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.chip:active {
+  transform: scale(0.96);
+}
+
+.chipGold {
+  border-color: var(--color-accent-gold);
+  background: linear-gradient(135deg, #FFF8F0, #FFF3E0);
+}
+
+.chipGold:hover {
+  border-color: var(--color-accent-gold-dark);
+}
+
+.chipEmoji {
+  font-size: var(--text-2xl);
+}
+
+.chipTextHi {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-neutral-grey-800);
+  font-family: var(--font-devanagari);
+}
+
+.chipTextEn {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-500);
+}
+
+/* ============================================
+   TRUST BADGES
+   ============================================ */
+.trustSection {
+  padding: var(--space-section-gap) 0;
+  background: var(--color-neutral-grey-50);
+}
+
+.trustGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+  gap: var(--space-component-gap);
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+.trustBadge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  padding: var(--space-card-padding);
+  text-align: center;
+}
+
+.trustIcon {
+  font-size: var(--text-2xl);
+}
+
+.trustLabel {
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--color-neutral-grey-600);
+  line-height: 1.35;
+}
+
+/* ============================================
+   CTA SECTION
+   ============================================ */
+.ctaSection {
+  padding: var(--space-section-gap) 0;
+  text-align: center;
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 24rem);
+  padding: clamp(0.875rem, 0.75rem + 0.625vw, 1.125rem) var(--space-card-padding);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-neutral-white);
+  background: var(--gradient-cta);
+  border: none;
+  border-radius: var(--radius-button);
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition:
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.ctaButton:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.ctaButton:active {
+  transform: scale(0.98);
+}
+
+.ctaSub {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-500);
+  margin-top: var(--space-inline-gap);
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+/* Small phones: single column layouts */
+@media (max-width: 479px) {
+  .chipGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .trustGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .languageOptions {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tablets: wider cards */
+@media (min-width: 768px) {
+  .chipGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .trustGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .languageOptions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Desktop: centered, constrained */
+@media (min-width: 1024px) {
+  .hero {
+    min-height: 24rem;
+  }
+
+  .chipGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .trustGrid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
