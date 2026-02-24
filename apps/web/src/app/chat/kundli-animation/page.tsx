@@ -208,12 +208,17 @@ function KundliAnimationContent() {
     setDoshaChecks((prev) => prev.map((d) => ({ ...d, status: 'done' })));
   }, [phase]);
 
-  // Navigate to diagnosis (placeholder — will connect to real diagnosis in future)
+  // Navigate to diagnosis screen with birth details and problem type
   const handleViewDiagnosis = useCallback(() => {
-    // In future, this navigates to the diagnosis screen with real data
-    // For now, go back to home
-    router.push('/home');
-  }, [router]);
+    const problem = searchParams.get('problem') || 'marriage_delay';
+    const params = new URLSearchParams({
+      problem,
+      lang,
+      dob,
+      place,
+    });
+    router.push(`/chat/diagnosis?${params.toString()}`);
+  }, [router, searchParams, lang, dob, place]);
 
   // Phase titles
   const phaseTitle = (() => {
