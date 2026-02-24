@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import TopBar from '@/components/TopBar';
 import BottomTabBar from '@/components/BottomTabBar';
 import styles from './page.module.css';
@@ -33,6 +34,7 @@ function getTimeGreeting(language: 'hi' | 'en'): { emoji: string; text: string }
 }
 
 export default function HomePage() {
+  const router = useRouter();
   const [language, setLanguage] = useState<'hi' | 'en'>('hi');
   const [inputValue, setInputValue] = useState('');
   const [hasHistory] = useState(false); // Will be set from API/storage in future
@@ -50,15 +52,13 @@ export default function HomePage() {
   };
 
   const handleChipClick = (chipKey: string) => {
-    // In the future, this will create a chat session and navigate to /chat
-    // For now, log the selection
-    console.log('Selected problem:', chipKey);
+    router.push(`/chat?problem=${chipKey}`);
   };
 
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;
-    // In the future, this will create a chat session and navigate to /chat
-    console.log('Message sent:', inputValue);
+    const encoded = encodeURIComponent(inputValue.trim());
+    router.push(`/chat?problem=something_else&message=${encoded}`);
     setInputValue('');
   };
 
