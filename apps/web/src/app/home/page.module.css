@@ -1,0 +1,414 @@
+/* ============================================
+   Home / Chat Entry — Phase 1.3
+   ============================================ */
+
+.appLayout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--color-neutral-white);
+}
+
+.mainContent {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: var(--space-section-gap);
+}
+
+.container {
+  width: 100%;
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+  padding: 0 var(--space-page-x);
+}
+
+/* ============================================
+   First-Time User: Illustration
+   ============================================ */
+.illustration {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-inline-gap);
+  padding-top: var(--space-section-gap);
+  padding-bottom: var(--space-component-gap);
+}
+
+.illustrationEmoji {
+  font-size: clamp(3rem, 2.5rem + 2.5vw, 4.5rem);
+  animation: gentleFloat 3s ease-in-out infinite;
+}
+
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-0.5rem); }
+}
+
+.greetingText {
+  font-size: var(--text-base);
+  color: var(--color-neutral-grey-500);
+  font-weight: 500;
+}
+
+/* ============================================
+   First-Time User: Main Prompt
+   ============================================ */
+.promptSection {
+  text-align: center;
+  margin-bottom: var(--space-section-gap);
+}
+
+.mainPrompt {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+  font-family: var(--font-devanagari);
+  line-height: 1.35;
+}
+
+.mainPromptSub {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-500);
+  margin-top: 0.25rem;
+}
+
+/* ============================================
+   First-Time User: Problem Chips
+   ============================================ */
+.chipGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr));
+  gap: var(--space-component-gap);
+  max-width: 40rem;
+  margin: 0 auto;
+}
+
+.chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: var(--space-card-padding);
+  background: var(--color-neutral-white);
+  border: 1.5px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  text-align: center;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.chip:hover {
+  border-color: var(--color-primary-saffron-light);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+}
+
+.chip:active {
+  transform: scale(0.96);
+}
+
+.chipGold {
+  border-color: var(--color-accent-gold);
+  background: linear-gradient(135deg, #FFF8F0, #FFF3E0);
+}
+
+.chipGold:hover {
+  border-color: var(--color-accent-gold-dark);
+  box-shadow: 0 4px 12px rgba(212, 160, 23, 0.15);
+}
+
+.chipEmoji {
+  font-size: var(--text-2xl);
+}
+
+.chipTextPrimary {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-neutral-grey-800);
+}
+
+.chipTextSecondary {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-500);
+}
+
+/* ============================================
+   Input Bar (Bottom-Pinned)
+   ============================================ */
+.inputBarWrapper {
+  position: sticky;
+  bottom: var(--tab-bar-height);
+  background: var(--color-neutral-white);
+  border-top: 1px solid var(--color-neutral-grey-100);
+  padding: var(--space-inline-gap) var(--space-page-x);
+  z-index: var(--z-sticky);
+}
+
+.inputBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-inline-gap);
+  max-width: 40rem;
+  margin: 0 auto;
+  background: var(--color-neutral-grey-50);
+  border: 1.5px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-full);
+  padding: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem) clamp(0.75rem, 0.5rem + 1.25vw, 1rem);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.inputBar:focus-within {
+  border-color: var(--color-primary-saffron-light);
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
+}
+
+.input {
+  flex: 1;
+  border: none;
+  background: none;
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-800);
+  outline: none;
+  min-width: 0;
+}
+
+.input::placeholder {
+  color: var(--color-neutral-grey-400);
+}
+
+.sendButton,
+.micButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(2rem, 1.75rem + 1.25vw, 2.5rem);
+  height: clamp(2rem, 1.75rem + 1.25vw, 2.5rem);
+  border-radius: 50%;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.sendButton {
+  color: var(--color-neutral-white);
+  background: var(--color-primary-saffron);
+}
+
+.sendButton:hover {
+  background: var(--color-primary-saffron-dark);
+  transform: scale(1.05);
+}
+
+.sendButton:active {
+  transform: scale(0.95);
+}
+
+.micButton {
+  color: var(--color-neutral-grey-500);
+  background: transparent;
+}
+
+.micButton:hover {
+  background: var(--color-neutral-grey-200);
+  color: var(--color-neutral-grey-700);
+}
+
+/* ============================================
+   Returning User: Welcome
+   ============================================ */
+.welcomeSection {
+  padding-top: var(--space-section-gap);
+  padding-bottom: var(--space-component-gap);
+}
+
+.welcomeText {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+}
+
+/* ============================================
+   Returning User: Cards
+   ============================================ */
+.card {
+  background: var(--color-neutral-white);
+  border: 1px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-card-padding);
+  margin-bottom: var(--space-component-gap);
+  box-shadow: var(--shadow-card);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-inline-gap);
+  margin-bottom: var(--space-inline-gap);
+}
+
+.cardIcon {
+  font-size: var(--text-lg);
+}
+
+.cardTitle {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+}
+
+.progressBar {
+  width: 100%;
+  height: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+  background: var(--color-neutral-grey-100);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: var(--space-inline-gap);
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--gradient-cta);
+  border-radius: var(--radius-full);
+  transition: width 0.6s ease;
+}
+
+.cardMeta {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-500);
+}
+
+.alertCard {
+  background: var(--color-warning-light);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius-lg);
+  padding: var(--space-card-padding);
+  margin-bottom: var(--space-component-gap);
+}
+
+.alertText {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-700);
+  margin-top: var(--space-inline-gap);
+}
+
+/* ============================================
+   Returning User: Recent Chats
+   ============================================ */
+.recentSection {
+  margin-top: var(--space-component-gap);
+  margin-bottom: var(--space-component-gap);
+}
+
+.sectionTitle {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+  margin-bottom: var(--space-component-gap);
+}
+
+.emptyState {
+  text-align: center;
+  padding: var(--space-section-gap) 0;
+}
+
+.emptyText {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-400);
+}
+
+/* ============================================
+   Returning User: CTAs
+   ============================================ */
+.ctaRow {
+  display: flex;
+  gap: var(--space-component-gap);
+  margin-top: var(--space-component-gap);
+}
+
+.ctaPrimary,
+.ctaSecondary {
+  flex: 1;
+  padding: clamp(0.75rem, 0.625rem + 0.625vw, 1rem);
+  font-size: var(--text-base);
+  font-weight: 600;
+  border-radius: var(--radius-button);
+  cursor: pointer;
+  transition:
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.ctaPrimary {
+  color: var(--color-neutral-white);
+  background: var(--gradient-cta);
+  border: none;
+  box-shadow: var(--shadow-md);
+}
+
+.ctaPrimary:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+.ctaPrimary:active {
+  transform: scale(0.98);
+}
+
+.ctaSecondary {
+  color: var(--color-primary-saffron);
+  background: var(--color-neutral-white);
+  border: 2px solid var(--color-primary-saffron-light);
+}
+
+.ctaSecondary:hover {
+  background: rgba(255, 140, 0, 0.05);
+  transform: translateY(-1px);
+}
+
+.ctaSecondary:active {
+  transform: scale(0.98);
+}
+
+/* ============================================
+   Responsive Adjustments
+   ============================================ */
+
+/* Small phones */
+@media (max-width: 479px) {
+  .chipGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ctaRow {
+    flex-direction: column;
+  }
+}
+
+/* Tablets */
+@media (min-width: 480px) and (max-width: 767px) {
+  .chipGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Tablets and up */
+@media (min-width: 768px) {
+  .chipGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .illustration {
+    padding-top: clamp(2rem, 1.5rem + 2.5vw, 4rem);
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .chipGrid {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 44rem;
+  }
+}
