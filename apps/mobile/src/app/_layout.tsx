@@ -16,6 +16,8 @@ export default function RootLayout() {
         <Stack.Screen name="language" />
         <Stack.Screen name="onboarding" />
         <Stack.Screen name="home" options={{ animation: 'fade' }} />
+        <Stack.Screen name="chat" />
+        <Stack.Screen name="kundli-animation" options={{ animation: 'fade' }} />
       </Stack>
     </>
   );

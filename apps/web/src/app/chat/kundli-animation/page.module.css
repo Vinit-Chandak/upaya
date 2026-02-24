@@ -1,0 +1,370 @@
+/* ============================================
+   Kundli Generation Animation — Phase 1.6
+   Full-screen cosmic animation with 4 phases:
+   Phase 1: Computing planetary positions
+   Phase 2: Scanning planets (kundli wheel fills)
+   Phase 3: Analyzing doshas (checklist)
+   Phase 4: Complete — view diagnosis
+   ============================================ */
+
+/* --- Layout --- */
+.animationLayout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  background: var(--gradient-cosmic);
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-page-x);
+}
+
+/* --- Starfield Background --- */
+.starfield {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  animation: twinkle 3s ease-in-out infinite alternate;
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.2; }
+  100% { opacity: 0.8; }
+}
+
+/* --- Content Container --- */
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-section-gap);
+  z-index: 1;
+  max-width: 28rem;
+  width: 100%;
+  text-align: center;
+}
+
+/* --- Kundli Wheel --- */
+.wheelContainer {
+  position: relative;
+  width: clamp(12rem, 10rem + 10vw, 18rem);
+  height: clamp(12rem, 10rem + 10vw, 18rem);
+}
+
+.wheelOuter {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: clamp(2px, 0.15vw + 1.5px, 3px) solid rgba(212, 160, 23, 0.3);
+  animation: wheelSpin 20s linear infinite;
+}
+
+.wheelMiddle {
+  position: absolute;
+  inset: clamp(0.75rem, 0.5rem + 1.25vw, 1.25rem);
+  border-radius: 50%;
+  border: clamp(2px, 0.15vw + 1.5px, 3px) solid rgba(212, 160, 23, 0.5);
+  animation: wheelSpin 15s linear infinite reverse;
+}
+
+.wheelInner {
+  position: absolute;
+  inset: clamp(1.5rem, 1rem + 2.5vw, 2.5rem);
+  border-radius: 50%;
+  border: clamp(2px, 0.15vw + 1.5px, 3px) solid rgba(212, 160, 23, 0.7);
+  animation: wheelSpin 10s linear infinite;
+}
+
+.wheelCenter {
+  position: absolute;
+  inset: clamp(3rem, 2.5rem + 2.5vw, 4.5rem);
+  border-radius: 50%;
+  background: rgba(212, 160, 23, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wheelCenterSymbol {
+  font-size: clamp(1.5rem, 1.25rem + 1.25vw, 2.25rem);
+  color: var(--color-accent-gold);
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes wheelSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+/* --- Planet Nodes on Wheel --- */
+.planetNode {
+  position: absolute;
+  width: clamp(1.75rem, 1.5rem + 1.25vw, 2.5rem);
+  height: clamp(1.75rem, 1.5rem + 1.25vw, 2.5rem);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(0.75rem, 0.625rem + 0.625vw, 1rem);
+  transition: all 0.5s ease;
+}
+
+.planetNodeHidden {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+.planetNodeRevealed {
+  background: rgba(212, 160, 23, 0.2);
+  border: 1.5px solid var(--color-accent-gold);
+  animation: planetPop 0.5s var(--transition-spring) both;
+}
+
+@keyframes planetPop {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* --- Phase Title and Progress --- */
+.phaseTitle {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--color-neutral-white);
+  font-family: var(--font-devanagari);
+  animation: fadeInUp 0.5s ease both;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(0.75rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.phaseSub {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.7);
+  animation: fadeInUp 0.5s ease 0.15s both;
+}
+
+/* --- Progress Bar --- */
+.progressBarContainer {
+  width: 100%;
+  max-width: 20rem;
+}
+
+.progressBar {
+  width: 100%;
+  height: clamp(0.25rem, 0.2rem + 0.25vw, 0.375rem);
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--gradient-cta);
+  border-radius: var(--radius-full);
+  transition: width 0.5s ease;
+}
+
+.progressLabel {
+  font-size: var(--text-xs);
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 0.375rem;
+}
+
+/* --- Phase 2: Planet Discovery Messages --- */
+.discoveryMessages {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  width: 100%;
+  animation: fadeInUp 0.4s ease both;
+}
+
+.discoveryLine {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--text-xs);
+  color: rgba(255, 255, 255, 0.7);
+  animation: discoveryAppear 0.3s ease both;
+}
+
+@keyframes discoveryAppear {
+  from { opacity: 0; transform: translateX(-0.5rem); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.discoveryIcon {
+  font-size: var(--text-sm);
+  color: var(--color-accent-gold);
+  flex-shrink: 0;
+}
+
+/* --- Phase 3: Dosha Checklist --- */
+.doshaChecklist {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg);
+  padding: var(--space-card-padding);
+}
+
+.doshaCheckItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-inline-gap);
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 0.3s ease;
+}
+
+.doshaCheckItemActive {
+  color: var(--color-neutral-white);
+}
+
+.doshaCheckItemDone {
+  color: var(--color-accent-gold);
+}
+
+.doshaCheckIcon {
+  width: clamp(1.125rem, 1rem + 0.625vw, 1.5rem);
+  height: clamp(1.125rem, 1rem + 0.625vw, 1.5rem);
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(0.625rem, 0.5rem + 0.625vw, 0.75rem);
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.doshaCheckIconActive {
+  border-color: var(--color-accent-gold);
+  animation: spinCheck 1s linear infinite;
+}
+
+@keyframes spinCheck {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.doshaCheckIconDone {
+  border-color: var(--color-accent-gold);
+  background: var(--color-accent-gold);
+  color: var(--color-neutral-white);
+  animation: none;
+}
+
+/* --- Phase 4: Complete --- */
+.completeSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-component-gap);
+  animation: fadeInUp 0.5s ease both;
+}
+
+.completeIcon {
+  font-size: clamp(3rem, 2.5rem + 2.5vw, 4rem);
+  animation: completePop 0.6s var(--transition-spring) both;
+}
+
+@keyframes completePop {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+.completeTitle {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--color-accent-gold);
+  font-family: var(--font-devanagari);
+}
+
+.completeSub {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.viewDiagnosisButton {
+  margin-top: var(--space-component-gap);
+  padding: clamp(0.75rem, 0.625rem + 0.625vw, 1rem) clamp(2rem, 1.5rem + 2.5vw, 3rem);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-neutral-white);
+  background: var(--gradient-cta);
+  border: none;
+  border-radius: var(--radius-button);
+  cursor: pointer;
+  transition:
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+  animation: fadeInUp 0.5s ease 0.3s both;
+}
+
+.viewDiagnosisButton:hover {
+  box-shadow: 0 4px 20px rgba(255, 140, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+.viewDiagnosisButton:active {
+  transform: scale(0.98);
+}
+
+/* --- Birth Detail Summary --- */
+.birthSummary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+  animation: fadeInUp 0.4s ease 0.2s both;
+}
+
+.birthSummaryItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: clamp(0.2rem, 0.15rem + 0.25vw, 0.3rem) clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+  font-size: var(--text-xs);
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-chip);
+}
+
+.birthSummaryIcon {
+  font-size: var(--text-xs);
+}
+
+/* --- Responsive --- */
+@media (max-width: 479px) {
+  .wheelContainer {
+    width: clamp(10rem, 8rem + 10vw, 14rem);
+    height: clamp(10rem, 8rem + 10vw, 14rem);
+  }
+
+  .doshaChecklist {
+    padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem);
+  }
+}
+
+@media (min-width: 768px) {
+  .content {
+    max-width: 32rem;
+  }
+}
