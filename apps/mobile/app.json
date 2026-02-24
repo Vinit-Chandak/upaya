@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Upaya",
+    "slug": "upaya",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "upaya",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#FF6B00",
+      "resizeMode": "contain"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.upaya.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#FF6B00"
+      },
+      "package": "com.upaya.app"
+    },
+    "plugins": ["expo-router", "expo-font"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
