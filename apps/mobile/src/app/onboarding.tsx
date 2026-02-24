@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,37 +6,70 @@ import {
   ScrollView,
   StyleSheet,
   Dimensions,
+  Animated,
   type NativeSyntheticEvent,
   type NativeScrollEvent,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors } from '@upaya/shared';
 import { fp, wp, hp } from '../theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const ONBOARDING_SCREENS = [
-  {
-    id: 'story',
-    title: 'हमने आप जैसे लोगों की मदद की है',
-    titleEn: "We've Helped People Like You",
-  },
-  {
-    id: 'process',
-    title: 'Upaya कैसे काम करता है',
-    titleEn: 'How Upaya Works',
-  },
-  {
-    id: 'trust',
-    title: 'आपका spiritual problem solver',
-    titleEn: 'Your spiritual problem solver',
-  },
+  { id: 'story' },
+  { id: 'process' },
+  { id: 'trust' },
 ];
 
+const STEPS = [
+  { title: 'अपनी problem बताएं', titleEn: 'Tell your problem', desc: 'AI empathetically समझेगा', descEn: 'AI understands empathetically', icon: '💬' },
+  { title: 'AI आपकी कुंडली analyze करे', titleEn: 'AI analyzes your kundli', desc: 'Exact ग्रह और दोष ढूंढेगा', descEn: 'Finds exact planets and doshas', icon: '📊' },
+  { title: 'Personalized remedy plan', titleEn: 'Personalized remedy plan', desc: 'Specific मंत्र, temples, timing', descEn: 'Specific mantras, temples, timing', icon: '📜' },
+  { title: 'Temple पूजा + Video proof', titleEn: 'Temple puja + Video proof', desc: 'Real पूजा, video, प्रसाद', descEn: 'Real puja, video, prasad shipped', icon: '🛕' },
+];
+
+/**
+ * Onboarding Screen (Phase 1.2)
+ * 3 swipeable screens: Emotional Hook → How It Works → Trust & CTA
+ * Stores onboarding_completed in AsyncStorage on completion.
+ */
 export default function OnboardingScreen() {
   const router = useRouter();
   const scrollRef = useRef<ScrollView>(null);
   const [currentPage, setCurrentPage] = useState(0);
+  const [language, setLanguage] = useState<'hi' | 'en'>('hi');
+
+  // Staggered step animation
+  const stepAnims = useRef(STEPS.map(() => new Animated.Value(0))).current;
+
+  useEffect(() => {
+    const loadLang = async () => {
+      try {
+        const stored = await AsyncStorage.getItem('upaya_language');
+        if (stored === 'hi' || stored === 'en') setLanguage(stored);
+      } catch {
+        // default hi
+      }
+    };
+    loadLang();
+  }, []);
+
+  useEffect(() => {
+    if (currentPage === 1) {
+      // Reset and stagger step animations
+      stepAnims.forEach((anim) => anim.setValue(0));
+      stepAnims.forEach((anim, i) => {
+        Animated.timing(anim, {
+          toValue: 1,
+          duration: 400,
+          delay: 200 * (i + 1),
+          useNativeDriver: true,
+        }).start();
+      });
+    }
+  }, [currentPage, stepAnims]);
 
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const page = Math.round(e.nativeEvent.contentOffset.x / SCREEN_WIDTH);
@@ -51,16 +84,20 @@ export default function OnboardingScreen() {
     }
   };
 
-  const completeOnboarding = () => {
-    // TODO: Store onboarding_completed in AsyncStorage
-    router.replace('/language'); // Will be replaced with '/home' once built
+  const completeOnboarding = async () => {
+    try {
+      await AsyncStorage.setItem('upaya_onboarding_completed', 'true');
+    } catch {
+      // Silently fail
+    }
+    router.replace('/home');
   };
 
   return (
     <View style={styles.container}>
       {/* Skip Button */}
       <TouchableOpacity style={styles.skipButton} onPress={completeOnboarding}>
-        <Text style={styles.skipText}>Skip →</Text>
+        <Text style={styles.skipText}>Skip &rarr;</Text>
       </TouchableOpacity>
 
       {/* Swipeable Pages */}
@@ -71,74 +108,110 @@ export default function OnboardingScreen() {
         showsHorizontalScrollIndicator={false}
         onScroll={handleScroll}
         scrollEventThrottle={16}
+        style={styles.scrollView}
       >
         {/* Screen 1: Emotional Hook */}
         <View style={styles.page}>
-          <View style={styles.illustrationPlaceholder}>
+          <View style={styles.illustrationCircle}>
             <Text style={styles.illustrationEmoji}>🙏</Text>
           </View>
+          <Text style={styles.pageTitle}>
+            {language === 'hi'
+              ? 'हमने आप जैसे लोगों की मदद की है'
+              : "We've Helped People Like You"}
+          </Text>
           <View style={styles.testimonialCard}>
-            <Text style={styles.testimonialName}>💍 प्रिया, 28, लखनऊ</Text>
+            <Text style={styles.testimonialName}>
+              💍 {language === 'hi' ? 'प्रिया, 28, लखनऊ' : 'Priya, 28, Lucknow'}
+            </Text>
             <Text style={styles.testimonialText}>
-              4 साल से शादी के रिश्ते आ के टूट रहे थे। सबने कहा मंगल दोष है, लेकिन कोई
-              solution नहीं बताया।{'\n\n'}Upaya ने कुंडली analyze की → exact problem मिली →
-              मंगलनाथ Temple में specific पूजा suggest की।{'\n\n'}5 महीने में रिश्ता पक्का
-              हुआ। 🙏
+              {language === 'hi'
+                ? '4 साल से शादी के रिश्ते आ के टूट रहे थे। सबने कहा मंगल दोष है, लेकिन कोई solution नहीं बताया।\n\nUpaya ने कुंडली analyze की → exact problem मिली → मंगलनाथ Temple में specific पूजा suggest की।\n\n5 महीने में रिश्ता पक्का हुआ। 🙏'
+                : "Marriage talks kept falling apart for 4 years. Everyone said it's Mangal Dosha but nobody gave a real solution.\n\nUpaya analyzed my chart, found the exact cause, and recommended a specific puja at Mangalnath Temple.\n\nGot married within 5 months. 🙏"}
             </Text>
           </View>
         </View>
 
         {/* Screen 2: How It Works */}
         <View style={styles.page}>
-          <Text style={styles.pageTitle}>Upaya कैसे काम करता है</Text>
+          <Text style={styles.pageTitle}>
+            {language === 'hi' ? 'Upaya कैसे काम करता है' : 'How Upaya Works'}
+          </Text>
           <View style={styles.stepsContainer}>
-            {[
-              { num: '①', title: 'अपनी problem बताएं', desc: 'AI empathetically समझेगा', icon: '💬' },
-              { num: '②', title: 'AI आपकी कुंडली analyze करे', desc: 'Exact ग्रह और दोष ढूंढेगा', icon: '📊' },
-              { num: '③', title: 'Personalized remedy plan', desc: 'Specific मंत्र, temples, timing', icon: '📜' },
-              { num: '④', title: 'Temple पूजा + Video proof', desc: 'Real पूजा, video, प्रसाद', icon: '🛕' },
-            ].map((step, i) => (
+            {STEPS.map((step, i) => (
               <View key={i}>
-                <View style={styles.stepRow}>
-                  <Text style={styles.stepIcon}>{step.icon}</Text>
-                  <View style={styles.stepContent}>
-                    <Text style={styles.stepTitle}>{step.title}</Text>
-                    <Text style={styles.stepDesc}>{step.desc}</Text>
+                <Animated.View
+                  style={[
+                    styles.stepRow,
+                    {
+                      opacity: stepAnims[i],
+                      transform: [
+                        {
+                          translateY: stepAnims[i].interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [20, 0],
+                          }),
+                        },
+                      ],
+                    },
+                  ]}
+                >
+                  <View style={styles.stepIconCircle}>
+                    <Text style={styles.stepIcon}>{step.icon}</Text>
                   </View>
-                </View>
+                  <View style={styles.stepContent}>
+                    <Text style={styles.stepTitle}>
+                      {language === 'hi' ? step.title : step.titleEn}
+                    </Text>
+                    <Text style={styles.stepDesc}>
+                      {language === 'hi' ? step.desc : step.descEn}
+                    </Text>
+                  </View>
+                </Animated.View>
                 {i < 3 && <View style={styles.stepConnector} />}
               </View>
             ))}
           </View>
           <Text style={styles.stepTagline}>
-            Diagnosis से लेकर remedy execution तक — सब एक जगह
+            {language === 'hi'
+              ? 'Diagnosis से लेकर remedy execution तक — सब एक जगह'
+              : 'From diagnosis to remedy execution — all in one place'}
           </Text>
         </View>
 
         {/* Screen 3: Trust & CTA */}
         <View style={styles.page}>
-          <Text style={styles.pageTitle}>✨ आपका spiritual problem solver ✨</Text>
+          <Text style={styles.pageTitle}>
+            {language === 'hi'
+              ? 'आपका spiritual problem solver'
+              : 'Trusted & Proven'}
+          </Text>
           <View style={styles.badgeGrid}>
             {[
-              { icon: '📊', label: 'Kundlis\nanalyzed' },
-              { icon: '🛕', label: 'Temples\nverified' },
-              { icon: '📹', label: 'Video proof\nof every puja' },
-              { icon: '📦', label: 'Prasad\ndelivered' },
-              { icon: '🔒', label: '100%\nPrivate' },
-              { icon: '🙏', label: 'Pandit\nverified' },
+              { icon: '📊', label: '50,000+', sublabel: language === 'hi' ? 'कुंडलियाँ analyzed' : 'Kundlis analyzed' },
+              { icon: '🛕', label: '100+', sublabel: language === 'hi' ? 'Temples verified' : 'Temples verified' },
+              { icon: '📹', label: language === 'hi' ? 'Video proof' : 'Video proof', sublabel: language === 'hi' ? 'हर पूजा का' : 'of every puja' },
+              { icon: '📦', label: language === 'hi' ? 'प्रसाद' : 'Prasad', sublabel: language === 'hi' ? 'delivered at home' : 'delivered home' },
+              { icon: '🔒', label: '100%', sublabel: 'Private & Secure' },
+              { icon: '🙏', label: 'Pandit', sublabel: 'verified' },
             ].map((badge) => (
-              <View key={badge.label} style={styles.badge}>
+              <View key={badge.sublabel} style={styles.badge}>
                 <Text style={styles.badgeIcon}>{badge.icon}</Text>
                 <Text style={styles.badgeLabel}>{badge.label}</Text>
+                <Text style={styles.badgeSublabel}>{badge.sublabel}</Text>
               </View>
             ))}
           </View>
           <View style={styles.miniTestimonial}>
-            <Text style={styles.stars}>⭐⭐⭐⭐⭐</Text>
+            <Text style={styles.stars}>&#11088;&#11088;&#11088;&#11088;&#11088;</Text>
             <Text style={styles.miniText}>
-              &quot;पहली बार लगा कि किसी ने सच में समझा और सही रास्ता बताया&quot;
+              {language === 'hi'
+                ? '"पहली बार लगा कि किसी ने सच में समझा और सही रास्ता बताया"'
+                : '"For the first time, I felt truly understood and guided on the right path"'}
             </Text>
-            <Text style={styles.miniAuthor}>— राहुल S., दिल्ली</Text>
+            <Text style={styles.miniAuthor}>
+              — {language === 'hi' ? 'राहुल S., दिल्ली' : 'Rahul S., Delhi'}
+            </Text>
           </View>
         </View>
       </ScrollView>
@@ -153,13 +226,23 @@ export default function OnboardingScreen() {
             />
           ))}
         </View>
-        <TouchableOpacity style={styles.button} onPress={goToNext} activeOpacity={0.8}>
-          <Text style={styles.buttonText}>
-            {currentPage < 2 ? 'आगे बढ़ें →' : '🙏 शुरू करें'}
+        <TouchableOpacity
+          style={[styles.button, currentPage === 2 && styles.buttonPrimary]}
+          onPress={goToNext}
+          activeOpacity={0.8}
+        >
+          <Text style={[styles.buttonText, currentPage === 2 && styles.buttonTextPrimary]}>
+            {currentPage < 2
+              ? (language === 'hi' ? 'आगे बढ़ें →' : 'Next →')
+              : (language === 'hi' ? '🙏 शुरू करें' : '🙏 Get Started')}
           </Text>
         </TouchableOpacity>
         {currentPage === 2 && (
-          <Text style={styles.ctaSub}>Free कुंडली analysis · No login required</Text>
+          <Text style={styles.ctaSub}>
+            {language === 'hi'
+              ? 'Free कुंडली analysis · No login required'
+              : 'Free kundli analysis · No login required'}
+          </Text>
         )}
       </View>
     </View>
@@ -182,6 +265,9 @@ const styles = StyleSheet.create({
     fontSize: fp(14),
     color: colors.neutral.grey500,
   },
+  scrollView: {
+    flex: 1,
+  },
   page: {
     width: SCREEN_WIDTH,
     paddingHorizontal: wp(24),
@@ -193,19 +279,19 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     color: colors.neutral.grey800,
-    marginBottom: hp(24),
+    marginBottom: hp(20),
   },
-  illustrationPlaceholder: {
-    width: wp(200),
-    height: hp(150),
-    borderRadius: wp(16),
+  illustrationCircle: {
+    width: wp(120),
+    height: wp(120),
+    borderRadius: wp(60),
     backgroundColor: colors.neutral.cream,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: hp(20),
+    marginBottom: hp(16),
   },
   illustrationEmoji: {
-    fontSize: fp(64),
+    fontSize: fp(48),
   },
   testimonialCard: {
     backgroundColor: colors.neutral.cream,
@@ -235,10 +321,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: wp(12),
   },
+  stepIconCircle: {
+    width: wp(44),
+    height: wp(44),
+    borderRadius: wp(22),
+    backgroundColor: colors.neutral.cream,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   stepIcon: {
-    fontSize: fp(28),
-    width: wp(40),
-    textAlign: 'center',
+    fontSize: fp(22),
   },
   stepContent: {
     flex: 1,
@@ -255,9 +347,9 @@ const styles = StyleSheet.create({
   },
   stepConnector: {
     width: 2,
-    height: hp(20),
+    height: hp(18),
     backgroundColor: colors.neutral.grey200,
-    marginLeft: wp(19),
+    marginLeft: wp(21),
     marginVertical: hp(4),
   },
   stepTagline: {
@@ -271,26 +363,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    gap: wp(12),
-    marginBottom: hp(20),
+    gap: wp(10),
+    marginBottom: hp(16),
   },
   badge: {
-    width: (SCREEN_WIDTH - wp(24) * 2 - wp(12) * 2) / 3,
+    width: (SCREEN_WIDTH - wp(24) * 2 - wp(10) * 2) / 3,
     alignItems: 'center',
-    padding: wp(12),
+    padding: wp(10),
     backgroundColor: colors.neutral.grey50,
-    borderRadius: wp(8),
+    borderRadius: wp(10),
   },
   badgeIcon: {
-    fontSize: fp(24),
-    marginBottom: hp(4),
+    fontSize: fp(22),
+    marginBottom: hp(2),
   },
   badgeLabel: {
-    fontSize: fp(11),
-    color: colors.neutral.grey600,
+    fontSize: fp(12),
+    fontWeight: '600',
+    color: colors.neutral.grey800,
     textAlign: 'center',
-    fontWeight: '500',
-    lineHeight: fp(11) * 1.4,
+  },
+  badgeSublabel: {
+    fontSize: fp(10),
+    color: colors.neutral.grey500,
+    textAlign: 'center',
+    lineHeight: fp(10) * 1.4,
+    marginTop: 1,
   },
   miniTestimonial: {
     backgroundColor: colors.neutral.cream,
@@ -342,11 +440,20 @@ const styles = StyleSheet.create({
     borderRadius: wp(12),
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: colors.primary.saffronLight,
+  },
+  buttonPrimary: {
+    backgroundColor: colors.primary.saffron,
+    borderColor: colors.primary.saffron,
   },
   buttonText: {
     fontSize: fp(17),
     fontWeight: '600',
     color: colors.primary.saffron,
+  },
+  buttonTextPrimary: {
+    color: colors.neutral.white,
   },
   ctaSub: {
     fontSize: fp(12),

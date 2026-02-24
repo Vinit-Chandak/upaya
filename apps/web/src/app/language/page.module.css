@@ -1,0 +1,126 @@
+/* ============================================
+   Language Selection — Phase 1.1
+   ============================================ */
+
+.main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  background: var(--color-neutral-cream);
+  padding: var(--space-page-x);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 28rem;
+}
+
+.namaste {
+  font-size: clamp(2.5rem, 2rem + 2.5vw, 3.5rem);
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  color: var(--color-neutral-grey-900);
+  margin-top: var(--space-component-gap);
+  text-align: center;
+  font-family: var(--font-devanagari);
+}
+
+.subtitle {
+  font-size: var(--text-base);
+  color: var(--color-neutral-grey-500);
+  margin-top: 0.25rem;
+  text-align: center;
+}
+
+.options {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+  margin-top: var(--space-section-gap);
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-component-gap);
+  padding: var(--space-card-padding);
+  background: var(--color-neutral-white);
+  border: 2px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast),
+    background-color var(--transition-fast);
+  width: 100%;
+  text-align: left;
+}
+
+.card:hover {
+  border-color: var(--color-primary-saffron);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.card:active {
+  transform: scale(0.98);
+}
+
+.cardSelected {
+  border-color: var(--color-primary-saffron);
+  background: linear-gradient(135deg, #FFF8F0, #FFF3E0);
+  box-shadow: 0 0 0 1px var(--color-primary-saffron), var(--shadow-md);
+}
+
+.cardDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.flag {
+  font-size: var(--text-2xl);
+  flex-shrink: 0;
+}
+
+.cardInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.langName {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+}
+
+.langSub {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-500);
+  margin-top: 0.125rem;
+}
+
+.checkmark {
+  font-size: var(--text-lg);
+  color: var(--color-primary-saffron);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.hint {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-400);
+  margin-top: var(--space-section-gap);
+  text-align: center;
+  font-family: var(--font-devanagari);
+}

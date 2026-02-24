@@ -1,17 +1,45 @@
+import { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors } from '@upaya/shared';
 import { fp, wp, hp } from '../theme';
 
+interface LanguageOption {
+  code: 'hi' | 'en';
+  name: string;
+  sub: string;
+  flag: string;
+}
+
+const LANGUAGES: LanguageOption[] = [
+  { code: 'hi', name: 'हिन्दी', sub: 'Hindi', flag: '🇮🇳' },
+  { code: 'en', name: 'English', sub: 'अंग्रेज़ी', flag: '🇬🇧' },
+];
+
+const COMING_SOON = [
+  { name: 'தமிழ்', sub: 'Coming Soon', flag: '🔜' },
+  { name: 'తెలుగు', sub: 'Coming Soon', flag: '🔜' },
+];
+
 /**
- * Language Selection Screen — Shown on first launch only.
+ * Language Selection Screen (Phase 1.1)
+ * Stores language preference in AsyncStorage and navigates to onboarding.
  */
 export default function LanguageScreen() {
   const router = useRouter();
+  const [selected, setSelected] = useState<string | null>(null);
 
-  const selectLanguage = (_lang: 'hi' | 'en') => {
-    // TODO: Store language in AsyncStorage
-    router.replace('/onboarding');
+  const selectLanguage = async (lang: 'hi' | 'en') => {
+    setSelected(lang);
+    try {
+      await AsyncStorage.setItem('upaya_language', lang);
+    } catch {
+      // Silently fail — language will default to Hindi
+    }
+    setTimeout(() => {
+      router.replace('/onboarding');
+    }, 200);
   };
 
   return (
@@ -21,45 +49,33 @@ export default function LanguageScreen() {
       <Text style={styles.subtitle}>Choose your preferred language</Text>
 
       <View style={styles.options}>
-        <TouchableOpacity
-          style={styles.card}
-          activeOpacity={0.8}
-          onPress={() => selectLanguage('hi')}
-        >
-          <Text style={styles.flag}>🇮🇳</Text>
-          <View style={styles.cardInfo}>
-            <Text style={styles.langName}>हिन्दी</Text>
-            <Text style={styles.langSub}>Hindi</Text>
-          </View>
-        </TouchableOpacity>
+        {LANGUAGES.map((lang) => (
+          <TouchableOpacity
+            key={lang.code}
+            style={[styles.card, selected === lang.code && styles.cardSelected]}
+            activeOpacity={0.8}
+            onPress={() => selectLanguage(lang.code)}
+          >
+            <Text style={styles.flag}>{lang.flag}</Text>
+            <View style={styles.cardInfo}>
+              <Text style={styles.langName}>{lang.name}</Text>
+              <Text style={styles.langSub}>{lang.sub}</Text>
+            </View>
+            {selected === lang.code && (
+              <Text style={styles.checkmark}>&#10003;</Text>
+            )}
+          </TouchableOpacity>
+        ))}
 
-        <TouchableOpacity
-          style={styles.card}
-          activeOpacity={0.8}
-          onPress={() => selectLanguage('en')}
-        >
-          <Text style={styles.flag}>🇬🇧</Text>
-          <View style={styles.cardInfo}>
-            <Text style={styles.langName}>English</Text>
-            <Text style={styles.langSub}>अंग्रेज़ी</Text>
+        {COMING_SOON.map((lang) => (
+          <View key={lang.name} style={[styles.card, styles.cardDisabled]}>
+            <Text style={styles.flag}>{lang.flag}</Text>
+            <View style={styles.cardInfo}>
+              <Text style={[styles.langName, styles.textDisabled]}>{lang.name}</Text>
+              <Text style={[styles.langSub, styles.textDisabled]}>{lang.sub}</Text>
+            </View>
           </View>
-        </TouchableOpacity>
-
-        <View style={[styles.card, styles.cardDisabled]}>
-          <Text style={styles.flag}>🔜</Text>
-          <View style={styles.cardInfo}>
-            <Text style={[styles.langName, styles.textDisabled]}>தமிழ்</Text>
-            <Text style={[styles.langSub, styles.textDisabled]}>Coming Soon</Text>
-          </View>
-        </View>
-
-        <View style={[styles.card, styles.cardDisabled]}>
-          <Text style={styles.flag}>🔜</Text>
-          <View style={styles.cardInfo}>
-            <Text style={[styles.langName, styles.textDisabled]}>తెలుగు</Text>
-            <Text style={[styles.langSub, styles.textDisabled]}>Coming Soon</Text>
-          </View>
-        </View>
+        ))}
       </View>
 
       <Text style={styles.hint}>
@@ -109,6 +125,10 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colors.neutral.grey200,
   },
+  cardSelected: {
+    borderColor: colors.primary.saffron,
+    backgroundColor: '#FFF8F0',
+  },
   cardDisabled: {
     opacity: 0.5,
   },
@@ -130,6 +150,11 @@ const styles = StyleSheet.create({
   },
   textDisabled: {
     color: colors.neutral.grey400,
+  },
+  checkmark: {
+    fontSize: fp(20),
+    color: colors.primary.saffron,
+    fontWeight: '700',
   },
   hint: {
     fontSize: fp(12),
