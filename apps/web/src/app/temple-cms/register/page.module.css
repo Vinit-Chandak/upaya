@@ -1,0 +1,847 @@
+/* ============================================
+   Temple Registration Wizard — Multi-Step Form
+   ============================================ */
+
+.appLayout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--color-neutral-off-white);
+}
+
+.mainContent {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.container {
+  width: 100%;
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: var(--space-component-gap) var(--space-page-x) var(--space-section-gap);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-section-gap);
+}
+
+/* ============================================
+   Step Indicators
+   ============================================ */
+.stepIndicators {
+  background: var(--color-neutral-white);
+  border-bottom: 1px solid var(--color-neutral-grey-200);
+  position: sticky;
+  top: var(--top-bar-height);
+  z-index: var(--z-sticky);
+  padding: clamp(0.75rem, 0.625rem + 0.625vw, 1rem) 0;
+}
+
+.stepIndicatorsInner {
+  width: 100%;
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 0 var(--space-page-x);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.stepIndicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.25rem, 0.2rem + 0.25vw, 0.375rem);
+  z-index: 1;
+  flex: 1;
+}
+
+.stepDot {
+  width: clamp(1.75rem, 1.5rem + 1.25vw, 2.25rem);
+  height: clamp(1.75rem, 1.5rem + 1.25vw, 2.25rem);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  background: var(--color-neutral-grey-200);
+  color: var(--color-neutral-grey-500);
+  transition: all var(--transition-normal);
+}
+
+.stepIndicatorActive .stepDot {
+  background: var(--gradient-cta);
+  color: var(--color-neutral-white);
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.2);
+}
+
+.stepIndicatorDone .stepDot {
+  background: var(--color-success);
+  color: var(--color-neutral-white);
+}
+
+.stepLabel {
+  font-size: clamp(0.625rem, 0.55rem + 0.375vw, 0.75rem);
+  color: var(--color-neutral-grey-400);
+  font-weight: 500;
+  text-align: center;
+  transition: color var(--transition-fast);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.stepIndicatorActive .stepLabel {
+  color: var(--color-primary-saffron);
+  font-weight: 600;
+}
+
+.stepIndicatorDone .stepLabel {
+  color: var(--color-success);
+}
+
+/* Progress line behind dots */
+.stepProgressLine {
+  position: absolute;
+  top: clamp(0.875rem, 0.75rem + 0.625vw, 1.125rem);
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: var(--color-neutral-grey-200);
+  z-index: 0;
+}
+
+.stepProgressFill {
+  height: 100%;
+  background: var(--color-success);
+  transition: width var(--transition-normal);
+  border-radius: 1px;
+}
+
+/* ============================================
+   Step Content
+   ============================================ */
+.stepContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+}
+
+.stepTitle {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--color-neutral-grey-800);
+}
+
+.stepSubtitle {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-500);
+  line-height: 1.5;
+  margin-top: -0.25rem;
+}
+
+/* ============================================
+   Form Fields (shared)
+   ============================================ */
+.formFields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-component-gap);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.25rem, 0.2rem + 0.25vw, 0.375rem);
+}
+
+.formLabel {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-neutral-grey-600);
+}
+
+.formInput {
+  width: 100%;
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-800);
+  background: var(--color-neutral-white);
+  border: 1.5px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-lg);
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) clamp(0.75rem, 0.5rem + 1.25vw, 1rem);
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.formInput:focus {
+  border-color: var(--color-primary-saffron-light);
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.08);
+}
+
+.formInput::placeholder {
+  color: var(--color-neutral-grey-400);
+}
+
+.formSelect {
+  width: 100%;
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-800);
+  background: var(--color-neutral-white);
+  border: 1.5px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-lg);
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) clamp(0.75rem, 0.5rem + 1.25vw, 1rem);
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+
+.formSelect:focus {
+  border-color: var(--color-primary-saffron-light);
+}
+
+.formTextarea {
+  width: 100%;
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-800);
+  background: var(--color-neutral-white);
+  border: 1.5px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-lg);
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) clamp(0.75rem, 0.5rem + 1.25vw, 1rem);
+  outline: none;
+  resize: vertical;
+  min-height: 3rem;
+  transition: border-color var(--transition-fast);
+  font-family: inherit;
+}
+
+.formTextarea:focus {
+  border-color: var(--color-primary-saffron-light);
+}
+
+.formTextarea::placeholder {
+  color: var(--color-neutral-grey-400);
+}
+
+.formError {
+  font-size: var(--text-xs);
+  color: var(--color-error);
+  font-weight: 500;
+}
+
+/* ============================================
+   Step 2: Puja Form List
+   ============================================ */
+.pujaFormList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+}
+
+.pujaFormCard {
+  background: var(--color-neutral-white);
+  border: 1.5px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-xl);
+  padding: var(--space-card-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+}
+
+.pujaFormHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-inline-gap);
+}
+
+.pujaFormNum {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-primary-saffron-dark);
+}
+
+.removePujaButton {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-error);
+  background: var(--color-error-light);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-button);
+  padding: 0.25rem 0.75rem;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.removePujaButton:hover {
+  background: #fecaca;
+}
+
+.pujaFormFields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+}
+
+.addPujaBtn {
+  width: 100%;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-primary-saffron);
+  background: var(--color-neutral-white);
+  border: 2px dashed var(--color-primary-saffron-light);
+  border-radius: var(--radius-lg);
+  padding: clamp(0.75rem, 0.625rem + 0.625vw, 1rem);
+  cursor: pointer;
+  text-align: center;
+  transition: all var(--transition-fast);
+}
+
+.addPujaBtn:hover {
+  background: rgba(255, 140, 0, 0.05);
+  border-color: var(--color-primary-saffron);
+}
+
+/* ============================================
+   Step 3: Pricing Table
+   ============================================ */
+.pricingTable {
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.pricingHeader {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: var(--space-inline-gap);
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) var(--space-card-padding);
+  background: var(--color-neutral-grey-50);
+  border-bottom: 1px solid var(--color-neutral-grey-200);
+}
+
+.pricingHeaderCell {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-neutral-grey-600);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.pricingRow {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: var(--space-inline-gap);
+  align-items: center;
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) var(--space-card-padding);
+  border-bottom: 1px solid var(--color-neutral-grey-100);
+}
+
+.pricingRow:last-child {
+  border-bottom: none;
+}
+
+.pricingCell {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-800);
+  font-weight: 500;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pricingCellInput {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.rupeePrefix {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-500);
+  font-weight: 500;
+}
+
+.pricingInput {
+  width: clamp(4rem, 3.5rem + 2.5vw, 5.5rem);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+  background: var(--color-neutral-grey-50);
+  border: 1.5px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-md);
+  padding: 0.25rem 0.5rem;
+  outline: none;
+  text-align: right;
+  transition: border-color var(--transition-fast);
+}
+
+.pricingInput:focus {
+  border-color: var(--color-primary-saffron-light);
+}
+
+.pricingCellShare {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-success);
+  white-space: nowrap;
+}
+
+.pricingNote {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+  background: var(--color-info-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-card-padding);
+}
+
+.pricingNoteIcon {
+  font-size: var(--text-base);
+  flex-shrink: 0;
+}
+
+.pricingNoteText {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-700);
+  line-height: 1.5;
+}
+
+/* ============================================
+   Step 4: Photo Upload
+   ============================================ */
+.photoUploadSection {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+}
+
+.photoSectionTitle {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-neutral-grey-800);
+}
+
+.photoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(clamp(6rem, 5rem + 5vw, 8rem), 1fr));
+  gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+}
+
+.photoPlaceholder {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.25rem, 0.2rem + 0.25vw, 0.375rem);
+  background: var(--color-neutral-grey-50);
+  border: 2px dashed var(--color-neutral-grey-300);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.photoPlaceholder:hover {
+  border-color: var(--color-primary-saffron-light);
+  background: rgba(255, 140, 0, 0.04);
+}
+
+.photoIcon {
+  color: var(--color-neutral-grey-400);
+}
+
+.photoPlaceholderText {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-400);
+  font-weight: 500;
+}
+
+/* ============================================
+   Step 5: Review Cards
+   ============================================ */
+.reviewCard {
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-xl);
+  padding: var(--space-card-padding);
+  box-shadow: var(--shadow-card);
+}
+
+.reviewCardTitle {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-neutral-grey-800);
+  margin-bottom: var(--space-component-gap);
+}
+
+.reviewCount {
+  font-weight: 500;
+  color: var(--color-neutral-grey-500);
+}
+
+.reviewRows {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+}
+
+.reviewRow {
+  display: flex;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+  font-size: var(--text-sm);
+}
+
+.reviewLabel {
+  color: var(--color-neutral-grey-500);
+  flex-shrink: 0;
+  min-width: clamp(4rem, 3.5rem + 2.5vw, 5.5rem);
+}
+
+.reviewValue {
+  color: var(--color-neutral-grey-800);
+  font-weight: 500;
+}
+
+.reviewPujaList {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.25rem, 0.2rem + 0.25vw, 0.375rem);
+}
+
+.reviewPujaItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-inline-gap);
+  padding: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem) 0;
+  border-bottom: 1px solid var(--color-neutral-grey-100);
+}
+
+.reviewPujaItem:last-child {
+  border-bottom: none;
+}
+
+.reviewPujaName {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-700);
+  font-weight: 500;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reviewPujaPrice {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-primary-saffron-dark);
+  flex-shrink: 0;
+}
+
+.reviewEmpty {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-400);
+  font-style: italic;
+}
+
+/* ============================================
+   Terms Section
+   ============================================ */
+.termsSection {
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-xl);
+  padding: var(--space-card-padding);
+  box-shadow: var(--shadow-card);
+}
+
+.termsLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+  cursor: pointer;
+}
+
+.termsCheckbox {
+  width: clamp(1.125rem, 1rem + 0.625vw, 1.375rem);
+  height: clamp(1.125rem, 1rem + 0.625vw, 1.375rem);
+  margin-top: 0.125rem;
+  accent-color: var(--color-primary-saffron);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.termsText {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-700);
+  line-height: 1.5;
+}
+
+/* ============================================
+   Navigation Buttons
+   ============================================ */
+.navButtons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-component-gap);
+  padding-top: var(--space-component-gap);
+}
+
+.navButtonSpacer {
+  flex: 1;
+}
+
+.navButtonBack {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-neutral-grey-600);
+  background: var(--color-neutral-white);
+  border: 1.5px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-button);
+  padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem) clamp(1rem, 0.75rem + 1.25vw, 1.5rem);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.navButtonBack:hover {
+  background: var(--color-neutral-grey-50);
+  border-color: var(--color-neutral-grey-300);
+}
+
+.navButtonNext {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-neutral-white);
+  background: var(--gradient-cta);
+  border: none;
+  border-radius: var(--radius-button);
+  padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem) clamp(1.25rem, 1rem + 1.25vw, 2rem);
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.navButtonNext:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+.navButtonNext:active {
+  transform: scale(0.98);
+}
+
+.navButtonSubmit {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-neutral-white);
+  background: var(--color-success);
+  border: none;
+  border-radius: var(--radius-button);
+  padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem) clamp(1.25rem, 1rem + 1.25vw, 2rem);
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.navButtonSubmit:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+.navButtonSubmit:active {
+  transform: scale(0.98);
+}
+
+/* ============================================
+   Success State
+   ============================================ */
+.successCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-xl);
+  padding: var(--space-section-gap) var(--space-card-padding);
+  box-shadow: var(--shadow-card);
+  margin-top: var(--space-section-gap);
+}
+
+.successEmoji {
+  font-size: clamp(3rem, 2.5rem + 2.5vw, 4.5rem);
+  margin-bottom: var(--space-component-gap);
+}
+
+.successTitle {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--color-success);
+  margin-bottom: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+}
+
+.successDesc {
+  font-size: var(--text-base);
+  color: var(--color-neutral-grey-600);
+  line-height: 1.5;
+  margin-bottom: var(--space-section-gap);
+}
+
+.successDetails {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+  text-align: left;
+  background: var(--color-neutral-grey-50);
+  border-radius: var(--radius-lg);
+  padding: var(--space-card-padding);
+  margin-bottom: var(--space-section-gap);
+}
+
+.successRow {
+  display: flex;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+  font-size: var(--text-sm);
+}
+
+.successLabel {
+  color: var(--color-neutral-grey-500);
+  flex-shrink: 0;
+  min-width: clamp(3.5rem, 3rem + 2.5vw, 5rem);
+}
+
+.successValue {
+  color: var(--color-neutral-grey-800);
+  font-weight: 600;
+}
+
+.successButton {
+  width: 100%;
+  max-width: 20rem;
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-neutral-white);
+  background: var(--gradient-cta);
+  border: none;
+  border-radius: var(--radius-button);
+  padding: clamp(0.75rem, 0.625rem + 0.625vw, 1rem);
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.successButton:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+.successButton:active {
+  transform: scale(0.98);
+}
+
+/* ============================================
+   Responsive Adjustments
+   ============================================ */
+
+/* Small phones */
+@media (max-width: 479px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .stepLabel {
+    display: none;
+  }
+
+  .stepIndicatorsInner {
+    justify-content: space-around;
+  }
+
+  .pricingHeader {
+    display: none;
+  }
+
+  .pricingRow {
+    grid-template-columns: 1fr;
+    gap: clamp(0.25rem, 0.2rem + 0.25vw, 0.375rem);
+  }
+
+  .pricingCellShare {
+    text-align: right;
+  }
+
+  .photoGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .navButtons {
+    flex-wrap: wrap;
+  }
+
+  .navButtonSpacer {
+    display: none;
+  }
+
+  .navButtonBack,
+  .navButtonNext,
+  .navButtonSubmit {
+    flex: 1;
+  }
+}
+
+/* Tablets */
+@media (min-width: 480px) and (max-width: 767px) {
+  .formRow {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .photoGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Tablets and up */
+@media (min-width: 768px) {
+  .container {
+    padding: var(--space-section-gap) var(--space-page-x);
+  }
+
+  .formRow {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .photoGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .pricingRow {
+    grid-template-columns: 1fr 8rem 8rem;
+  }
+
+  .pricingHeader {
+    grid-template-columns: 1fr 8rem 8rem;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .container {
+    max-width: 48rem;
+  }
+
+  .stepIndicatorsInner {
+    max-width: 48rem;
+  }
+}
