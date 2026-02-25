@@ -98,11 +98,6 @@ function BookingFlowContent() {
     else if (step === 2 && canProceedStep2) setStep(3);
   };
 
-  const handleGoBack = () => {
-    if (step > 1) setStep((step - 1) as BookingStep);
-    else router.back();
-  };
-
   const handlePayment = () => {
     // In production, call the booking + payment API
     const selectedDateObj = dates.find((d) => d.date === selectedDate);

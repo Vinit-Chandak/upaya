@@ -1,0 +1,299 @@
+/* ============================================
+   Transit Alerts — Phase 3 (S14)
+   ============================================ */
+
+.appLayout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--color-neutral-off-white);
+}
+
+.mainContent {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: var(--tab-bar-height);
+}
+
+.container {
+  width: 100%;
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: var(--space-component-gap) var(--space-page-x);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+}
+
+.subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-500);
+}
+
+/* --- Alert List --- */
+.alertList {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+}
+
+.alertCard {
+  width: 100%;
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-card-padding);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-inline-gap);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: box-shadow var(--transition-fast);
+  border: none;
+}
+
+.alertCard:hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+.alertCardUnread {
+  border-left: 3px solid var(--color-primary-saffron);
+}
+
+.alertLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+  flex: 1;
+  min-width: 0;
+}
+
+.impactDot {
+  width: clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem);
+  height: clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 0.375rem;
+}
+
+.alertInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.alertTitle {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+}
+
+.alertMeta {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-500);
+}
+
+.alertTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.125rem;
+}
+
+.alertTag {
+  font-size: clamp(0.5625rem, 0.5rem + 0.3125vw, 0.6875rem);
+  background: var(--color-neutral-grey-100);
+  color: var(--color-neutral-grey-600);
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-chip);
+  white-space: nowrap;
+}
+
+.impactBadge {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-chip);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* --- Empty State --- */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-component-gap);
+  padding: clamp(3rem, 2rem + 5vw, 5rem) 0;
+}
+
+.emptyIcon {
+  font-size: clamp(3rem, 2.5rem + 2.5vw, 4rem);
+}
+
+.emptyText {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-500);
+}
+
+/* --- Detail View --- */
+.detailView {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+}
+
+.backBtn {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-primary-saffron);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: fit-content;
+  transition: color var(--transition-fast);
+}
+
+.backBtn:hover {
+  color: var(--color-primary-saffron-dark);
+}
+
+.detailHeader {
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-card-padding);
+  border-left: 4px solid var(--color-warning);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+  box-shadow: var(--shadow-sm);
+}
+
+.detailTitle {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-neutral-grey-800);
+}
+
+.detailDate {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-500);
+}
+
+.detailBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+}
+
+.detailDesc {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-700);
+  line-height: 1.7;
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-card-padding);
+  box-shadow: var(--shadow-sm);
+}
+
+.subHeading {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-neutral-grey-700);
+  margin-bottom: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+}
+
+.affectedSection {
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-card-padding);
+  box-shadow: var(--shadow-sm);
+}
+
+.remediesSection {
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-card-padding);
+  box-shadow: var(--shadow-sm);
+}
+
+.remedyList {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+}
+
+.remedyItem {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-inline-gap);
+  padding-bottom: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+  border-bottom: 1px solid var(--color-neutral-grey-100);
+}
+
+.remedyItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.remedyItemLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+  flex: 1;
+  min-width: 0;
+}
+
+.remedyIcon {
+  font-size: var(--text-lg);
+  flex-shrink: 0;
+}
+
+.remedyName {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+}
+
+.remedyDesc {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-500);
+  margin-top: 0.125rem;
+}
+
+.freeTag {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-success);
+  background: var(--color-success-light);
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-chip);
+  flex-shrink: 0;
+}
+
+.priceTag {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-primary-saffron);
+  flex-shrink: 0;
+}
+
+/* --- Responsive --- */
+@media (min-width: 768px) {
+  .container {
+    padding: var(--space-section-gap) var(--space-page-x);
+    gap: var(--space-section-gap);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 44rem;
+  }
+}

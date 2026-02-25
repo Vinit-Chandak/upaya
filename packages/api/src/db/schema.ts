@@ -10,6 +10,18 @@
  * - reports
  * - payments
  * - referrals
+ *
+ * Phase 2 tables:
+ * - temples, temple_admins, puja_catalog, addresses
+ * - bookings, booking_status_log, puja_videos, puja_certificates
+ * - shipping_orders
+ *
+ * Phase 3 tables:
+ * - remedy_protocols, remedy_tasks, remedy_completions
+ * - streaks, karma_points
+ * - transit_alerts, notifications, notification_settings
+ * - pandits, pandit_sessions
+ * - wallets, wallet_transactions
  */
 export const schema = `
 -- Enable UUID extension
@@ -329,6 +341,242 @@ CREATE TABLE IF NOT EXISTS shipping_orders (
 CREATE INDEX IF NOT EXISTS idx_shipping_orders_booking_id ON shipping_orders(booking_id);
 
 -- ============================================
+-- PHASE 3: REMEDY PROTOCOLS
+-- ============================================
+CREATE TABLE IF NOT EXISTS remedy_protocols (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  report_id UUID REFERENCES reports(id) ON DELETE SET NULL,
+  name VARCHAR(255) NOT NULL,
+  name_hi VARCHAR(255) NOT NULL DEFAULT '',
+  start_date DATE NOT NULL,
+  end_date DATE NOT NULL,
+  total_days INTEGER NOT NULL DEFAULT 63,
+  status VARCHAR(20) NOT NULL DEFAULT 'active',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_remedy_protocols_user_id ON remedy_protocols(user_id);
+CREATE INDEX IF NOT EXISTS idx_remedy_protocols_status ON remedy_protocols(status);
+
+-- ============================================
+-- PHASE 3: REMEDY TASKS
+-- ============================================
+CREATE TABLE IF NOT EXISTS remedy_tasks (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  protocol_id UUID NOT NULL REFERENCES remedy_protocols(id) ON DELETE CASCADE,
+  name VARCHAR(255) NOT NULL,
+  name_hi VARCHAR(255) NOT NULL DEFAULT '',
+  type VARCHAR(30) NOT NULL DEFAULT 'mantra',
+  description TEXT NOT NULL DEFAULT '',
+  description_hi TEXT NOT NULL DEFAULT '',
+  frequency VARCHAR(100) NOT NULL DEFAULT 'daily',
+  frequency_hi VARCHAR(100) NOT NULL DEFAULT '',
+  mantra_text_roman TEXT,
+  mantra_text_devanagari TEXT,
+  mantra_audio_url TEXT,
+  target_count INTEGER NOT NULL DEFAULT 108,
+  day_of_week VARCHAR(10),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_remedy_tasks_protocol_id ON remedy_tasks(protocol_id);
+
+-- ============================================
+-- PHASE 3: REMEDY COMPLETIONS
+-- ============================================
+CREATE TABLE IF NOT EXISTS remedy_completions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  task_id UUID NOT NULL REFERENCES remedy_tasks(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  completed_date DATE NOT NULL,
+  count INTEGER NOT NULL DEFAULT 1,
+  duration_seconds INTEGER,
+  karma_points INTEGER NOT NULL DEFAULT 10,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_remedy_completions_task_id ON remedy_completions(task_id);
+CREATE INDEX IF NOT EXISTS idx_remedy_completions_user_id ON remedy_completions(user_id);
+CREATE INDEX IF NOT EXISTS idx_remedy_completions_date ON remedy_completions(user_id, completed_date);
+
+-- ============================================
+-- PHASE 3: STREAKS
+-- ============================================
+CREATE TABLE IF NOT EXISTS streaks (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  task_id UUID NOT NULL REFERENCES remedy_tasks(id) ON DELETE CASCADE,
+  current_streak INTEGER NOT NULL DEFAULT 0,
+  longest_streak INTEGER NOT NULL DEFAULT 0,
+  last_completed_date DATE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(user_id, task_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_streaks_user_id ON streaks(user_id);
+
+-- ============================================
+-- PHASE 3: KARMA POINTS
+-- ============================================
+CREATE TABLE IF NOT EXISTS karma_points (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  points INTEGER NOT NULL,
+  source VARCHAR(50) NOT NULL,
+  source_id UUID,
+  description VARCHAR(255) NOT NULL DEFAULT '',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_karma_points_user_id ON karma_points(user_id);
+
+-- ============================================
+-- PHASE 3: TRANSIT ALERTS
+-- ============================================
+CREATE TABLE IF NOT EXISTS transit_alerts (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  kundli_id UUID NOT NULL REFERENCES kundlis(id) ON DELETE CASCADE,
+  planet VARCHAR(20) NOT NULL,
+  from_house INTEGER NOT NULL,
+  to_house INTEGER NOT NULL,
+  transit_date DATE NOT NULL,
+  end_date DATE,
+  impact_level VARCHAR(20) NOT NULL DEFAULT 'medium',
+  title VARCHAR(255) NOT NULL DEFAULT '',
+  title_hi VARCHAR(255) NOT NULL DEFAULT '',
+  description TEXT NOT NULL DEFAULT '',
+  description_hi TEXT NOT NULL DEFAULT '',
+  remedies_json JSONB NOT NULL DEFAULT '[]',
+  read BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_transit_alerts_user_id ON transit_alerts(user_id);
+CREATE INDEX IF NOT EXISTS idx_transit_alerts_read ON transit_alerts(user_id, read);
+
+-- ============================================
+-- PHASE 3: NOTIFICATIONS
+-- ============================================
+CREATE TABLE IF NOT EXISTS notifications (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  type VARCHAR(30) NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  title_hi VARCHAR(255) NOT NULL DEFAULT '',
+  body TEXT NOT NULL DEFAULT '',
+  body_hi TEXT NOT NULL DEFAULT '',
+  data_json JSONB,
+  read BOOLEAN NOT NULL DEFAULT FALSE,
+  sent_at TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications(user_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_read ON notifications(user_id, read);
+CREATE INDEX IF NOT EXISTS idx_notifications_type ON notifications(type);
+
+-- ============================================
+-- PHASE 3: NOTIFICATION SETTINGS
+-- ============================================
+CREATE TABLE IF NOT EXISTS notification_settings (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE UNIQUE,
+  remedy_reminders BOOLEAN NOT NULL DEFAULT TRUE,
+  transit_alerts BOOLEAN NOT NULL DEFAULT TRUE,
+  festival_remedies BOOLEAN NOT NULL DEFAULT TRUE,
+  puja_updates BOOLEAN NOT NULL DEFAULT TRUE,
+  promotional BOOLEAN NOT NULL DEFAULT FALSE,
+  reminder_time_morning TIME NOT NULL DEFAULT '06:30',
+  reminder_time_evening TIME NOT NULL DEFAULT '19:00',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_notification_settings_user_id ON notification_settings(user_id);
+
+-- ============================================
+-- PHASE 3: PANDITS
+-- ============================================
+CREATE TABLE IF NOT EXISTS pandits (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name VARCHAR(255) NOT NULL,
+  name_hi VARCHAR(255) NOT NULL DEFAULT '',
+  photo_url TEXT,
+  specialities JSONB NOT NULL DEFAULT '[]',
+  languages JSONB NOT NULL DEFAULT '["hi"]',
+  experience_years INTEGER NOT NULL DEFAULT 0,
+  rating DECIMAL(3, 2) NOT NULL DEFAULT 0.00,
+  total_consultations INTEGER NOT NULL DEFAULT 0,
+  price_per_min_chat INTEGER NOT NULL DEFAULT 1000,
+  price_per_min_call INTEGER NOT NULL DEFAULT 1500,
+  availability_json JSONB NOT NULL DEFAULT '{}',
+  bio TEXT NOT NULL DEFAULT '',
+  bio_hi TEXT NOT NULL DEFAULT '',
+  status VARCHAR(20) NOT NULL DEFAULT 'active',
+  firebase_uid VARCHAR(255) UNIQUE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_pandits_status ON pandits(status);
+
+-- ============================================
+-- PHASE 3: PANDIT SESSIONS
+-- ============================================
+CREATE TABLE IF NOT EXISTS pandit_sessions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  pandit_id UUID NOT NULL REFERENCES pandits(id) ON DELETE CASCADE,
+  type VARCHAR(10) NOT NULL DEFAULT 'chat',
+  start_time TIMESTAMP WITH TIME ZONE,
+  end_time TIMESTAMP WITH TIME ZONE,
+  duration_minutes INTEGER,
+  cost INTEGER NOT NULL DEFAULT 0,
+  ai_brief_json JSONB,
+  ai_summary_json JSONB,
+  messages_json JSONB NOT NULL DEFAULT '[]',
+  rating INTEGER,
+  status VARCHAR(20) NOT NULL DEFAULT 'pending',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_pandit_sessions_user_id ON pandit_sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_pandit_sessions_pandit_id ON pandit_sessions(pandit_id);
+CREATE INDEX IF NOT EXISTS idx_pandit_sessions_status ON pandit_sessions(status);
+
+-- ============================================
+-- PHASE 3: WALLETS
+-- ============================================
+CREATE TABLE IF NOT EXISTS wallets (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE UNIQUE,
+  balance INTEGER NOT NULL DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_wallets_user_id ON wallets(user_id);
+
+-- ============================================
+-- PHASE 3: WALLET TRANSACTIONS
+-- ============================================
+CREATE TABLE IF NOT EXISTS wallet_transactions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  wallet_id UUID NOT NULL REFERENCES wallets(id) ON DELETE CASCADE,
+  type VARCHAR(20) NOT NULL,
+  amount INTEGER NOT NULL,
+  description VARCHAR(255) NOT NULL DEFAULT '',
+  reference_id UUID,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_wallet_transactions_wallet_id ON wallet_transactions(wallet_id);
+
+-- ============================================
 -- UPDATED_AT TRIGGER
 -- ============================================
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -368,6 +616,37 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_shipping_orders_updated_at') THEN
     CREATE TRIGGER update_shipping_orders_updated_at
       BEFORE UPDATE ON shipping_orders
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+
+  -- Phase 3 triggers
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_remedy_protocols_updated_at') THEN
+    CREATE TRIGGER update_remedy_protocols_updated_at
+      BEFORE UPDATE ON remedy_protocols
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_streaks_updated_at') THEN
+    CREATE TRIGGER update_streaks_updated_at
+      BEFORE UPDATE ON streaks
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_notification_settings_updated_at') THEN
+    CREATE TRIGGER update_notification_settings_updated_at
+      BEFORE UPDATE ON notification_settings
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_pandit_sessions_updated_at') THEN
+    CREATE TRIGGER update_pandit_sessions_updated_at
+      BEFORE UPDATE ON pandit_sessions
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_wallets_updated_at') THEN
+    CREATE TRIGGER update_wallets_updated_at
+      BEFORE UPDATE ON wallets
       FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
   END IF;
 END;

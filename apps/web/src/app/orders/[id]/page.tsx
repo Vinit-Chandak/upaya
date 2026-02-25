@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import TopBar from '@/components/TopBar';
 import BottomTabBar from '@/components/BottomTabBar';
 import styles from './page.module.css';
@@ -71,7 +71,6 @@ const MOCK_ORDER: MockOrder = {
 };
 
 export default function OrderDetailPage() {
-  const router = useRouter();
   const params = useParams();
   const [language, setLanguage] = useState<'hi' | 'en'>('hi');
   const [order] = useState<MockOrder>(MOCK_ORDER);
