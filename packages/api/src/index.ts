@@ -9,6 +9,10 @@ import { diagnosisRouter } from './routes/diagnosis';
 import { reportRouter } from './routes/report';
 import { paymentRouter } from './routes/payment';
 import { referralRouter } from './routes/referral';
+import { templeRouter } from './routes/temple';
+import { pujaRouter } from './routes/puja';
+import { bookingRouter } from './routes/booking';
+import { addressRouter } from './routes/address';
 import { errorHandler } from './middleware/error';
 import { requestLogger } from './middleware/logger';
 
@@ -42,6 +46,10 @@ app.use('/api/diagnosis', diagnosisRouter);
 app.use('/api/reports', reportRouter);
 app.use('/api/payments', paymentRouter);
 app.use('/api/referrals', referralRouter);
+app.use('/api/temples', templeRouter);
+app.use('/api/pujas', pujaRouter);
+app.use('/api/bookings', bookingRouter);
+app.use('/api/addresses', addressRouter);
 
 // --- Error Handler (must be last) ---
 app.use(errorHandler);

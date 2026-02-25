@@ -158,6 +158,177 @@ CREATE INDEX IF NOT EXISTS idx_referrals_code ON referrals(code);
 CREATE INDEX IF NOT EXISTS idx_referrals_referrer ON referrals(referrer_user_id);
 
 -- ============================================
+-- PHASE 2: TEMPLES
+-- ============================================
+CREATE TABLE IF NOT EXISTS temples (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name VARCHAR(255) NOT NULL,
+  name_hi VARCHAR(255) NOT NULL,
+  city VARCHAR(100) NOT NULL,
+  state VARCHAR(100) NOT NULL,
+  lat DECIMAL(10, 7),
+  lng DECIMAL(10, 7),
+  description TEXT NOT NULL DEFAULT '',
+  description_hi TEXT NOT NULL DEFAULT '',
+  images JSONB NOT NULL DEFAULT '[]',
+  contact_phone VARCHAR(20),
+  contact_email VARCHAR(255),
+  revenue_share_pct DECIMAL(5, 2) NOT NULL DEFAULT 30.00,
+  rating DECIMAL(3, 2) NOT NULL DEFAULT 0.00,
+  total_pujas_completed INTEGER NOT NULL DEFAULT 0,
+  status VARCHAR(30) NOT NULL DEFAULT 'active',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_temples_city ON temples(city);
+CREATE INDEX IF NOT EXISTS idx_temples_status ON temples(status);
+
+-- ============================================
+-- PHASE 2: TEMPLE ADMINS
+-- ============================================
+CREATE TABLE IF NOT EXISTS temple_admins (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  temple_id UUID NOT NULL REFERENCES temples(id) ON DELETE CASCADE,
+  name VARCHAR(255) NOT NULL,
+  phone VARCHAR(20) NOT NULL,
+  email VARCHAR(255),
+  firebase_uid VARCHAR(255) UNIQUE,
+  role VARCHAR(20) NOT NULL DEFAULT 'admin',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_temple_admins_temple_id ON temple_admins(temple_id);
+CREATE INDEX IF NOT EXISTS idx_temple_admins_firebase_uid ON temple_admins(firebase_uid);
+
+-- ============================================
+-- PHASE 2: PUJA CATALOG
+-- ============================================
+CREATE TABLE IF NOT EXISTS puja_catalog (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  temple_id UUID NOT NULL REFERENCES temples(id) ON DELETE CASCADE,
+  name VARCHAR(255) NOT NULL,
+  name_hi VARCHAR(255) NOT NULL,
+  deity VARCHAR(100) NOT NULL DEFAULT '',
+  deity_hi VARCHAR(100) NOT NULL DEFAULT '',
+  dosha_type VARCHAR(50),
+  description TEXT NOT NULL DEFAULT '',
+  description_hi TEXT NOT NULL DEFAULT '',
+  inclusions JSONB NOT NULL DEFAULT '[]',
+  inclusions_hi JSONB NOT NULL DEFAULT '[]',
+  price INTEGER NOT NULL,
+  images JSONB NOT NULL DEFAULT '[]',
+  available_days JSONB NOT NULL DEFAULT '[]',
+  muhurta_data JSONB,
+  status VARCHAR(20) NOT NULL DEFAULT 'active',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_puja_catalog_temple_id ON puja_catalog(temple_id);
+CREATE INDEX IF NOT EXISTS idx_puja_catalog_dosha_type ON puja_catalog(dosha_type);
+CREATE INDEX IF NOT EXISTS idx_puja_catalog_status ON puja_catalog(status);
+
+-- ============================================
+-- PHASE 2: ADDRESSES
+-- ============================================
+CREATE TABLE IF NOT EXISTS addresses (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  name VARCHAR(255) NOT NULL,
+  line1 VARCHAR(500) NOT NULL,
+  line2 VARCHAR(500),
+  city VARCHAR(100) NOT NULL,
+  state VARCHAR(100) NOT NULL,
+  pincode VARCHAR(10) NOT NULL,
+  phone VARCHAR(20) NOT NULL,
+  is_default BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_addresses_user_id ON addresses(user_id);
+
+-- ============================================
+-- PHASE 2: BOOKINGS
+-- ============================================
+CREATE TABLE IF NOT EXISTS bookings (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  puja_catalog_id UUID NOT NULL REFERENCES puja_catalog(id) ON DELETE RESTRICT,
+  temple_id UUID NOT NULL REFERENCES temples(id) ON DELETE RESTRICT,
+  sankalp_name VARCHAR(255) NOT NULL,
+  sankalp_father_name VARCHAR(255) NOT NULL DEFAULT '',
+  sankalp_gotra VARCHAR(100) NOT NULL DEFAULT '',
+  sankalp_wish TEXT NOT NULL DEFAULT '',
+  booking_date DATE NOT NULL,
+  status VARCHAR(30) NOT NULL DEFAULT 'booked',
+  payment_id UUID REFERENCES payments(id) ON DELETE SET NULL,
+  delivery_address_id UUID REFERENCES addresses(id) ON DELETE SET NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_bookings_user_id ON bookings(user_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_temple_id ON bookings(temple_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings(status);
+CREATE INDEX IF NOT EXISTS idx_bookings_booking_date ON bookings(booking_date);
+
+-- ============================================
+-- PHASE 2: BOOKING STATUS LOG
+-- ============================================
+CREATE TABLE IF NOT EXISTS booking_status_log (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  booking_id UUID NOT NULL REFERENCES bookings(id) ON DELETE CASCADE,
+  status VARCHAR(30) NOT NULL,
+  notes TEXT,
+  updated_by UUID,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_booking_status_log_booking_id ON booking_status_log(booking_id);
+
+-- ============================================
+-- PHASE 2: PUJA VIDEOS
+-- ============================================
+CREATE TABLE IF NOT EXISTS puja_videos (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  booking_id UUID NOT NULL REFERENCES bookings(id) ON DELETE CASCADE,
+  video_url TEXT NOT NULL,
+  thumbnail_url TEXT,
+  duration INTEGER,
+  uploaded_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_puja_videos_booking_id ON puja_videos(booking_id);
+
+-- ============================================
+-- PHASE 2: PUJA CERTIFICATES
+-- ============================================
+CREATE TABLE IF NOT EXISTS puja_certificates (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  booking_id UUID NOT NULL REFERENCES bookings(id) ON DELETE CASCADE,
+  pdf_url TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_puja_certificates_booking_id ON puja_certificates(booking_id);
+
+-- ============================================
+-- PHASE 2: SHIPPING ORDERS
+-- ============================================
+CREATE TABLE IF NOT EXISTS shipping_orders (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  booking_id UUID NOT NULL REFERENCES bookings(id) ON DELETE CASCADE,
+  provider VARCHAR(50) NOT NULL DEFAULT '',
+  tracking_number VARCHAR(100),
+  status VARCHAR(30) NOT NULL DEFAULT 'pending',
+  estimated_delivery DATE,
+  delivery_address TEXT NOT NULL DEFAULT '',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_shipping_orders_booking_id ON shipping_orders(booking_id);
+
+-- ============================================
 -- UPDATED_AT TRIGGER
 -- ============================================
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -185,6 +356,18 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_payments_updated_at') THEN
     CREATE TRIGGER update_payments_updated_at
       BEFORE UPDATE ON payments
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_bookings_updated_at') THEN
+    CREATE TRIGGER update_bookings_updated_at
+      BEFORE UPDATE ON bookings
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_shipping_orders_updated_at') THEN
+    CREATE TRIGGER update_shipping_orders_updated_at
+      BEFORE UPDATE ON shipping_orders
       FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
   END IF;
 END;

@@ -288,6 +288,91 @@
   color: var(--color-primary-saffron-dark);
 }
 
+/* --- Order Cards (Phase 2) --- */
+.orderCard {
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-card-padding);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-inline-gap);
+  box-shadow: var(--shadow-sm);
+  border-left: 3px solid var(--color-primary-saffron);
+  cursor: pointer;
+  transition: box-shadow var(--transition-fast);
+}
+
+.orderCard:hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+.orderCardLeft {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+  min-width: 0;
+}
+
+.orderIcon {
+  font-size: var(--text-xl);
+  flex-shrink: 0;
+}
+
+.orderInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.orderName {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.orderMeta {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.orderStatus {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-primary-saffron-dark);
+  background: rgba(255, 140, 0, 0.1);
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-chip);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.viewAllOrders {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-primary-saffron);
+  background: transparent;
+  border: 1.5px dashed var(--color-primary-saffron-light);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.viewAllOrders:hover {
+  background: rgba(255, 140, 0, 0.04);
+}
+
 /* --- Referral Card --- */
 .referralCard {
   background: var(--color-neutral-cream);

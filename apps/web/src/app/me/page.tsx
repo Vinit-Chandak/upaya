@@ -30,6 +30,18 @@ interface SavedReport {
   createdAt: string;
 }
 
+interface OrderSummary {
+  id: string;
+  pujaName: string;
+  pujaNameEn: string;
+  templeName: string;
+  templeNameEn: string;
+  status: string;
+  statusLabel: string;
+  statusLabelEn: string;
+  bookingDate: string;
+}
+
 function getMockProfile(): UserProfile {
   return {
     name: null,
@@ -64,12 +76,29 @@ function getMockReports(language: 'hi' | 'en'): SavedReport[] {
   ];
 }
 
+function getMockOrders(): OrderSummary[] {
+  return [
+    {
+      id: 'ord1',
+      pujaName: 'मंगल दोष निवारण पूजा',
+      pujaNameEn: 'Mangal Dosha Nivaran Puja',
+      templeName: 'मंगलनाथ मंदिर',
+      templeNameEn: 'Mangalnath Temple',
+      status: 'confirmed_by_temple',
+      statusLabel: 'Confirmed',
+      statusLabelEn: 'Confirmed',
+      bookingDate: '2026-03-05',
+    },
+  ];
+}
+
 export default function MePage() {
   const router = useRouter();
   const [language, setLanguage] = useState<'hi' | 'en'>('hi');
   const [profile] = useState<UserProfile>(getMockProfile());
   const [kundlis, setKundlis] = useState<SavedKundli[]>([]);
   const [reports, setReports] = useState<SavedReport[]>([]);
+  const [orders] = useState<OrderSummary[]>(getMockOrders());
   const [referralCode] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
 
@@ -219,6 +248,57 @@ export default function MePage() {
                     </span>
                   </div>
                 ))}
+              </div>
+            )}
+          </section>
+
+          {/* My Orders (Phase 2) */}
+          <section className={styles.section}>
+            <h3 className={styles.sectionTitle}>
+              <span>{'🪔'}</span>
+              {language === 'hi' ? 'My Puja Orders' : 'My Puja Orders'}
+            </h3>
+
+            {orders.length === 0 ? (
+              <div className={styles.emptyCard}>
+                <p className={styles.emptyText}>
+                  {language === 'hi'
+                    ? 'अभी कोई पूजा booking नहीं'
+                    : 'No puja bookings yet'}
+                </p>
+                <button className={styles.emptyAction} onClick={() => router.push('/explore')}>
+                  {language === 'hi' ? 'पूजा Book करें' : 'Book a Puja'}
+                </button>
+              </div>
+            ) : (
+              <div className={styles.cardList}>
+                {orders.map((o) => (
+                  <div
+                    key={o.id}
+                    className={styles.orderCard}
+                    onClick={() => router.push(`/orders/${o.id}`)}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <div className={styles.orderCardLeft}>
+                      <span className={styles.orderIcon}>{'🪔'}</span>
+                      <div className={styles.orderInfo}>
+                        <span className={styles.orderName}>
+                          {language === 'hi' ? o.pujaName : o.pujaNameEn}
+                        </span>
+                        <span className={styles.orderMeta}>
+                          {language === 'hi' ? o.templeName : o.templeNameEn} · {new Date(o.bookingDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                        </span>
+                      </div>
+                    </div>
+                    <span className={styles.orderStatus}>
+                      {language === 'hi' ? o.statusLabel : o.statusLabelEn}
+                    </span>
+                  </div>
+                ))}
+                <button className={styles.viewAllOrders} onClick={() => router.push('/orders')}>
+                  {language === 'hi' ? 'सभी Orders देखें →' : 'View All Orders →'}
+                </button>
               </div>
             )}
           </section>
