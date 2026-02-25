@@ -291,10 +291,10 @@ const MOCK_PANDITS: PanditCard[] = [
 ];
 
 const TABS: { key: ExploreTab; label: string; labelHi: string }[] = [
-  { key: 'temples', label: 'Temples', labelHi: 'Temples' },
-  { key: 'pujas', label: 'Pujas', labelHi: 'Pujas' },
-  { key: 'store', label: 'Store', labelHi: 'Store' },
-  { key: 'pandits', label: 'Pandits', labelHi: 'Pandits' },
+  { key: 'temples', label: 'Temples', labelHi: 'मंदिर' },
+  { key: 'pujas', label: 'Pujas', labelHi: 'पूजा' },
+  { key: 'store', label: 'Store', labelHi: 'दुकान' },
+  { key: 'pandits', label: 'Pandits', labelHi: 'पंडित' },
 ];
 
 export default function ExplorePage() {
@@ -315,7 +315,7 @@ export default function ExplorePage() {
 
   return (
     <div className={styles.appLayout}>
-      <TopBar title="Explore" onLanguageToggle={toggleLanguage} />
+      <TopBar title={language === 'hi' ? 'खोजें' : 'Explore'} onLanguageToggle={toggleLanguage} language={language} />
 
       {/* Horizontal Tab Bar */}
       <div className={styles.tabBar}>
@@ -344,7 +344,7 @@ export default function ExplorePage() {
             <input
               type="text"
               className={styles.searchInput}
-              placeholder={language === 'hi' ? 'Search remedies, temples, mantras...' : 'Search remedies, temples, mantras...'}
+              placeholder={language === 'hi' ? 'उपाय, मंदिर, मंत्र खोजें...' : 'Search remedies, temples, mantras...'}
               readOnly
             />
           </div>
@@ -387,7 +387,7 @@ export default function ExplorePage() {
               {/* Trending Articles */}
               <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>
-                  {language === 'hi' ? '\uD83D\uDD25 Trending Articles' : '\uD83D\uDD25 Trending Articles'}
+                  {language === 'hi' ? '🔥 चर्चित लेख' : '🔥 Trending Articles'}
                 </h2>
                 <div className={styles.articleScroll}>
                   {FEATURED_ARTICLES.map((article) => (
@@ -412,7 +412,7 @@ export default function ExplorePage() {
               {/* Categories */}
               <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>
-                  {language === 'hi' ? '\uD83D\uDCDA Categories' : '\uD83D\uDCDA Categories'}
+                  {language === 'hi' ? '📚 श्रेणियाँ' : '📚 Categories'}
                 </h2>
                 <div className={styles.categoryGrid}>
                   {CATEGORIES.map((cat) => (
@@ -422,7 +422,7 @@ export default function ExplorePage() {
                         {language === 'hi' ? cat.name : cat.nameEn}
                       </span>
                       <span className={styles.categoryCount}>
-                        {cat.count} articles
+                        {cat.count} {language === 'hi' ? 'लेख' : 'articles'}
                       </span>
                     </div>
                   ))}
@@ -432,7 +432,7 @@ export default function ExplorePage() {
               {/* Quick Actions */}
               <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>
-                  {language === 'hi' ? '\u26A1 Quick Actions' : '\u26A1 Quick Actions'}
+                  {language === 'hi' ? '⚡ त्वरित कार्य' : '⚡ Quick Actions'}
                 </h2>
                 <div className={styles.quickActions}>
                   <button className={styles.quickAction} onClick={() => router.push('/chat?problem=get_kundli')}>
@@ -571,7 +571,7 @@ export default function ExplorePage() {
               {/* Category Chips */}
               <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>
-                  {language === 'hi' ? '\uD83D\uDED2 Categories' : '\uD83D\uDED2 Categories'}
+                  {language === 'hi' ? '🛒 श्रेणियाँ' : '🛒 Categories'}
                 </h2>
                 <div className={styles.storeCategoryChips}>
                   {STORE_CATEGORIES.map((cat) => (

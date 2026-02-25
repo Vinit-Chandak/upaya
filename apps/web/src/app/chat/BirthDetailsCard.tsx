@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import styles from './BirthDetailsCard.module.css';
 
-// Popular Indian cities for suggestions
+// Popular Indian cities shown when input is empty
 const POPULAR_CITIES = [
   { name: 'Delhi, India', lat: 28.6139, lng: 77.209 },
   { name: 'Mumbai, Maharashtra, India', lat: 19.076, lng: 72.8777 },
@@ -34,6 +34,12 @@ const APPROX_OPTIONS_EN = [
   { key: 'dontknow', label: "Don't know at all", time: '' },
 ];
 
+interface PlaceResult {
+  name: string;
+  lat: number;
+  lng: number;
+}
+
 interface BirthDetailsCardProps {
   language: 'hi' | 'en';
   onSubmit: (details: {
@@ -54,24 +60,86 @@ export default function BirthDetailsCard({ language, onSubmit, disabled }: Birth
   const [unknownTime, setUnknownTime] = useState(false);
   const [selectedApprox, setSelectedApprox] = useState<string | null>(null);
   const [placeQuery, setPlaceQuery] = useState('');
-  const [selectedPlace, setSelectedPlace] = useState<{
-    name: string;
-    lat: number;
-    lng: number;
-  } | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<PlaceResult | null>(null);
   const [showPlaceResults, setShowPlaceResults] = useState(false);
+  const [placeResults, setPlaceResults] = useState<PlaceResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   const placeInputRef = useRef<HTMLInputElement>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const approxOptions = language === 'hi' ? APPROX_OPTIONS_HI : APPROX_OPTIONS_EN;
 
-  // Filter cities based on query
-  const filteredCities = placeQuery.trim().length > 0
-    ? POPULAR_CITIES.filter(
-        (c) =>
-          c.name.toLowerCase().includes(placeQuery.toLowerCase())
-      )
-    : POPULAR_CITIES;
+  // Search places using OpenStreetMap Nominatim API (free, no key required)
+  const searchPlaces = useCallback(async (query: string) => {
+    if (query.trim().length < 2) {
+      setPlaceResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const params = new URLSearchParams({
+        q: query,
+        format: 'json',
+        limit: '8',
+        addressdetails: '1',
+        'accept-language': language === 'hi' ? 'hi,en' : 'en,hi',
+      });
+
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?${params.toString()}`,
+        {
+          headers: {
+            'User-Agent': 'Upaya-App/1.0',
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error('Search failed');
+
+      const data = await response.json();
+      const results: PlaceResult[] = data.map(
+        (item: { display_name: string; lat: string; lon: string }) => ({
+          name: item.display_name,
+          lat: parseFloat(item.lat),
+          lng: parseFloat(item.lon),
+        })
+      );
+      setPlaceResults(results);
+    } catch {
+      // On error, fall back to filtering popular cities
+      const filtered = POPULAR_CITIES.filter((c) =>
+        c.name.toLowerCase().includes(query.toLowerCase())
+      );
+      setPlaceResults(filtered);
+    } finally {
+      setIsSearching(false);
+    }
+  }, [language]);
+
+  // Debounced search when user types
+  const handlePlaceQueryChange = useCallback(
+    (query: string) => {
+      setPlaceQuery(query);
+      setSelectedPlace(null);
+      setShowPlaceResults(true);
+
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+
+      if (query.trim().length < 2) {
+        setPlaceResults([]);
+        return;
+      }
+
+      debounceRef.current = setTimeout(() => {
+        searchPlaces(query);
+      }, 350);
+    },
+    [searchPlaces]
+  );
 
   // Is form valid?
   const isValid = dob && selectedPlace && (unknownTime || timeOfBirth);
@@ -81,7 +149,7 @@ export default function BirthDetailsCard({ language, onSubmit, disabled }: Birth
   };
 
   const handlePlaceSelect = useCallback(
-    (city: { name: string; lat: number; lng: number }) => {
+    (city: PlaceResult) => {
       setSelectedPlace(city);
       setPlaceQuery(city.name);
       setShowPlaceResults(false);
@@ -98,6 +166,13 @@ export default function BirthDetailsCard({ language, onSubmit, disabled }: Birth
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Clean up debounce on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
   }, []);
 
   const handleSubmit = () => {
@@ -131,16 +206,22 @@ export default function BirthDetailsCard({ language, onSubmit, disabled }: Birth
     });
   };
 
+  // Which results to show: API results if searched, popular cities if empty
+  const displayResults =
+    placeQuery.trim().length >= 2
+      ? placeResults
+      : POPULAR_CITIES;
+
   return (
     <div className={styles.card}>
       {/* Title */}
       <div className={styles.cardTitle}>
         <span className={styles.cardTitleIcon}>📋</span>
-        <span>{language === 'hi' ? 'Birth Details' : 'Birth Details'}</span>
+        <span>{language === 'hi' ? 'जन्म विवरण' : 'Birth Details'}</span>
       </div>
       <p className={styles.cardSubtitle}>
         {language === 'hi'
-          ? 'Accurate कुंडली के लिए ये details ज़रूरी हैं:'
+          ? 'सटीक कुंडली के लिए ये विवरण ज़रूरी हैं:'
           : 'These details are needed for an accurate kundli:'}
       </p>
 
@@ -215,7 +296,7 @@ export default function BirthDetailsCard({ language, onSubmit, disabled }: Birth
             />
             <span className={styles.checkboxLabel}>
               {language === 'hi'
-                ? 'Exact time नहीं पता? (Approximate use करेंगे)'
+                ? 'सही समय नहीं पता? (अनुमानित समय इस्तेमाल करेंगे)'
                 : "Don't know exact time? (We'll use approximate)"}
             </span>
           </label>
@@ -246,7 +327,7 @@ export default function BirthDetailsCard({ language, onSubmit, disabled }: Birth
               ))}
               <p className={styles.approxNote}>
                 {language === 'hi'
-                  ? 'Approximate time से भी कुंडली बनती है, लेकिन exact time से ज़्यादा accurate होती है।'
+                  ? 'अनुमानित समय से भी कुंडली बनती है, लेकिन सही समय से ज़्यादा सटीक होती है।'
                   : 'Kundli can be generated with approximate time too, but exact time gives more accurate results.'}
               </p>
             </div>
@@ -264,27 +345,28 @@ export default function BirthDetailsCard({ language, onSubmit, disabled }: Birth
               ref={placeInputRef}
               type="text"
               className={styles.fieldInput}
-              placeholder={language === 'hi' ? 'शहर/गाँव खोजें...' : 'Search city/town...'}
+              placeholder={language === 'hi' ? 'शहर या गाँव का नाम लिखें...' : 'Type city or town name...'}
               value={placeQuery}
-              onChange={(e) => {
-                setPlaceQuery(e.target.value);
-                setSelectedPlace(null);
-                setShowPlaceResults(true);
-              }}
+              onChange={(e) => handlePlaceQueryChange(e.target.value)}
               onFocus={handlePlaceFocus}
               disabled={disabled}
             />
 
             {showPlaceResults && (
               <div className={styles.placeSearchResults}>
-                {placeQuery.trim().length === 0 && (
+                {placeQuery.trim().length < 2 && (
                   <div className={styles.popularCitiesLabel}>
                     {language === 'hi' ? 'लोकप्रिय शहर' : 'Popular cities'}
                   </div>
                 )}
-                {filteredCities.map((city) => (
+                {isSearching && (
+                  <div className={styles.placeResultItem} style={{ color: 'var(--color-neutral-grey-400)', justifyContent: 'center' }}>
+                    {language === 'hi' ? 'खोज रहे हैं...' : 'Searching...'}
+                  </div>
+                )}
+                {!isSearching && displayResults.map((city, index) => (
                   <button
-                    key={city.name}
+                    key={`${city.name}-${index}`}
                     className={styles.placeResultItem}
                     onClick={() => handlePlaceSelect(city)}
                     type="button"
@@ -293,9 +375,9 @@ export default function BirthDetailsCard({ language, onSubmit, disabled }: Birth
                     {city.name}
                   </button>
                 ))}
-                {filteredCities.length === 0 && placeQuery.trim().length > 0 && (
+                {!isSearching && displayResults.length === 0 && placeQuery.trim().length >= 2 && (
                   <div className={styles.placeResultItem} style={{ color: 'var(--color-neutral-grey-400)' }}>
-                    {language === 'hi' ? 'कोई result नहीं मिला' : 'No results found'}
+                    {language === 'hi' ? 'कोई जगह नहीं मिली' : 'No places found'}
                   </div>
                 )}
               </div>
@@ -312,7 +394,7 @@ export default function BirthDetailsCard({ language, onSubmit, disabled }: Birth
       >
         {language === 'hi' ? '✨ मेरी कुंडली बनाएं' : '✨ Generate My Kundli'}
         <span className={styles.generateButtonSub}>
-          {language === 'hi' ? 'Generate My Kundli' : 'मेरी कुंडली बनाएं'}
+          {language === 'hi' ? 'कुंडली 2 मिनट में तैयार' : 'Kundli ready in 2 minutes'}
         </span>
       </button>
     </div>

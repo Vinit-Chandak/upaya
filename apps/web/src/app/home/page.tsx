@@ -75,7 +75,7 @@ export default function HomePage() {
   if (!hasHistory) {
     return (
       <div className={styles.appLayout}>
-        <TopBar onLanguageToggle={toggleLanguage} />
+        <TopBar onLanguageToggle={toggleLanguage} language={language} />
 
         <main className={styles.mainContent}>
           <div className={styles.container}>
@@ -104,7 +104,7 @@ export default function HomePage() {
               {PROBLEM_CHIPS.map((chip) => (
                 <button
                   key={chip.key}
-                  className={`${styles.chip} ${chip.key === 'get_kundli' ? styles.chipGold : ''}`}
+                  className={styles.chip}
                   onClick={() => handleChipClick(chip.key)}
                 >
                   <span className={styles.chipEmoji}>{chip.emoji}</span>
@@ -166,7 +166,7 @@ export default function HomePage() {
   // Returning user view (has chat history)
   return (
     <div className={styles.appLayout}>
-      <TopBar onLanguageToggle={toggleLanguage} />
+      <TopBar onLanguageToggle={toggleLanguage} language={language} />
 
       <main className={styles.mainContent}>
         <div className={styles.container}>
@@ -174,7 +174,7 @@ export default function HomePage() {
           <div className={styles.welcomeSection}>
             <h1 className={styles.welcomeText}>
               {language === 'hi'
-                ? `Welcome back${userName ? `, ${userName}` : ''} 🙏`
+                ? `फिर से स्वागत है${userName ? `, ${userName}` : ''} 🙏`
                 : `Welcome back${userName ? `, ${userName}` : ''} 🙏`}
             </h1>
           </div>
@@ -184,13 +184,15 @@ export default function HomePage() {
             <div className={styles.cardHeader}>
               <span className={styles.cardIcon}>📿</span>
               <h3 className={styles.cardTitle}>
-                {language === 'hi' ? 'आपका Active Remedy Plan' : 'Your Active Remedy Plan'}
+                {language === 'hi' ? 'आपका चालू उपाय योजना' : 'Your Active Remedy Plan'}
               </h3>
             </div>
             <div className={styles.progressBar}>
               <div className={styles.progressFill} style={{ width: '35%' }} />
             </div>
-            <p className={styles.cardMeta}>Day 8 of 63 &middot; 35% complete</p>
+            <p className={styles.cardMeta}>
+              {language === 'hi' ? '63 में से 8वाँ दिन · 35% पूरा' : 'Day 8 of 63 · 35% complete'}
+            </p>
           </div>
 
           {/* Transit Alert Card (placeholder) */}
@@ -198,12 +200,12 @@ export default function HomePage() {
             <div className={styles.cardHeader}>
               <span className={styles.cardIcon}>⚡</span>
               <h3 className={styles.cardTitle}>
-                {language === 'hi' ? 'Transit Alert' : 'Transit Alert'}
+                {language === 'hi' ? 'ग्रह गोचर सूचना' : 'Transit Alert'}
               </h3>
             </div>
             <p className={styles.alertText}>
               {language === 'hi'
-                ? 'Rahu transit 12 दिन में — protective remedies available'
+                ? 'राहु गोचर 12 दिन में — सुरक्षात्मक उपाय उपलब्ध हैं'
                 : 'Rahu transit in 12 days — protective remedies available'}
             </p>
           </div>
@@ -215,7 +217,7 @@ export default function HomePage() {
             </h3>
             <div className={styles.emptyState}>
               <p className={styles.emptyText}>
-                {language === 'hi' ? 'कोई recent chat नहीं' : 'No recent chats'}
+                {language === 'hi' ? 'कोई हालिया बातचीत नहीं' : 'No recent chats'}
               </p>
             </div>
           </div>
@@ -223,10 +225,10 @@ export default function HomePage() {
           {/* Two CTAs */}
           <div className={styles.ctaRow}>
             <button className={styles.ctaSecondary}>
-              {language === 'hi' ? 'पिछली chat जारी रखें' : 'Continue last chat'}
+              {language === 'hi' ? 'पिछली बातचीत जारी रखें' : 'Continue last chat'}
             </button>
             <button className={styles.ctaPrimary}>
-              {language === 'hi' ? 'नई Problem' : 'New Problem'}
+              {language === 'hi' ? 'नई समस्या' : 'New Problem'}
             </button>
           </div>
         </div>

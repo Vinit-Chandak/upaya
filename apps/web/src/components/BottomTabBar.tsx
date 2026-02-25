@@ -16,7 +16,7 @@ const TABS: Tab[] = [
   {
     key: 'home',
     label: 'Home',
-    labelHi: 'Home',
+    labelHi: 'होम',
     href: '/home',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -28,7 +28,7 @@ const TABS: Tab[] = [
   {
     key: 'remedies',
     label: 'Remedies',
-    labelHi: 'Remedies',
+    labelHi: 'उपाय',
     href: '/remedies',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -40,7 +40,7 @@ const TABS: Tab[] = [
   {
     key: 'explore',
     label: 'Explore',
-    labelHi: 'Explore',
+    labelHi: 'खोजें',
     href: '/explore',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -53,7 +53,7 @@ const TABS: Tab[] = [
   {
     key: 'me',
     label: 'Me',
-    labelHi: 'Me',
+    labelHi: 'प्रोफ़ाइल',
     href: '/me',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
