@@ -13,6 +13,11 @@ import { templeRouter } from './routes/temple';
 import { pujaRouter } from './routes/puja';
 import { bookingRouter } from './routes/booking';
 import { addressRouter } from './routes/address';
+import { protocolRouter } from './routes/protocol';
+import { transitRouter } from './routes/transit';
+import { notificationRouter } from './routes/notification';
+import { panditRouter } from './routes/pandit';
+import { walletRouter } from './routes/wallet';
 import { errorHandler } from './middleware/error';
 import { requestLogger } from './middleware/logger';
 
@@ -50,6 +55,13 @@ app.use('/api/temples', templeRouter);
 app.use('/api/pujas', pujaRouter);
 app.use('/api/bookings', bookingRouter);
 app.use('/api/addresses', addressRouter);
+
+// --- Phase 3: Retention Engine ---
+app.use('/api/protocols', protocolRouter);
+app.use('/api/transits', transitRouter);
+app.use('/api/notifications', notificationRouter);
+app.use('/api/pandits', panditRouter);
+app.use('/api/wallet', walletRouter);
 
 // --- Error Handler (must be last) ---
 app.use(errorHandler);

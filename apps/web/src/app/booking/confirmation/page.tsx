@@ -17,7 +17,6 @@ function ConfirmationContent() {
   const searchParams = useSearchParams();
   const pujaDate = searchParams.get('date') || '';
   const pujaDateLabel = searchParams.get('dateLabel') || pujaDate;
-  const sankalpName = searchParams.get('name') || '';
   const [language, setLanguage] = useState<'hi' | 'en'>('hi');
   const [showConfetti, setShowConfetti] = useState(true);
 

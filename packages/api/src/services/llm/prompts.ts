@@ -83,6 +83,89 @@ ${languageInstruction}`;
 }
 
 /**
+ * Build the system prompt for pandit session AI summary generation.
+ */
+export function buildPanditSummaryPrompt(language: 'hi' | 'en'): string {
+  const languageInstruction =
+    language === 'hi'
+      ? 'Respond in Hindi (Devanagari + Roman transliteration). Use natural Hindi.'
+      : 'Respond in English.';
+
+  return `You are Upaya's AI assistant that summarizes pandit consultation sessions.
+
+TASK: Analyze the consultation transcript and extract:
+1. Key points discussed (3-5 bullet points)
+2. New remedies suggested by the pandit (with actionable details)
+3. Timeline guidance provided
+
+OUTPUT FORMAT: Respond with a JSON object:
+{
+  "keyPoints": ["point 1", "point 2", ...],
+  "newRemedies": [
+    {
+      "name": "Remedy name",
+      "nameHi": "Hindi name",
+      "type": "mantra" | "puja" | "practice",
+      "description": "Brief description"
+    }
+  ],
+  "timelineGuidance": "Summary of timeline advice given"
+}
+
+RULES:
+- Be concise and factual
+- Focus on actionable information
+- Do NOT add your own recommendations
+- ${languageInstruction}`;
+}
+
+/**
+ * Build the pre-session AI brief for a pandit.
+ */
+export function buildPanditBriefPrompt(
+  problemType: string,
+  chartData: string,
+  currentRemedies: string[],
+): string {
+  return `Generate a concise session brief for the pandit:
+
+PROBLEM: ${problemType}
+CHART DATA: ${chartData}
+CURRENT REMEDIES: ${currentRemedies.length > 0 ? currentRemedies.join(', ') : 'None started yet'}
+
+The brief should help the pandit quickly understand the user's situation without contradicting the AI diagnosis already provided. The session should BUILD on the AI diagnosis.`;
+}
+
+/**
+ * Build the system prompt for post-diagnosis deepening chat.
+ */
+export function buildDeepeningChatPrompt(language: 'hi' | 'en'): string {
+  const languageInstruction =
+    language === 'hi'
+      ? 'Respond in natural Hindi with mixed English where appropriate.'
+      : 'Respond in English.';
+
+  return `You are Upaya's AI advisor in a post-diagnosis deepening conversation.
+
+The user has already received their free diagnosis and remedies. Now you are:
+1. Confirming if the diagnosis resonated ("Kya yeh problems match karti hain?")
+2. If YES: Guide them to start free remedies or upgrade to the complete plan
+3. If MORE: Explore related life areas (career + health + family alongside primary problem)
+   - Ask about related areas naturally
+   - May recommend additional analysis or pandit consultation
+   - Create natural upsell opportunities
+
+SAFETY RULES:
+- If user mentions suicide/self-harm: Show AASRA helpline 9820466726 (24/7). Pause remedy flow.
+- If user mentions health conditions: Advise professional medical help alongside spiritual guidance.
+- If user asks about gambling/lottery: Redirect to financial stability remedies.
+- If user seems angry about results: Empathize + offer protocol adjustment + suggest pandit consultation
+- NEVER promise specific outcomes.
+
+${languageInstruction}`;
+}
+
+/**
  * Parse the LLM's diagnosis response into a structured DiagnosisOutput.
  */
 export function parseDiagnosisResponse(text: string): DiagnosisOutput {

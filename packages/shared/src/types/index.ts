@@ -84,3 +84,58 @@ export type {
   ShippingStatus,
   ShippingOrder,
 } from './shipping';
+
+// --- Phase 3: Retention Engine ---
+
+export type {
+  ProtocolStatus,
+  RemedyTaskType,
+  RemedyProtocol,
+  RemedyTask,
+  RemedyCompletion,
+  Streak,
+  KarmaPointEntry,
+  KarmaSource,
+  ProtocolWithTasks,
+  RemedyTaskWithProgress,
+  WeeklyStatsData,
+  CreateProtocolInput,
+  CompleteTaskInput,
+} from './protocol';
+export { KARMA_POINTS } from './protocol';
+
+export type {
+  ImpactLevel,
+  TransitAlert,
+  TransitRemedy,
+} from './transit';
+
+export type {
+  NotificationType,
+  Notification,
+  NotificationSettings,
+  UpdateNotificationSettingsInput,
+} from './notification';
+
+export type {
+  PanditStatus,
+  SessionType,
+  SessionStatus,
+  Pandit,
+  PanditAvailability,
+  PanditSession,
+  PanditMessage,
+  PanditAIBrief,
+  PanditAISummary,
+  PanditWithAvailability,
+  CreateSessionInput,
+  EndSessionInput,
+} from './pandit';
+
+export type {
+  WalletTransactionType,
+  Wallet,
+  WalletTransaction,
+  RechargeInput,
+} from './wallet';
+export { WALLET_RECHARGE_OPTIONS } from './wallet';
