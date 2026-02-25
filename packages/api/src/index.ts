@@ -18,6 +18,13 @@ import { transitRouter } from './routes/transit';
 import { notificationRouter } from './routes/notification';
 import { panditRouter } from './routes/pandit';
 import { walletRouter } from './routes/wallet';
+import { storeRouter } from './routes/store';
+import { cartRouter } from './routes/cart';
+import { productOrderRouter } from './routes/product-orders';
+import { sevaRouter } from './routes/seva';
+import { subscriptionRouter } from './routes/subscription';
+import { familyRouter } from './routes/family';
+import { muhurtaRouter } from './routes/muhurta';
 import { errorHandler } from './middleware/error';
 import { requestLogger } from './middleware/logger';
 
@@ -62,6 +69,15 @@ app.use('/api/transits', transitRouter);
 app.use('/api/notifications', notificationRouter);
 app.use('/api/pandits', panditRouter);
 app.use('/api/wallet', walletRouter);
+
+// --- Phase 4: Commerce & Monetization ---
+app.use('/api/store', storeRouter);
+app.use('/api/cart', cartRouter);
+app.use('/api/product-orders', productOrderRouter);
+app.use('/api/seva', sevaRouter);
+app.use('/api/subscriptions', subscriptionRouter);
+app.use('/api/family', familyRouter);
+app.use('/api/muhurta', muhurtaRouter);
 
 // --- Error Handler (must be last) ---
 app.use(errorHandler);

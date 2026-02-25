@@ -577,6 +577,182 @@ CREATE TABLE IF NOT EXISTS wallet_transactions (
 CREATE INDEX IF NOT EXISTS idx_wallet_transactions_wallet_id ON wallet_transactions(wallet_id);
 
 -- ============================================
+-- PHASE 4: PRODUCTS (SIDDHA STORE)
+-- ============================================
+CREATE TABLE IF NOT EXISTS products (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name VARCHAR(255) NOT NULL,
+  name_hi VARCHAR(255) NOT NULL DEFAULT '',
+  category VARCHAR(30) NOT NULL DEFAULT 'gemstones',
+  description TEXT NOT NULL DEFAULT '',
+  description_hi TEXT NOT NULL DEFAULT '',
+  images JSONB NOT NULL DEFAULT '[]',
+  price INTEGER NOT NULL,
+  mrp INTEGER NOT NULL,
+  discount_pct DECIMAL(5, 2) NOT NULL DEFAULT 0.00,
+  weight VARCHAR(50),
+  specifications JSONB NOT NULL DEFAULT '{}',
+  wearing_instructions TEXT,
+  wearing_instructions_hi TEXT,
+  pran_pratistha_video_url TEXT,
+  certification TEXT,
+  stock INTEGER NOT NULL DEFAULT 0,
+  rating DECIMAL(3, 2) NOT NULL DEFAULT 0.00,
+  review_count INTEGER NOT NULL DEFAULT 0,
+  dosha_type VARCHAR(50),
+  status VARCHAR(20) NOT NULL DEFAULT 'active',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
+CREATE INDEX IF NOT EXISTS idx_products_status ON products(status);
+CREATE INDEX IF NOT EXISTS idx_products_dosha_type ON products(dosha_type);
+
+-- ============================================
+-- PHASE 4: PRODUCT REVIEWS
+-- ============================================
+CREATE TABLE IF NOT EXISTS product_reviews (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+  review_text TEXT NOT NULL DEFAULT '',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_product_reviews_product_id ON product_reviews(product_id);
+CREATE INDEX IF NOT EXISTS idx_product_reviews_user_id ON product_reviews(user_id);
+
+-- ============================================
+-- PHASE 4: CART ITEMS
+-- ============================================
+CREATE TABLE IF NOT EXISTS cart_items (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  quantity INTEGER NOT NULL DEFAULT 1 CHECK (quantity >= 1),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(user_id, product_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_cart_items_user_id ON cart_items(user_id);
+
+-- ============================================
+-- PHASE 4: PRODUCT ORDERS
+-- ============================================
+CREATE TABLE IF NOT EXISTS product_orders (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  total_amount INTEGER NOT NULL,
+  shipping_address_id UUID REFERENCES addresses(id) ON DELETE SET NULL,
+  payment_id UUID REFERENCES payments(id) ON DELETE SET NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'pending',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_product_orders_user_id ON product_orders(user_id);
+CREATE INDEX IF NOT EXISTS idx_product_orders_status ON product_orders(status);
+
+-- ============================================
+-- PHASE 4: PRODUCT ORDER ITEMS
+-- ============================================
+CREATE TABLE IF NOT EXISTS product_order_items (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  order_id UUID NOT NULL REFERENCES product_orders(id) ON DELETE CASCADE,
+  product_id UUID NOT NULL REFERENCES products(id) ON DELETE RESTRICT,
+  quantity INTEGER NOT NULL DEFAULT 1,
+  price INTEGER NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_product_order_items_order_id ON product_order_items(order_id);
+
+-- ============================================
+-- PHASE 4: SEVA CATALOG
+-- ============================================
+CREATE TABLE IF NOT EXISTS seva_catalog (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  temple_id UUID NOT NULL REFERENCES temples(id) ON DELETE CASCADE,
+  type VARCHAR(30) NOT NULL DEFAULT 'gau_seva',
+  name VARCHAR(255) NOT NULL,
+  name_hi VARCHAR(255) NOT NULL DEFAULT '',
+  description TEXT NOT NULL DEFAULT '',
+  description_hi TEXT NOT NULL DEFAULT '',
+  price INTEGER NOT NULL,
+  photo_proof BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_seva_catalog_temple_id ON seva_catalog(temple_id);
+CREATE INDEX IF NOT EXISTS idx_seva_catalog_type ON seva_catalog(type);
+
+-- ============================================
+-- PHASE 4: SEVA BOOKINGS
+-- ============================================
+CREATE TABLE IF NOT EXISTS seva_bookings (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  seva_catalog_id UUID NOT NULL REFERENCES seva_catalog(id) ON DELETE RESTRICT,
+  temple_id UUID NOT NULL REFERENCES temples(id) ON DELETE RESTRICT,
+  payment_id UUID REFERENCES payments(id) ON DELETE SET NULL,
+  status VARCHAR(30) NOT NULL DEFAULT 'pending',
+  proof_url TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_seva_bookings_user_id ON seva_bookings(user_id);
+CREATE INDEX IF NOT EXISTS idx_seva_bookings_status ON seva_bookings(status);
+
+-- ============================================
+-- PHASE 4: SUBSCRIPTIONS
+-- ============================================
+CREATE TABLE IF NOT EXISTS subscriptions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  tier VARCHAR(20) NOT NULL DEFAULT 'basic',
+  protocol_id UUID REFERENCES remedy_protocols(id) ON DELETE SET NULL,
+  start_date DATE NOT NULL,
+  end_date DATE NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'active',
+  payment_id UUID REFERENCES payments(id) ON DELETE SET NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_subscriptions_user_id ON subscriptions(user_id);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_status ON subscriptions(status);
+
+-- ============================================
+-- PHASE 4: FAMILY MEMBERS
+-- ============================================
+CREATE TABLE IF NOT EXISTS family_members (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  name VARCHAR(255) NOT NULL,
+  relationship VARCHAR(30) NOT NULL DEFAULT 'other',
+  kundli_id UUID REFERENCES kundlis(id) ON DELETE SET NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_family_members_user_id ON family_members(user_id);
+
+-- ============================================
+-- PHASE 4: MUHURTA QUERIES
+-- ============================================
+CREATE TABLE IF NOT EXISTS muhurta_queries (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  query_text TEXT NOT NULL,
+  category VARCHAR(30) NOT NULL DEFAULT 'other',
+  recommended_dates_json JSONB NOT NULL DEFAULT '[]',
+  payment_id UUID REFERENCES payments(id) ON DELETE SET NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_muhurta_queries_user_id ON muhurta_queries(user_id);
+
+-- ============================================
 -- UPDATED_AT TRIGGER
 -- ============================================
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -647,6 +823,19 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_wallets_updated_at') THEN
     CREATE TRIGGER update_wallets_updated_at
       BEFORE UPDATE ON wallets
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+
+  -- Phase 4 triggers
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_product_orders_updated_at') THEN
+    CREATE TRIGGER update_product_orders_updated_at
+      BEFORE UPDATE ON product_orders
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_subscriptions_updated_at') THEN
+    CREATE TRIGGER update_subscriptions_updated_at
+      BEFORE UPDATE ON subscriptions
       FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
   END IF;
 END;

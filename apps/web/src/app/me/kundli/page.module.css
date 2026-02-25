@@ -1,0 +1,560 @@
+/* ============================================
+   Full Kundli View — Phase 1 (S15.2)
+   Chart, Planets, Dashas, Yogas tabs
+   ============================================ */
+
+.appLayout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--color-neutral-off-white);
+}
+
+.mainContent {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: var(--space-section-gap);
+}
+
+.container {
+  width: 100%;
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 0 var(--space-page-x);
+}
+
+/* ============================================
+   Share Row
+   ============================================ */
+.shareRow {
+  display: flex;
+  justify-content: flex-end;
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: var(--space-inline-gap) var(--space-page-x) 0;
+}
+
+.shareButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem) clamp(0.625rem, 0.5rem + 0.625vw, 1rem);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-primary-saffron);
+  background: var(--color-neutral-white);
+  border: 1.5px solid var(--color-primary-saffron-light);
+  border-radius: var(--radius-button);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.shareButton:hover {
+  background: rgba(255, 140, 0, 0.05);
+  box-shadow: var(--shadow-sm);
+}
+
+.shareButton svg {
+  flex-shrink: 0;
+}
+
+/* ============================================
+   Tab Navigation
+   ============================================ */
+.tabNav {
+  display: flex;
+  gap: 0;
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-lg);
+  padding: clamp(0.1875rem, 0.125rem + 0.3125vw, 0.25rem);
+  margin-top: var(--space-component-gap);
+  margin-bottom: var(--space-component-gap);
+  box-shadow: var(--shadow-sm);
+}
+
+.tabButton {
+  flex: 1;
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) clamp(0.375rem, 0.25rem + 0.625vw, 0.75rem);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-neutral-grey-500);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    font-weight var(--transition-fast);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.tabButton:hover {
+  color: var(--color-neutral-grey-700);
+  background: var(--color-neutral-grey-50);
+}
+
+.tabButtonActive {
+  background: var(--gradient-cta);
+  color: var(--color-neutral-white);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+.tabButtonActive:hover {
+  color: var(--color-neutral-white);
+  background: var(--gradient-cta);
+}
+
+/* ============================================
+   Tab Content
+   ============================================ */
+.tabContent {
+  min-height: 20rem;
+}
+
+/* ============================================
+   Chart Tab — D1 Grid
+   ============================================ */
+.chartContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-component-gap);
+  padding: var(--space-section-gap) 0;
+}
+
+.chartGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  width: clamp(16rem, 14rem + 10vw, 22rem);
+  height: clamp(16rem, 14rem + 10vw, 22rem);
+  border: 2px solid var(--color-accent-gold);
+  background: var(--color-neutral-cream);
+  border-radius: var(--radius-md);
+}
+
+.chartCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-accent-gold-light);
+  position: relative;
+}
+
+.chartCellCenter {
+  border-color: transparent;
+  background: var(--color-neutral-white);
+}
+
+.chartHouseNumber {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-secondary-maroon);
+}
+
+.chartCaption {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-500);
+  font-weight: 500;
+}
+
+/* ============================================
+   Planets Tab — Table
+   ============================================ */
+.tableWrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--space-component-gap);
+}
+
+.planetsTable {
+  width: 100%;
+  min-width: 24rem;
+  border-collapse: collapse;
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.tableHeader {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-neutral-grey-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: left;
+  padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem) clamp(0.75rem, 0.5rem + 1.25vw, 1.25rem);
+  background: var(--color-neutral-grey-50);
+  border-bottom: 1px solid var(--color-neutral-grey-200);
+}
+
+.tableRow {
+  transition: background-color var(--transition-fast);
+  cursor: pointer;
+}
+
+.tableRow:hover {
+  background: var(--color-neutral-grey-50);
+}
+
+.tableRow:not(:last-child) {
+  border-bottom: 1px solid var(--color-neutral-grey-100);
+}
+
+.tableCell {
+  padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem) clamp(0.75rem, 0.5rem + 1.25vw, 1.25rem);
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-800);
+  vertical-align: middle;
+}
+
+.tableCellCenter {
+  padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem) clamp(0.75rem, 0.5rem + 1.25vw, 1.25rem);
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-800);
+  text-align: center;
+  font-weight: 600;
+}
+
+.planetSymbol {
+  display: inline-block;
+  width: 1.5em;
+  font-size: var(--text-base);
+  text-align: center;
+  margin-right: 0.375rem;
+}
+
+.planetName {
+  font-weight: 500;
+}
+
+/* Status Badges */
+.statusBadge {
+  display: inline-block;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  padding: 0.1875rem 0.5rem;
+  border-radius: var(--radius-chip);
+  white-space: nowrap;
+}
+
+.status_strong {
+  color: #059669;
+  background: #D1FAE5;
+}
+
+.status_neutral {
+  color: var(--color-neutral-grey-600);
+  background: var(--color-neutral-grey-100);
+}
+
+.status_weak {
+  color: #D97706;
+  background: #FEF3C7;
+}
+
+.status_afflicted {
+  color: #DC2626;
+  background: #FEE2E2;
+}
+
+.hintText {
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-400);
+  padding-top: var(--space-component-gap);
+}
+
+/* ============================================
+   Dashas Tab
+   ============================================ */
+.dashaContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-section-gap);
+}
+
+.dashaCurrentCard {
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-xl);
+  padding: var(--space-card-padding);
+  box-shadow: var(--shadow-card);
+  border-left: 4px solid var(--color-accent-gold);
+}
+
+.dashaCurrentHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-inline-gap);
+  margin-bottom: var(--space-component-gap);
+}
+
+.dashaCurrentIcon {
+  font-size: var(--text-lg);
+}
+
+.dashaCurrentTitle {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-neutral-grey-800);
+}
+
+.dashaCurrentBody {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.25rem, 0.125rem + 0.625vw, 0.5rem);
+}
+
+.dashaCurrentPlanet {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-secondary-maroon);
+}
+
+.dashaCurrentPeriod {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-500);
+}
+
+.dashaProgress {
+  width: 100%;
+  height: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+  background: var(--color-neutral-grey-100);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-top: 0.25rem;
+}
+
+.dashaProgressFill {
+  height: 100%;
+  background: var(--gradient-cta);
+  border-radius: var(--radius-full);
+  transition: width 0.6s ease;
+}
+
+.dashaProgressLabel {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-400);
+}
+
+.dashaUpcomingTitle {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-neutral-grey-800);
+}
+
+.dashaTimeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+  padding-left: clamp(1rem, 0.75rem + 1.25vw, 1.5rem);
+}
+
+.dashaTimeline::before {
+  content: '';
+  position: absolute;
+  left: clamp(0.3125rem, 0.25rem + 0.3125vw, 0.4375rem);
+  top: 0.5rem;
+  bottom: 0.5rem;
+  width: 2px;
+  background: var(--color-neutral-grey-200);
+}
+
+.dashaItem {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+  padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem) 0;
+  position: relative;
+}
+
+.dashaTimelineDot {
+  position: absolute;
+  left: calc(-1 * clamp(1rem, 0.75rem + 1.25vw, 1.5rem) + clamp(0.125rem, 0.0625rem + 0.3125vw, 0.25rem));
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--color-neutral-grey-300);
+  flex-shrink: 0;
+}
+
+.dashaItemCurrent .dashaTimelineDot {
+  background: var(--color-primary-saffron);
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.2);
+}
+
+.dashaItemContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.0625rem;
+}
+
+.dashaItemPlanet {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+}
+
+.dashaItemCurrent .dashaItemPlanet {
+  color: var(--color-secondary-maroon);
+}
+
+.dashaItemPeriod {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-500);
+}
+
+.dashaItemBadge {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-primary-saffron-dark);
+  background: rgba(255, 140, 0, 0.1);
+  padding: 0.1875rem 0.5rem;
+  border-radius: var(--radius-chip);
+  flex-shrink: 0;
+}
+
+/* ============================================
+   Yogas Tab
+   ============================================ */
+.yogaContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+}
+
+.yogaCard {
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-card-padding);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-fast);
+}
+
+.yogaCard:hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+.yogaCardHeader {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.625rem);
+  margin-bottom: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+}
+
+.yogaTypeDot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.yogaType_benefic {
+  background: var(--color-success);
+}
+
+.yogaType_malefic {
+  background: var(--color-error);
+}
+
+.yogaType_mixed {
+  background: var(--color-warning);
+}
+
+.yogaName {
+  flex: 1;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-neutral-grey-800);
+}
+
+.yogaTypeBadge {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  padding: 0.1875rem 0.5rem;
+  border-radius: var(--radius-chip);
+  flex-shrink: 0;
+}
+
+.yogaTypeBadge_benefic {
+  color: #059669;
+  background: #D1FAE5;
+}
+
+.yogaTypeBadge_malefic {
+  color: #DC2626;
+  background: #FEE2E2;
+}
+
+.yogaTypeBadge_mixed {
+  color: #D97706;
+  background: #FEF3C7;
+}
+
+.yogaDescription {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-600);
+  line-height: 1.5;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+/* Small phones */
+@media (max-width: 479px) {
+  .tabButton {
+    font-size: var(--text-xs);
+    padding: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem) 0.25rem;
+  }
+
+  .chartGrid {
+    width: 90vw;
+    height: 90vw;
+    max-width: 18rem;
+    max-height: 18rem;
+  }
+
+  .planetsTable {
+    min-width: 20rem;
+  }
+}
+
+/* Tablets */
+@media (min-width: 480px) and (max-width: 767px) {
+  .chartGrid {
+    width: 20rem;
+    height: 20rem;
+  }
+}
+
+/* Tablets and up */
+@media (min-width: 768px) {
+  .container {
+    padding: 0 var(--space-page-x);
+  }
+
+  .chartGrid {
+    width: 22rem;
+    height: 22rem;
+  }
+
+  .planetsTable {
+    min-width: 100%;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .container {
+    max-width: 44rem;
+  }
+}

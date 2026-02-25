@@ -1,0 +1,715 @@
+/* ============================================
+   Temple CMS Registration — Phase 4 (S18)
+   Multi-step wizard for temple self-onboarding
+   ============================================ */
+
+.appLayout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--color-neutral-off-white);
+}
+
+.mainContent {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: var(--space-section-gap);
+}
+
+.container {
+  width: 100%;
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: var(--space-component-gap) var(--space-page-x);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+}
+
+/* ============================================
+   Step Indicators
+   ============================================ */
+.stepIndicators {
+  padding: var(--space-component-gap) 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.stepIndicators::-webkit-scrollbar {
+  display: none;
+}
+
+.stepIndicatorsInner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  min-width: min-content;
+}
+
+.stepIndicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  position: relative;
+  min-width: clamp(3rem, 2.5rem + 2.5vw, 4rem);
+}
+
+.stepDot {
+  width: clamp(1.5rem, 1.25rem + 1.25vw, 2rem);
+  height: clamp(1.5rem, 1.25rem + 1.25vw, 2rem);
+  border-radius: 50%;
+  background: var(--color-neutral-grey-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-neutral-grey-500);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.stepIndicatorActive .stepDot {
+  background: var(--color-primary-saffron);
+  color: var(--color-neutral-white);
+}
+
+.stepIndicatorDone .stepDot {
+  background: var(--color-success);
+  color: var(--color-neutral-white);
+}
+
+.stepLabel {
+  font-size: clamp(0.5625rem, 0.5rem + 0.3125vw, 0.6875rem);
+  color: var(--color-neutral-grey-400);
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.stepIndicatorActive .stepLabel {
+  color: var(--color-primary-saffron);
+  font-weight: 600;
+}
+
+.stepIndicatorDone .stepLabel {
+  color: var(--color-success);
+}
+
+.stepProgressLine {
+  width: clamp(1rem, 0.75rem + 1.25vw, 2rem);
+  height: 2px;
+  background: var(--color-neutral-grey-200);
+  position: relative;
+  margin-top: clamp(0.75rem, 0.625rem + 0.625vw, 1rem);
+}
+
+.stepProgressFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--color-success);
+  transition: width var(--transition-normal);
+}
+
+/* ============================================
+   Step Content
+   ============================================ */
+.stepContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+}
+
+.stepTitle {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-neutral-grey-800);
+}
+
+.stepSubtitle {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-500);
+  margin-top: -0.25rem;
+}
+
+/* ============================================
+   Form Fields
+   ============================================ */
+.formFields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.25rem, 0.125rem + 0.625vw, 0.375rem);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-component-gap);
+}
+
+.formLabel {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-neutral-grey-700);
+}
+
+.formInput {
+  width: 100%;
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-800);
+  background: var(--color-neutral-white);
+  border: 1.5px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.formInput:focus {
+  border-color: var(--color-primary-saffron-light);
+}
+
+.formInput::placeholder {
+  color: var(--color-neutral-grey-400);
+}
+
+.formSelect {
+  width: 100%;
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-800);
+  background: var(--color-neutral-white);
+  border: 1.5px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-md);
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+
+.formSelect:focus {
+  border-color: var(--color-primary-saffron-light);
+}
+
+.formTextarea {
+  width: 100%;
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-800);
+  background: var(--color-neutral-white);
+  border: 1.5px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-md);
+  outline: none;
+  resize: vertical;
+  min-height: 4rem;
+  transition: border-color var(--transition-fast);
+}
+
+.formTextarea:focus {
+  border-color: var(--color-primary-saffron-light);
+}
+
+.formError {
+  font-size: var(--text-xs);
+  color: var(--color-error);
+  font-weight: 500;
+}
+
+/* ============================================
+   Puja Catalog Step
+   ============================================ */
+.pujaFormList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+}
+
+.pujaFormCard {
+  background: var(--color-neutral-white);
+  border: 1.5px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-card-padding);
+}
+
+.pujaFormHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-component-gap);
+}
+
+.pujaFormNum {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-primary-saffron);
+}
+
+.removePujaButton {
+  font-size: var(--text-xs);
+  color: var(--color-error);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: opacity var(--transition-fast);
+}
+
+.removePujaButton:hover {
+  opacity: 0.7;
+}
+
+.pujaFormFields {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+}
+
+.addPujaBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  width: 100%;
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-primary-saffron);
+  background: var(--color-neutral-white);
+  border: 2px dashed var(--color-primary-saffron-light);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.addPujaBtn:hover {
+  background: rgba(255, 140, 0, 0.03);
+}
+
+/* ============================================
+   Pricing Step
+   ============================================ */
+.pricingTable {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.pricingHeader {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr;
+  gap: clamp(0.25rem, 0.125rem + 0.625vw, 0.375rem);
+  padding: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+  background: var(--color-neutral-grey-50);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.pricingHeaderCell {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-neutral-grey-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pricingRow {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr;
+  gap: clamp(0.25rem, 0.125rem + 0.625vw, 0.375rem);
+  padding: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+  border-bottom: 1px solid var(--color-neutral-grey-100);
+  align-items: center;
+}
+
+.pricingCell {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-700);
+}
+
+.pricingCellInput {
+  display: flex;
+  align-items: center;
+}
+
+.rupeePrefix {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-500);
+  margin-right: 0.125rem;
+}
+
+.pricingInput {
+  width: 100%;
+  max-width: 6rem;
+  padding: clamp(0.25rem, 0.125rem + 0.625vw, 0.375rem);
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-800);
+  border: 1.5px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-sm);
+  outline: none;
+}
+
+.pricingInput:focus {
+  border-color: var(--color-primary-saffron-light);
+}
+
+.pricingCellShare {
+  font-size: var(--text-xs);
+  color: var(--color-success);
+  font-weight: 500;
+}
+
+.pricingNote {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(0.25rem, 0.125rem + 0.625vw, 0.375rem);
+  margin-top: var(--space-component-gap);
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+  background: var(--color-neutral-cream);
+  border-radius: var(--radius-md);
+}
+
+.pricingNoteIcon {
+  font-size: var(--text-base);
+  flex-shrink: 0;
+}
+
+.pricingNoteText {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-600);
+  line-height: 1.5;
+}
+
+/* ============================================
+   Photo Upload Step
+   ============================================ */
+.photoUploadSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+}
+
+.photoSectionTitle {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-neutral-grey-700);
+}
+
+.photoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+}
+
+.photoPlaceholder {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  background: var(--color-neutral-grey-50);
+  border: 2px dashed var(--color-neutral-grey-300);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.photoPlaceholder:hover {
+  border-color: var(--color-primary-saffron-light);
+  background: rgba(255, 140, 0, 0.03);
+}
+
+.photoIcon {
+  font-size: var(--text-xl);
+  color: var(--color-neutral-grey-400);
+}
+
+.photoPlaceholderText {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-400);
+  text-align: center;
+}
+
+/* ============================================
+   Review Step
+   ============================================ */
+.reviewCard {
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-card-padding);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+}
+
+.reviewCardTitle {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-neutral-grey-800);
+}
+
+.reviewRows {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+}
+
+.reviewRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-inline-gap);
+}
+
+.reviewLabel {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-500);
+  flex-shrink: 0;
+}
+
+.reviewValue {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+  text-align: right;
+}
+
+.reviewCount {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-500);
+}
+
+.reviewEmpty {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-400);
+  font-style: italic;
+}
+
+.reviewPujaList {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.25rem, 0.125rem + 0.625vw, 0.375rem);
+}
+
+.reviewPujaItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: clamp(0.25rem, 0.125rem + 0.625vw, 0.375rem) 0;
+  border-bottom: 1px solid var(--color-neutral-grey-100);
+}
+
+.reviewPujaItem:last-child {
+  border-bottom: none;
+}
+
+.reviewPujaName {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-700);
+}
+
+.reviewPujaPrice {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-primary-saffron);
+}
+
+/* ============================================
+   Terms & Conditions
+   ============================================ */
+.termsSection {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+}
+
+.termsLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+  cursor: pointer;
+}
+
+.termsCheckbox {
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+  accent-color: var(--color-primary-saffron);
+}
+
+.termsText {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-600);
+  line-height: 1.5;
+}
+
+/* ============================================
+   Navigation Buttons
+   ============================================ */
+.navButtons {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-component-gap);
+  margin-top: var(--space-component-gap);
+}
+
+.navButtonSpacer {
+  flex: 1;
+}
+
+.navButtonBack {
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) clamp(1rem, 0.75rem + 1.25vw, 1.5rem);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-neutral-grey-600);
+  background: var(--color-neutral-white);
+  border: 1.5px solid var(--color-neutral-grey-300);
+  border-radius: var(--radius-button);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.navButtonBack:hover {
+  border-color: var(--color-neutral-grey-500);
+  color: var(--color-neutral-grey-800);
+}
+
+.navButtonNext {
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) clamp(1.25rem, 1rem + 1.25vw, 2rem);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-neutral-white);
+  background: var(--gradient-cta);
+  border: none;
+  border-radius: var(--radius-button);
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.navButtonNext:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+.navButtonNext:active {
+  transform: scale(0.97);
+}
+
+.navButtonSubmit {
+  composes: navButtonNext;
+  background: var(--color-success);
+}
+
+/* ============================================
+   Success State
+   ============================================ */
+.successCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-section-gap) var(--space-card-padding);
+  gap: var(--space-component-gap);
+}
+
+.successEmoji {
+  font-size: clamp(3rem, 2.5rem + 2.5vw, 4rem);
+}
+
+.successTitle {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--color-neutral-grey-800);
+}
+
+.successDesc {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-600);
+  max-width: 24rem;
+  line-height: 1.6;
+}
+
+.successDetails {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+  width: 100%;
+  max-width: 20rem;
+}
+
+.successRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.successLabel {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-500);
+}
+
+.successValue {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+}
+
+.successButton {
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) clamp(1.5rem, 1.25rem + 1.25vw, 2.5rem);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-neutral-white);
+  background: var(--gradient-cta);
+  border: none;
+  border-radius: var(--radius-button);
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.successButton:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 479px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .photoGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pricingHeader,
+  .pricingRow {
+    grid-template-columns: 1.5fr 1fr 0.75fr;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: var(--space-section-gap) var(--space-page-x);
+  }
+
+  .photoGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 44rem;
+  }
+}

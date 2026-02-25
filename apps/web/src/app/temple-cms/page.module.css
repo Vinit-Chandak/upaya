@@ -1,5 +1,5 @@
 /* ============================================
-   Temple CMS Dashboard — Phase 2
+   Temple CMS — Registration + Dashboard
    ============================================ */
 
 .appLayout {
@@ -9,13 +9,15 @@
   background: var(--color-neutral-off-white);
 }
 
-/* --- CMS Header --- */
+/* ============================================
+   CMS Header
+   ============================================ */
 .cmsHeader {
   background: var(--color-neutral-white);
   border-bottom: 1px solid var(--color-neutral-grey-200);
   position: sticky;
   top: 0;
-  z-index: var(--z-header);
+  z-index: var(--z-sticky);
 }
 
 .cmsHeaderInner {
@@ -72,13 +74,15 @@
   background: rgba(255, 140, 0, 0.14);
 }
 
-/* --- Tab Navigation --- */
+/* ============================================
+   Tab Navigation
+   ============================================ */
 .tabNav {
   background: var(--color-neutral-white);
   border-bottom: 1px solid var(--color-neutral-grey-200);
   position: sticky;
   top: clamp(3rem, 2.75rem + 1.25vw, 3.75rem);
-  z-index: calc(var(--z-header) - 1);
+  z-index: calc(var(--z-sticky) - 1);
 }
 
 .tabNavInner {
@@ -120,7 +124,9 @@
   border-bottom-color: var(--color-primary-saffron);
 }
 
-/* --- Main Content --- */
+/* ============================================
+   Main Content
+   ============================================ */
 .mainContent {
   flex: 1;
   overflow-y: auto;
@@ -136,17 +142,271 @@
   gap: var(--space-section-gap);
 }
 
-/* --- Dashboard Content --- */
+/* ============================================
+   Registration View — Hero
+   ============================================ */
+.regHero {
+  text-align: center;
+  padding: var(--space-section-gap) 0 var(--space-component-gap);
+}
+
+.regHeroEmoji {
+  font-size: clamp(3rem, 2.5rem + 2.5vw, 4.5rem);
+  display: block;
+  margin-bottom: var(--space-component-gap);
+}
+
+.regHeroTitle {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--color-neutral-grey-800);
+  line-height: 1.3;
+  margin-bottom: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+}
+
+.regHeroSubtitle {
+  font-size: var(--text-base);
+  color: var(--color-neutral-grey-500);
+  line-height: 1.5;
+}
+
+/* ============================================
+   Registration View — Steps
+   ============================================ */
+.regSteps {
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-xl);
+  padding: var(--space-card-padding);
+  box-shadow: var(--shadow-card);
+}
+
+.regStepsTitle {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-neutral-grey-800);
+  margin-bottom: var(--space-component-gap);
+}
+
+.regStepsList {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+}
+
+.regStepItem {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 0.5rem + 1.25vw, 1rem);
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+  background: var(--color-neutral-grey-50);
+  border-radius: var(--radius-lg);
+  transition: background-color var(--transition-fast);
+}
+
+.regStepItem:hover {
+  background: var(--color-neutral-cream);
+}
+
+.regStepNumber {
+  width: clamp(1.75rem, 1.5rem + 1.25vw, 2.25rem);
+  height: clamp(1.75rem, 1.5rem + 1.25vw, 2.25rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gradient-cta);
+  color: var(--color-neutral-white);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.regStepInfo {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+}
+
+.regStepEmoji {
+  font-size: var(--text-lg);
+}
+
+.regStepLabel {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-neutral-grey-700);
+}
+
+/* ============================================
+   Registration View — Form Preview
+   ============================================ */
+.regFormPreview {
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-xl);
+  padding: var(--space-card-padding);
+  box-shadow: var(--shadow-card);
+}
+
+.regFormTitle {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-neutral-grey-800);
+  margin-bottom: var(--space-component-gap);
+}
+
+.regFormFields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+}
+
+.regFormRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-component-gap);
+}
+
+.regFormGroup {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.25rem, 0.2rem + 0.25vw, 0.375rem);
+}
+
+.regLabel {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-neutral-grey-600);
+}
+
+.regInput {
+  width: 100%;
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-800);
+  background: var(--color-neutral-grey-50);
+  border: 1.5px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-lg);
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) clamp(0.75rem, 0.5rem + 1.25vw, 1rem);
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.regInput:focus {
+  border-color: var(--color-primary-saffron-light);
+}
+
+.regInput::placeholder {
+  color: var(--color-neutral-grey-400);
+}
+
+/* ============================================
+   Registration View — CTAs
+   ============================================ */
+.regCtaSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+  align-items: center;
+}
+
+.regCtaPrimary {
+  width: 100%;
+  max-width: 24rem;
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-neutral-white);
+  background: var(--gradient-cta);
+  border: none;
+  border-radius: var(--radius-button);
+  padding: clamp(0.75rem, 0.625rem + 0.625vw, 1rem);
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+  text-align: center;
+}
+
+.regCtaPrimary:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+.regCtaPrimary:active {
+  transform: scale(0.98);
+}
+
+.regCtaSecondary {
+  width: 100%;
+  max-width: 24rem;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-primary-saffron);
+  background: var(--color-neutral-white);
+  border: 2px solid var(--color-primary-saffron-light);
+  border-radius: var(--radius-button);
+  padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.regCtaSecondary:hover {
+  background: rgba(255, 140, 0, 0.05);
+}
+
+/* ============================================
+   Registration View — Benefits
+   ============================================ */
+.regBenefits {
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-xl);
+  padding: var(--space-card-padding);
+  box-shadow: var(--shadow-card);
+}
+
+.regBenefitsTitle {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-neutral-grey-800);
+  margin-bottom: var(--space-component-gap);
+}
+
+.regBenefitsList {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+}
+
+.regBenefitItem {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+}
+
+.regBenefitEmoji {
+  font-size: var(--text-lg);
+  flex-shrink: 0;
+}
+
+.regBenefitText {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-700);
+  line-height: 1.4;
+}
+
+/* ============================================
+   Dashboard — Content
+   ============================================ */
 .dashContent {
   display: flex;
   flex-direction: column;
   gap: var(--space-section-gap);
 }
 
-/* --- Stats Grid --- */
+/* ============================================
+   Dashboard — Stats Grid
+   ============================================ */
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(clamp(8rem, 7rem + 5vw, 11rem), 1fr));
+  grid-template-columns: 1fr;
   gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
 }
 
@@ -168,6 +428,10 @@
   transform: translateY(-2px);
 }
 
+.statCardHighlight {
+  border-left: 3px solid var(--color-primary-saffron);
+}
+
 .statIcon {
   font-size: clamp(1.25rem, 1rem + 1.25vw, 1.75rem);
 }
@@ -185,85 +449,358 @@
   font-weight: 500;
 }
 
-/* --- Quick Section (Upcoming Bookings) --- */
-.quickSection {
+/* ============================================
+   Dashboard — Sections
+   ============================================ */
+.dashSection {
   display: flex;
   flex-direction: column;
   gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
 }
 
-.quickTitle {
+.dashSectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-inline-gap);
+}
+
+.dashSectionTitle {
   font-size: var(--text-base);
   font-weight: 700;
   color: var(--color-neutral-grey-800);
 }
 
-.quickCard {
-  background: var(--color-neutral-white);
-  border-radius: var(--radius-lg);
-  padding: var(--space-card-padding);
-  display: flex;
-  flex-direction: column;
-  gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
-  box-shadow: var(--shadow-sm);
-  border-left: 3px solid var(--color-primary-saffron);
-}
-
-.quickCardHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--space-inline-gap);
-}
-
-.quickName {
-  display: block;
-  font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--color-neutral-grey-800);
-}
-
-.quickPuja {
-  display: block;
+.addButton {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
-  margin-top: 0.125rem;
-}
-
-.quickDate {
-  font-size: var(--text-xs);
-  font-weight: 600;
-  color: var(--color-primary-saffron-dark);
-  background: rgba(255, 140, 0, 0.08);
-  padding: 0.125rem 0.5rem;
-  border-radius: var(--radius-chip);
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-
-.quickActions {
-  display: flex;
-  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
-  flex-wrap: wrap;
-}
-
-.actionButton {
-  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--color-neutral-white);
   background: var(--gradient-cta);
   border: none;
   border-radius: var(--radius-button);
-  padding: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem) clamp(0.75rem, 0.5rem + 1.25vw, 1.25rem);
+  padding: clamp(0.25rem, 0.2rem + 0.25vw, 0.375rem) clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
   cursor: pointer;
   transition: box-shadow var(--transition-fast);
 }
 
-.actionButton:hover {
+.addButton:hover {
   box-shadow: var(--shadow-md);
 }
 
-/* --- Bookings Content --- */
+/* ============================================
+   Dashboard — Puja Management List
+   ============================================ */
+.pujaManageList {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+}
+
+.pujaManageCard {
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-card-padding);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-inline-gap);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-fast);
+}
+
+.pujaManageCard:hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+.pujaManageLeft {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+  min-width: 0;
+  flex: 1;
+}
+
+.pujaManageEmoji {
+  font-size: var(--text-xl);
+  flex-shrink: 0;
+}
+
+.pujaManageInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.pujaManageName {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pujaManageMeta {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-500);
+}
+
+.pujaManageRight {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+  flex-shrink: 0;
+}
+
+.toggleButton {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-chip);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: 1.5px solid transparent;
+}
+
+.toggleActive {
+  color: var(--color-success);
+  background: var(--color-success-light);
+  border-color: var(--color-success);
+}
+
+.toggleInactive {
+  color: var(--color-neutral-grey-500);
+  background: var(--color-neutral-grey-100);
+  border-color: var(--color-neutral-grey-300);
+}
+
+.editBtn {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-primary-saffron);
+  background: rgba(255, 140, 0, 0.08);
+  border: 1.5px solid var(--color-primary-saffron-light);
+  border-radius: var(--radius-button);
+  padding: 0.25rem 0.75rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color var(--transition-fast);
+}
+
+.editBtn:hover {
+  background: rgba(255, 140, 0, 0.14);
+}
+
+/* ============================================
+   Dashboard — Recent Bookings
+   ============================================ */
+.recentBookingsList {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+}
+
+.recentBookingCard {
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-card-padding);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-inline-gap);
+  box-shadow: var(--shadow-sm);
+  border-left: 3px solid var(--color-primary-saffron);
+}
+
+.recentBookingLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.recentBookingName {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+}
+
+.recentBookingPuja {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-500);
+}
+
+.recentBookingDate {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-400);
+}
+
+.recentBookingRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.recentBookingAmount {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-primary-saffron-dark);
+}
+
+/* ============================================
+   Dashboard — Payout History
+   ============================================ */
+.payoutList {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+}
+
+.payoutCard {
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-card-padding);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-inline-gap);
+  box-shadow: var(--shadow-sm);
+}
+
+.payoutLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.payoutDate {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-700);
+  font-weight: 500;
+}
+
+.payoutRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.payoutAmount {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-neutral-grey-800);
+}
+
+.payoutStatus {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-chip);
+}
+
+.payoutCompleted {
+  color: var(--color-success);
+  background: var(--color-success-light);
+}
+
+.payoutProcessing {
+  color: var(--color-warning);
+  background: var(--color-warning-light);
+}
+
+.payoutPending {
+  color: var(--color-neutral-grey-500);
+  background: var(--color-neutral-grey-100);
+}
+
+/* ============================================
+   Dashboard — Refer Card
+   ============================================ */
+.referCard {
+  background: linear-gradient(135deg, #FFF8F0, #FFF3E0);
+  border: 1.5px solid var(--color-primary-saffron-light);
+  border-radius: var(--radius-xl);
+  padding: var(--space-card-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+}
+
+.referCardInner {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+}
+
+.referEmoji {
+  font-size: clamp(1.75rem, 1.5rem + 1.25vw, 2.5rem);
+  flex-shrink: 0;
+}
+
+.referInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.referTitle {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-neutral-grey-800);
+  margin-bottom: 0.125rem;
+}
+
+.referDesc {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-600);
+}
+
+.referButton {
+  width: 100%;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-primary-saffron-dark);
+  background: var(--color-neutral-white);
+  border: 1.5px solid var(--color-primary-saffron-light);
+  border-radius: var(--radius-button);
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+  cursor: pointer;
+  text-align: center;
+  transition: all var(--transition-fast);
+}
+
+.referButton:hover {
+  background: rgba(255, 140, 0, 0.08);
+}
+
+/* ============================================
+   Switch View Button (demo)
+   ============================================ */
+.switchViewButton {
+  width: 100%;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-neutral-grey-500);
+  background: transparent;
+  border: 1px dashed var(--color-neutral-grey-300);
+  border-radius: var(--radius-button);
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+  cursor: pointer;
+  text-align: center;
+  transition: all var(--transition-fast);
+}
+
+.switchViewButton:hover {
+  color: var(--color-neutral-grey-700);
+  border-color: var(--color-neutral-grey-500);
+}
+
+/* ============================================
+   Bookings Content
+   ============================================ */
 .bookingsContent {
   display: flex;
   flex-direction: column;
@@ -318,7 +855,9 @@
   color: var(--color-neutral-grey-400);
 }
 
-/* --- Status Badges --- */
+/* ============================================
+   Status Badges
+   ============================================ */
 .bookingStatus {
   font-size: var(--text-xs);
   font-weight: 600;
@@ -358,7 +897,9 @@
   background: var(--color-success-light);
 }
 
-/* --- Expanded Booking Details --- */
+/* ============================================
+   Expanded Booking Details
+   ============================================ */
 .bookingExpanded {
   padding: 0 var(--space-card-padding) var(--space-card-padding);
   display: flex;
@@ -397,7 +938,9 @@
   font-weight: 500;
 }
 
-/* --- Booking Actions --- */
+/* ============================================
+   Booking Actions
+   ============================================ */
 .bookingActions {
   display: flex;
   flex-direction: column;
@@ -422,7 +965,9 @@
   box-shadow: var(--shadow-md);
 }
 
-/* --- Tracking Form --- */
+/* ============================================
+   Tracking Form
+   ============================================ */
 .trackingForm {
   display: flex;
   flex-direction: column;
@@ -449,7 +994,9 @@
   color: var(--color-neutral-grey-400);
 }
 
-/* --- Catalog Content --- */
+/* ============================================
+   Catalog Content
+   ============================================ */
 .catalogContent {
   display: flex;
   flex-direction: column;
@@ -512,6 +1059,7 @@
   align-items: center;
   gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
   min-width: 0;
+  flex: 1;
 }
 
 .catalogEmoji {
@@ -537,6 +1085,13 @@
   color: var(--color-neutral-grey-500);
 }
 
+.catalogActions {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+  flex-shrink: 0;
+}
+
 .editButton {
   font-size: var(--text-xs);
   font-weight: 600;
@@ -554,24 +1109,49 @@
   background: rgba(255, 140, 0, 0.14);
 }
 
-/* --- Responsive --- */
+/* ============================================
+   Responsive Adjustments
+   ============================================ */
+
+/* Small phones */
 @media (max-width: 479px) {
   .statsGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
+  }
+
+  .regFormRow {
+    grid-template-columns: 1fr;
   }
 
   .trackingForm {
     flex-direction: column;
   }
+
+  .pujaManageCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pujaManageRight {
+    align-self: flex-end;
+  }
 }
 
+/* Tablets */
+@media (min-width: 480px) and (max-width: 767px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tablets and up */
 @media (min-width: 768px) {
   .container {
     padding: var(--space-section-gap) var(--space-page-x);
   }
 
   .statsGrid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .trackingForm {
@@ -583,10 +1163,34 @@
     width: auto;
     white-space: nowrap;
   }
+
+  .regFormRow {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .referCard {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .referButton {
+    width: auto;
+    flex-shrink: 0;
+  }
 }
 
+/* Desktop */
 @media (min-width: 1024px) {
   .container {
+    max-width: 64rem;
+  }
+
+  .tabNavInner {
+    max-width: 64rem;
+  }
+
+  .cmsHeaderInner {
     max-width: 64rem;
   }
 }

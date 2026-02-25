@@ -1,0 +1,313 @@
+/* ============================================
+   Subscription Plans — Phase 4
+   ============================================ */
+
+.appLayout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--color-neutral-white);
+}
+
+.mainContent {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: var(--space-section-gap);
+}
+
+.container {
+  width: 100%;
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+  padding: 0 var(--space-page-x);
+}
+
+/* ============================================
+   Header
+   ============================================ */
+.header {
+  text-align: center;
+  padding: var(--space-section-gap) 0 var(--space-component-gap);
+}
+
+.headerTitle {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--color-secondary-maroon);
+  font-family: var(--font-devanagari);
+  line-height: 1.35;
+}
+
+.headerSub {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-500);
+  margin-top: var(--space-inline-gap);
+}
+
+/* ============================================
+   Section Title
+   ============================================ */
+.sectionTitle {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+  margin-bottom: var(--space-component-gap);
+}
+
+/* ============================================
+   Plans Grid
+   ============================================ */
+.plansGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+  margin-bottom: var(--space-section-gap);
+}
+
+/* ============================================
+   Plan Card
+   ============================================ */
+.planCard {
+  position: relative;
+  background: var(--color-neutral-white);
+  border: 1.5px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-card-padding);
+  box-shadow: var(--shadow-card);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+  overflow: hidden;
+}
+
+.planCard:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+}
+
+.planCardRecommended {
+  border-color: var(--color-primary-saffron);
+  border-width: 2px;
+  background: linear-gradient(180deg, #FFF8F0 0%, #FFFFFF 20%);
+}
+
+/* ============================================
+   Recommended Ribbon
+   ============================================ */
+.recommendedRibbon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: var(--gradient-cta);
+  color: var(--color-neutral-white);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  padding: 0.25rem 1rem 0.25rem 1.25rem;
+  border-bottom-left-radius: var(--radius-lg);
+}
+
+/* ============================================
+   Plan Header
+   ============================================ */
+.planHeader {
+  margin-bottom: var(--space-component-gap);
+}
+
+.planTier {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-neutral-grey-800);
+}
+
+.planPricing {
+  display: flex;
+  align-items: baseline;
+  gap: 0.125rem;
+  margin-top: 0.25rem;
+}
+
+.planPrice {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--color-primary-saffron);
+}
+
+.planPeriod {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-500);
+}
+
+/* ============================================
+   Feature List
+   ============================================ */
+.featureList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-component-gap) 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.featureItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-inline-gap);
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-700);
+}
+
+.featureDisabled {
+  color: var(--color-neutral-grey-400);
+}
+
+.featureIcon {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  flex-shrink: 0;
+  width: 1.25rem;
+  text-align: center;
+}
+
+.featureItem:not(.featureDisabled) .featureIcon {
+  color: var(--color-success);
+}
+
+.featureDisabled .featureIcon {
+  color: var(--color-neutral-grey-300);
+}
+
+.featureText {
+  flex: 1;
+}
+
+/* ============================================
+   Subscribe CTA
+   ============================================ */
+.subscribeCta {
+  display: block;
+  width: 100%;
+  padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem);
+  font-size: var(--text-base);
+  font-weight: 600;
+  border-radius: var(--radius-button);
+  cursor: pointer;
+  transition:
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+  color: var(--color-primary-saffron);
+  background: var(--color-neutral-white);
+  border: 2px solid var(--color-primary-saffron-light);
+}
+
+.subscribeCta:hover {
+  background: rgba(255, 140, 0, 0.05);
+  transform: translateY(-1px);
+}
+
+.subscribeCta:active {
+  transform: scale(0.98);
+}
+
+.subscribeCtaPrimary {
+  color: var(--color-neutral-white);
+  background: var(--gradient-cta);
+  border: none;
+  box-shadow: var(--shadow-md);
+}
+
+.subscribeCtaPrimary:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+/* ============================================
+   Current Subscription Status
+   ============================================ */
+.statusSection {
+  margin-top: var(--space-section-gap);
+}
+
+.statusCard {
+  text-align: center;
+  background: var(--color-neutral-grey-50);
+  border: 1px dashed var(--color-neutral-grey-300);
+  border-radius: var(--radius-lg);
+  padding: var(--space-section-gap) var(--space-card-padding);
+}
+
+.statusIcon {
+  font-size: var(--text-3xl);
+  margin-bottom: var(--space-inline-gap);
+}
+
+.statusText {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-neutral-grey-700);
+}
+
+.statusHint {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-500);
+  margin-top: 0.25rem;
+}
+
+/* ============================================
+   Responsive Adjustments
+   ============================================ */
+
+/* Small phones */
+@media (max-width: 479px) {
+  .plansGrid {
+    gap: var(--space-component-gap);
+  }
+}
+
+/* Tablets */
+@media (min-width: 480px) and (max-width: 767px) {
+  .plansGrid {
+    max-width: 28rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Tablets and up */
+@media (min-width: 768px) {
+  .plansGrid {
+    flex-direction: row;
+    align-items: flex-start;
+    max-width: 56rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .planCard {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .planCardRecommended {
+    transform: scale(1.03);
+    z-index: 1;
+  }
+
+  .planCardRecommended:hover {
+    transform: scale(1.05);
+  }
+
+  .statusCard {
+    max-width: 28rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .plansGrid {
+    max-width: 60rem;
+  }
+}

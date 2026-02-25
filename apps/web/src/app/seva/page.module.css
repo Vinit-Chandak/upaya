@@ -1,0 +1,380 @@
+/* ============================================
+   Daan Seva — Phase 4
+   ============================================ */
+
+.appLayout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--color-neutral-white);
+}
+
+.mainContent {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: var(--space-section-gap);
+}
+
+.container {
+  width: 100%;
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+  padding: 0 var(--space-page-x);
+}
+
+/* ============================================
+   Hero Section
+   ============================================ */
+.hero {
+  text-align: center;
+  padding: var(--space-section-gap) 0 var(--space-component-gap);
+}
+
+.heroTitle {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--color-secondary-maroon);
+  font-family: var(--font-devanagari);
+  line-height: 1.35;
+}
+
+.heroSub {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-500);
+  margin-top: var(--space-inline-gap);
+}
+
+/* ============================================
+   Section Titles
+   ============================================ */
+.sectionTitle {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+  margin-bottom: var(--space-component-gap);
+}
+
+/* ============================================
+   Seva Type Cards Grid
+   ============================================ */
+.sevaSection {
+  margin-bottom: var(--space-section-gap);
+}
+
+.sevaGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-component-gap);
+}
+
+.sevaCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: var(--space-card-padding);
+  background: var(--color-neutral-white);
+  border: 1.5px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  text-align: center;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.sevaCard:hover {
+  border-color: var(--color-primary-saffron-light);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+}
+
+.sevaCard:active {
+  transform: scale(0.97);
+}
+
+.sevaCardSelected {
+  border-color: var(--color-primary-saffron);
+  background: linear-gradient(135deg, #FFF8F0, #FFF3E0);
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.15);
+}
+
+.sevaEmoji {
+  font-size: var(--text-3xl);
+  margin-bottom: 0.25rem;
+}
+
+.sevaName {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+}
+
+.sevaNameSub {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-500);
+}
+
+.sevaPrice {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-primary-saffron);
+  margin-top: 0.25rem;
+}
+
+.sevaProofBadge {
+  font-size: var(--text-xs);
+  color: var(--color-success);
+  background: var(--color-success-light);
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-full);
+  margin-top: 0.375rem;
+  white-space: nowrap;
+}
+
+/* ============================================
+   Temple Selection
+   ============================================ */
+.templeSection {
+  margin-bottom: var(--space-section-gap);
+  animation: fadeIn var(--transition-normal);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(0.5rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.templeList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-inline-gap);
+  margin-bottom: var(--space-component-gap);
+}
+
+.templeCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-inline-gap);
+  padding: var(--space-card-padding);
+  background: var(--color-neutral-white);
+  border: 1.5px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.templeCard:hover {
+  border-color: var(--color-primary-saffron-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.templeCardSelected {
+  border-color: var(--color-primary-saffron);
+  background: var(--color-neutral-cream);
+}
+
+.templeIcon {
+  font-size: var(--text-xl);
+  flex-shrink: 0;
+}
+
+.templeInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.templeName {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+}
+
+.templeCity {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-500);
+}
+
+.checkmark {
+  font-size: var(--text-lg);
+  color: var(--color-primary-saffron);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   Book Seva CTA
+   ============================================ */
+.bookCta {
+  display: block;
+  width: 100%;
+  max-width: 24rem;
+  margin: 0 auto;
+  padding: clamp(0.75rem, 0.625rem + 0.625vw, 1rem);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-neutral-white);
+  background: var(--gradient-cta);
+  border: none;
+  border-radius: var(--radius-button);
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition:
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
+}
+
+.bookCta:hover:not(:disabled) {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+.bookCta:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.bookCta:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   My Seva Bookings
+   ============================================ */
+.bookingsSection {
+  margin-top: var(--space-section-gap);
+}
+
+.bookingsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+}
+
+.bookingCard {
+  background: var(--color-neutral-white);
+  border: 1px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-card-padding);
+  box-shadow: var(--shadow-card);
+}
+
+.bookingHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-inline-gap);
+}
+
+.bookingType {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+}
+
+.bookingStatus {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-full);
+}
+
+.statusCompleted {
+  color: var(--color-success);
+  background: var(--color-success-light);
+}
+
+.statusUpcoming {
+  color: var(--color-info);
+  background: var(--color-info-light);
+}
+
+.bookingDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.bookingTemple {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-700);
+}
+
+.bookingDate {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-500);
+}
+
+.bookingAmount {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-primary-saffron);
+}
+
+.photoProof {
+  display: inline-block;
+  font-size: var(--text-xs);
+  color: var(--color-success);
+  margin-top: var(--space-inline-gap);
+  cursor: pointer;
+}
+
+.photoProof:hover {
+  text-decoration: underline;
+}
+
+/* ============================================
+   Responsive Adjustments
+   ============================================ */
+
+/* Small phones */
+@media (max-width: 479px) {
+  .sevaGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tablets */
+@media (min-width: 480px) and (max-width: 767px) {
+  .sevaGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tablets and up */
+@media (min-width: 768px) {
+  .sevaGrid {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 48rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .templeList {
+    max-width: 36rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .bookingsList {
+    max-width: 36rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .sevaGrid {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 52rem;
+  }
+}

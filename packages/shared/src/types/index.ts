@@ -139,3 +139,64 @@ export type {
   RechargeInput,
 } from './wallet';
 export { WALLET_RECHARGE_OPTIONS } from './wallet';
+
+// --- Phase 4: Commerce & Monetization ---
+
+export type {
+  ProductCategory,
+  ProductStatus,
+  Product,
+  ProductWithAI,
+  ProductReview,
+  CreateProductReviewInput,
+} from './product';
+export { PRODUCT_CATEGORIES } from './product';
+
+export type {
+  CartItem,
+  CartItemWithProduct,
+  AddToCartInput,
+  UpdateCartInput,
+  ProductOrderStatus,
+  ProductOrder,
+  ProductOrderItem,
+  ProductOrderWithItems,
+  CreateProductOrderInput,
+} from './cart';
+
+export type {
+  SevaType,
+  SevaBookingStatus,
+  SevaCatalogItem,
+  SevaCatalogWithTemple,
+  SevaBooking,
+  SevaBookingWithDetails,
+  CreateSevaBookingInput,
+} from './seva';
+export { SEVA_TYPES } from './seva';
+
+export type {
+  SubscriptionTier,
+  SubscriptionStatus,
+  Subscription,
+  CreateSubscriptionInput,
+  SubscriptionPlan,
+} from './subscription';
+export { SUBSCRIPTION_PLANS } from './subscription';
+
+export type {
+  FamilyRelationship,
+  FamilyMember,
+  FamilyMemberWithKundli,
+  CreateFamilyMemberInput,
+} from './family';
+export { FAMILY_RELATIONSHIPS } from './family';
+
+export type {
+  MuhurtaCategory,
+  MuhurtaQuality,
+  RecommendedDate,
+  MuhurtaQuery,
+  CreateMuhurtaQueryInput,
+} from './muhurta';
+export { MUHURTA_CATEGORIES, MUHURTA_PRICING } from './muhurta';
