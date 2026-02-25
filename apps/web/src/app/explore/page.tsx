@@ -25,6 +25,54 @@ interface CategoryCard {
   count: number;
 }
 
+interface TemplePujaCard {
+  id: string;
+  pujaName: string;
+  pujaNameEn: string;
+  templeName: string;
+  templeNameEn: string;
+  city: string;
+  price: number;
+  emoji: string;
+  rating: number;
+}
+
+const FEATURED_PUJAS: TemplePujaCard[] = [
+  {
+    id: 'tp1',
+    pujaName: 'मंगल दोष निवारण पूजा',
+    pujaNameEn: 'Mangal Dosha Nivaran Puja',
+    templeName: 'मंगलनाथ मंदिर',
+    templeNameEn: 'Mangalnath Temple',
+    city: 'Ujjain',
+    price: 2100,
+    emoji: '🪔',
+    rating: 4.8,
+  },
+  {
+    id: 'tp2',
+    pujaName: 'नवग्रह शांति पूजा',
+    pujaNameEn: 'Navagraha Shanti Puja',
+    templeName: 'काल भैरव मंदिर',
+    templeNameEn: 'Kal Bhairav Temple',
+    city: 'Ujjain',
+    price: 1800,
+    emoji: '🛕',
+    rating: 4.7,
+  },
+  {
+    id: 'tp3',
+    pujaName: 'शनि दोष निवारण पूजा',
+    pujaNameEn: 'Shani Dosha Nivaran Puja',
+    templeName: 'शनि मंदिर',
+    templeNameEn: 'Shani Temple',
+    city: 'Shingnapur',
+    price: 1500,
+    emoji: '🔮',
+    rating: 4.6,
+  },
+];
+
 const FEATURED_ARTICLES: ArticleCard[] = [
   {
     id: 'a1',
@@ -112,6 +160,39 @@ export default function ExplorePage() {
               readOnly
             />
           </div>
+
+          {/* Book a Puja — Phase 2 */}
+          <section className={styles.section}>
+            <h2 className={styles.sectionTitle}>
+              {language === 'hi' ? '🪔 पूजा Book करें' : '🪔 Book a Puja'}
+            </h2>
+
+            <div className={styles.pujaScroll}>
+              {FEATURED_PUJAS.map((puja) => (
+                <div
+                  key={puja.id}
+                  className={styles.pujaCard}
+                  onClick={() => router.push('/puja')}
+                  role="button"
+                  tabIndex={0}
+                >
+                  <div className={styles.pujaCardTop}>
+                    <span className={styles.pujaEmoji}>{puja.emoji}</span>
+                    <span className={styles.pujaRating}>⭐ {puja.rating}</span>
+                  </div>
+                  <h3 className={styles.pujaCardName}>
+                    {language === 'hi' ? puja.pujaName : puja.pujaNameEn}
+                  </h3>
+                  <span className={styles.pujaCardTemple}>
+                    {language === 'hi' ? puja.templeName : puja.templeNameEn} · {puja.city}
+                  </span>
+                  <span className={styles.pujaCardPrice}>
+                    ₹{puja.price.toLocaleString('en-IN')}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </section>
 
           {/* Featured / Trending */}
           <section className={styles.section}>

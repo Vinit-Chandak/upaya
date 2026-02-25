@@ -1,0 +1,418 @@
+/* ============================================
+   Order Detail / Tracking — Phase 2
+   ============================================ */
+
+.appLayout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--color-neutral-off-white);
+}
+
+.mainContent {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: var(--tab-bar-height);
+}
+
+.container {
+  width: 100%;
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: var(--space-component-gap) var(--space-page-x);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-section-gap);
+}
+
+/* --- Order Header --- */
+.orderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-inline-gap);
+}
+
+.orderHeaderLeft {
+  flex: 1;
+  min-width: 0;
+}
+
+.pujaName {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--color-neutral-grey-800);
+  line-height: 1.3;
+}
+
+.templeName {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-500);
+  margin-top: 0.125rem;
+}
+
+.orderIdBadge {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-neutral-grey-500);
+  background: var(--color-neutral-grey-100);
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-chip);
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+
+/* --- Section --- */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+}
+
+.sectionTitle {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-neutral-grey-800);
+}
+
+/* --- Status Timeline --- */
+.timelineCard {
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-xl);
+  padding: var(--space-card-padding);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-component-gap);
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.timelineItem {
+  display: flex;
+  gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+}
+
+.timelineLine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: clamp(1.25rem, 1rem + 1.25vw, 1.625rem);
+  flex-shrink: 0;
+}
+
+.timelineDot {
+  width: clamp(1.25rem, 1rem + 1.25vw, 1.625rem);
+  height: clamp(1.25rem, 1rem + 1.25vw, 1.625rem);
+  border-radius: 50%;
+  background: var(--color-neutral-grey-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all var(--transition-normal);
+}
+
+.timelineDotDone {
+  background: var(--color-success);
+  color: var(--color-neutral-white);
+}
+
+.timelineDotCurrent {
+  background: var(--color-primary-saffron);
+  color: var(--color-neutral-white);
+  box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.15);
+}
+
+.timelineConnector {
+  width: 2px;
+  flex: 1;
+  min-height: clamp(1.25rem, 1rem + 1.25vw, 1.75rem);
+  background: var(--color-neutral-grey-200);
+}
+
+.timelineConnectorDone {
+  background: var(--color-success);
+}
+
+.timelineContent {
+  flex: 1;
+  padding-bottom: clamp(0.75rem, 0.5rem + 1.25vw, 1rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.timelineRow {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.25rem, 0.2rem + 0.25vw, 0.375rem);
+}
+
+.timelineIcon {
+  font-size: var(--text-sm);
+}
+
+.timelineLabel {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-400);
+  font-weight: 500;
+}
+
+.timelineLabelDone {
+  color: var(--color-neutral-grey-800);
+  font-weight: 600;
+}
+
+.timelineDate {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-500);
+  margin-left: clamp(1.5rem, 1.25rem + 1.25vw, 2rem);
+}
+
+/* --- Video Card --- */
+.videoCard {
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.videoPlaceholder {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--gradient-cosmic);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.videoPlayIcon {
+  width: clamp(3rem, 2.5rem + 2.5vw, 4rem);
+  height: clamp(3rem, 2.5rem + 2.5vw, 4rem);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--color-secondary-maroon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xl);
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+}
+
+.videoPlaceholder:hover .videoPlayIcon {
+  transform: scale(1.1);
+}
+
+.videoActions {
+  display: flex;
+  gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
+  padding: var(--space-card-padding);
+  flex-wrap: wrap;
+}
+
+.videoButton {
+  flex: 1;
+  min-width: 0;
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-neutral-white);
+  background: var(--gradient-cta);
+  border: none;
+  border-radius: var(--radius-button);
+  cursor: pointer;
+  transition: box-shadow var(--transition-fast);
+}
+
+.videoButton:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.videoButtonSecondary {
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--color-neutral-grey-600);
+  background: var(--color-neutral-grey-50);
+  border: 1px solid var(--color-neutral-grey-200);
+  border-radius: var(--radius-button);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.videoButtonSecondary:hover {
+  background: var(--color-neutral-grey-100);
+}
+
+/* --- Certificate Card --- */
+.certificateCard {
+  background: var(--color-neutral-cream);
+  border: 1px solid var(--color-accent-gold-light);
+  border-radius: var(--radius-xl);
+  padding: var(--space-card-padding);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+}
+
+.certificateHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+}
+
+.certificateIcon {
+  font-size: var(--text-2xl);
+  flex-shrink: 0;
+}
+
+.certificateInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.certificateTitle {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+}
+
+.certificateSubtitle {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-500);
+}
+
+.certificateButton {
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-secondary-maroon);
+  background: var(--color-neutral-white);
+  border: 1.5px solid var(--color-accent-gold);
+  border-radius: var(--radius-button);
+  cursor: pointer;
+  text-align: center;
+  transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.certificateButton:hover {
+  background: var(--color-neutral-cream-dark);
+  box-shadow: var(--shadow-sm);
+}
+
+/* --- Shipping Card --- */
+.shippingCard {
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-xl);
+  padding: var(--space-card-padding);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+}
+
+.shippingRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.shippingLabel {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-500);
+}
+
+.trackingNumber {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+}
+
+.shippingValue {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-neutral-grey-700);
+}
+
+.trackButton {
+  padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-info);
+  background: var(--color-info-light);
+  border: none;
+  border-radius: var(--radius-button);
+  cursor: pointer;
+  text-align: center;
+  transition: opacity var(--transition-fast);
+}
+
+.trackButton:hover {
+  opacity: 0.85;
+}
+
+/* --- Support Bar --- */
+.supportBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-inline-gap);
+  padding: var(--space-card-padding);
+  background: var(--color-neutral-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.supportText {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-grey-600);
+}
+
+.supportButton {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-success);
+  background: var(--color-success-light);
+  border: none;
+  border-radius: var(--radius-button);
+  padding: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem) clamp(0.75rem, 0.5rem + 1.25vw, 1rem);
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+
+.supportButton:hover {
+  opacity: 0.85;
+}
+
+/* --- Responsive --- */
+@media (max-width: 479px) {
+  .videoActions {
+    flex-direction: column;
+  }
+
+  .videoButton {
+    flex: none;
+    width: 100%;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: var(--space-section-gap) var(--space-page-x);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 44rem;
+  }
+}
