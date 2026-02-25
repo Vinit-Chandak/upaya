@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { query, queryOne } from '../db/connection';
 import { requireAuth, type AuthenticatedRequest } from '../middleware/auth';
 import { AppError } from '../middleware/error';
+import { generateReport, buildReportData, generateReportHtml } from '../services/pdf';
 import type { Report } from '@upaya/shared';
 
 export const reportRouter = Router();
@@ -45,14 +46,53 @@ reportRouter.post('/', requireAuth, async (req: AuthenticatedRequest, res, next)
       [user.id, body.diagnosisId],
     );
 
-    // TODO: Trigger async PDF generation job
+    const report = rows[0];
 
-    res.status(201).json({ report: rows[0] });
+    // Trigger async PDF generation (non-blocking)
+    generateReport(report.id, body.diagnosisId, user.id).catch((err) => {
+      console.error('[Report] PDF generation failed:', err);
+    });
+
+    res.status(201).json({ report });
   } catch (error) {
     if (error instanceof z.ZodError) {
       next(new AppError(400, 'Invalid request body', 'VALIDATION_ERROR'));
       return;
     }
+    next(error);
+  }
+});
+
+/**
+ * GET /api/reports/:id/pdf
+ * Download the report as a printable HTML page (PDF via browser print).
+ */
+reportRouter.get('/:id/pdf', requireAuth, async (req: AuthenticatedRequest, res, next) => {
+  try {
+    const user = await queryOne<{ id: string }>(
+      'SELECT id FROM users WHERE firebase_uid = $1',
+      [req.user!.uid],
+    );
+    if (!user) {
+      throw new AppError(404, 'User not found', 'USER_NOT_FOUND');
+    }
+
+    const report = await queryOne<Report & { diagnosis_id: string }>(
+      'SELECT * FROM reports WHERE id = $1 AND user_id = $2',
+      [req.params.id, user.id],
+    );
+
+    if (!report) {
+      throw new AppError(404, 'Report not found', 'REPORT_NOT_FOUND');
+    }
+
+    const data = await buildReportData(report.diagnosis_id, user.id);
+    const html = generateReportHtml(data);
+
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('Content-Disposition', `inline; filename="upaya-report-${data.reportId}.html"`);
+    res.send(html);
+  } catch (error) {
     next(error);
   }
 });

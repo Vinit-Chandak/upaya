@@ -122,3 +122,63 @@ authRouter.patch('/me', requireAuth, async (req: AuthenticatedRequest, res, next
     next(error);
   }
 });
+
+/**
+ * POST /api/auth/migrate-session
+ * Migrate anonymous data (chat sessions, kundlis) to the authenticated user.
+ * Called after a user who was anonymous signs in for the first time (e.g., at payment).
+ */
+const migrateSessionSchema = z.object({
+  sessionIds: z.array(z.string()).optional(),
+  kundliIds: z.array(z.string().uuid()).optional(),
+});
+
+authRouter.post('/migrate-session', requireAuth, async (req: AuthenticatedRequest, res, next) => {
+  try {
+    const body = migrateSessionSchema.parse(req.body);
+
+    const user = await queryOne<{ id: string }>(
+      'SELECT id FROM users WHERE firebase_uid = $1',
+      [req.user!.uid],
+    );
+    if (!user) {
+      throw new AppError(404, 'User not found', 'USER_NOT_FOUND');
+    }
+
+    let migratedSessions = 0;
+    let migratedKundlis = 0;
+
+    // Migrate anonymous chat sessions to this user
+    if (body.sessionIds && body.sessionIds.length > 0) {
+      const result = await query(
+        `UPDATE chat_sessions SET user_id = $1
+         WHERE session_id = ANY($2) AND user_id IS NULL`,
+        [user.id, body.sessionIds],
+      );
+      migratedSessions = result.length;
+    }
+
+    // Migrate anonymous kundlis to this user
+    if (body.kundliIds && body.kundliIds.length > 0) {
+      const result = await query(
+        `UPDATE kundlis SET user_id = $1
+         WHERE id = ANY($2) AND user_id IS NULL`,
+        [user.id, body.kundliIds],
+      );
+      migratedKundlis = result.length;
+    }
+
+    res.json({
+      migrated: {
+        sessions: migratedSessions,
+        kundlis: migratedKundlis,
+      },
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      next(new AppError(400, 'Invalid request body', 'VALIDATION_ERROR'));
+      return;
+    }
+    next(error);
+  }
+});
