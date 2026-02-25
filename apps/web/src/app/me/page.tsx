@@ -142,7 +142,7 @@ export default function MePage() {
 
   return (
     <div className={styles.appLayout}>
-      <TopBar title={language === 'hi' ? 'Me' : 'Me'} onLanguageToggle={toggleLanguage} />
+      <TopBar title={language === 'hi' ? 'प्रोफ़ाइल' : 'Profile'} onLanguageToggle={toggleLanguage} language={language} />
 
       <main className={styles.mainContent}>
         <div className={styles.container}>
@@ -158,14 +158,14 @@ export default function MePage() {
             </div>
             <div className={styles.profileInfo}>
               <h2 className={styles.profileName}>
-                {profile.isLoggedIn ? profile.name : (language === 'hi' ? 'Guest User' : 'Guest User')}
+                {profile.isLoggedIn ? profile.name : (language === 'hi' ? 'अतिथि' : 'Guest User')}
               </h2>
               {profile.isLoggedIn && (
                 <>
                   <p className={styles.profilePhone}>{profile.phone}</p>
                   <p className={styles.profileMember}>
                     {language === 'hi'
-                      ? `Member since ${profile.memberSince}`
+                      ? `${profile.memberSince} से सदस्य`
                       : `Member since ${profile.memberSince}`}
                   </p>
                 </>
@@ -182,14 +182,14 @@ export default function MePage() {
           <div className={styles.badgeRow}>
             <div className={styles.badge}>
               <span className={styles.badgeIcon}>{'\uD83C\uDFC6'}</span>
-              <span className={styles.badgeLabel}>Karma</span>
+              <span className={styles.badgeLabel}>{language === 'hi' ? 'कर्म' : 'Karma'}</span>
               <span className={styles.badgeValue}>{karma.karma}</span>
             </div>
             <div className={styles.badge}>
               <span className={styles.badgeIcon}>{'\uD83D\uDD25'}</span>
-              <span className={styles.badgeLabel}>Streak</span>
+              <span className={styles.badgeLabel}>{language === 'hi' ? 'लगातार' : 'Streak'}</span>
               <span className={styles.badgeValue}>
-                {karma.streakDays} {language === 'hi' ? 'days' : 'days'}
+                {karma.streakDays} {language === 'hi' ? 'दिन' : 'days'}
               </span>
             </div>
           </div>
@@ -199,7 +199,7 @@ export default function MePage() {
             <div className={styles.kundliCardHeader}>
               <span className={styles.kundliCardIcon}>{'\uD83D\uDCCA'}</span>
               <h3 className={styles.kundliCardTitle}>
-                {language === 'hi' ? 'My Kundli' : 'My Kundli'}
+                {language === 'hi' ? 'मेरी कुंडली' : 'My Kundli'}
               </h3>
             </div>
             <div className={styles.kundliCardBody}>
@@ -211,12 +211,12 @@ export default function MePage() {
               </div>
               <div className={styles.kundliDetails}>
                 <div className={styles.kundliDetailRow}>
-                  <span className={styles.kundliDetailLabel}>DOB:</span>
+                  <span className={styles.kundliDetailLabel}>{language === 'hi' ? 'जन्म तिथि:' : 'DOB:'}</span>
                   <span className={styles.kundliDetailValue}>{miniKundli.dob}</span>
                 </div>
                 <div className={styles.kundliDetailRow}>
                   <span className={styles.kundliDetailLabel}>
-                    {language === 'hi' ? 'Current Dasha:' : 'Current Dasha:'}
+                    {language === 'hi' ? 'वर्तमान दशा:' : 'Current Dasha:'}
                   </span>
                   <span className={styles.kundliDetailValue}>
                     {language === 'hi' ? miniKundli.currentDasha : miniKundli.currentDashaEn}
@@ -225,7 +225,7 @@ export default function MePage() {
               </div>
             </div>
             <Link href="/me/kundli" className={styles.kundliViewLink}>
-              {language === 'hi' ? 'View Full \u2192' : 'View Full \u2192'}
+              {language === 'hi' ? 'पूरी देखें →' : 'View Full →'}
             </Link>
           </div>
 
@@ -234,7 +234,7 @@ export default function MePage() {
             <div className={styles.familyCardHeader}>
               <span className={styles.familyCardIcon}>{'\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67\u200D\uD83D\uDC66'}</span>
               <h3 className={styles.familyCardTitle}>
-                {language === 'hi' ? 'Family Kundli Vault' : 'Family Kundli Vault'}
+                {language === 'hi' ? 'परिवार कुंडली' : 'Family Kundli Vault'}
               </h3>
             </div>
             <div className={styles.familyMembers}>
@@ -243,13 +243,13 @@ export default function MePage() {
                   <span>{'\uD83D\uDE4F'}</span>
                 </div>
                 <span className={styles.familyMemberName}>
-                  {language === 'hi' ? 'You' : 'You'}
+                  {language === 'hi' ? 'आप' : 'You'}
                 </span>
               </div>
               <Link href="/me/family" className={styles.familyAddButton}>
                 <span className={styles.familyAddIcon}>+</span>
                 <span className={styles.familyAddText}>
-                  {language === 'hi' ? 'Add Family Member' : 'Add Family Member'}
+                  {language === 'hi' ? 'सदस्य जोड़ें' : 'Add Family Member'}
                 </span>
               </Link>
             </div>
@@ -259,7 +259,7 @@ export default function MePage() {
           <section className={styles.section}>
             <h3 className={styles.sectionTitle}>
               <span>{'\uD83D\uDCDC'}</span>
-              {language === 'hi' ? 'My Reports' : 'My Reports'}
+              {language === 'hi' ? 'मेरी रिपोर्ट्स' : 'My Reports'}
             </h3>
             <div className={styles.cardList}>
               {reports.map((r) => (
@@ -279,8 +279,8 @@ export default function MePage() {
                   </div>
                   <span className={`${styles.reportItemStatus} ${r.status === 'ready' ? styles.statusReady : styles.statusGenerating}`}>
                     {r.status === 'ready'
-                      ? (language === 'hi' ? 'Ready' : 'Ready')
-                      : (language === 'hi' ? 'Generating...' : 'Generating...')}
+                      ? (language === 'hi' ? 'तैयार' : 'Ready')
+                      : (language === 'hi' ? 'बन रही है...' : 'Generating...')}
                   </span>
                 </Link>
               ))}
@@ -291,7 +291,7 @@ export default function MePage() {
           <section className={styles.section}>
             <h3 className={styles.sectionTitle}>
               <span>{'\uD83D\uDCE6'}</span>
-              {language === 'hi' ? 'My Orders' : 'My Orders'}
+              {language === 'hi' ? 'मेरे ऑर्डर्स' : 'My Orders'}
             </h3>
             <div className={styles.cardList}>
               {orders.map((o) => (
@@ -323,7 +323,7 @@ export default function MePage() {
               <div className={styles.referralHeader}>
                 <span className={styles.referralIcon}>{'\uD83C\uDF81'}</span>
                 <h3 className={styles.referralTitle}>
-                  {language === 'hi' ? 'Refer & Earn' : 'Refer & Earn'}
+                  {language === 'hi' ? 'रेफ़र करें और कमाएं' : 'Refer & Earn'}
                 </h3>
               </div>
               <p className={styles.referralText}>
@@ -334,14 +334,14 @@ export default function MePage() {
               {referralCode && (
                 <div className={styles.referralCodeBox}>
                   <span className={styles.referralCodeLabel}>
-                    {language === 'hi' ? 'Your Code:' : 'Your Code:'}
+                    {language === 'hi' ? 'आपका कोड:' : 'Your Code:'}
                   </span>
                   <span className={styles.referralCodeValue}>{referralCode}</span>
                 </div>
               )}
             </div>
             <button className={styles.shareButton} onClick={handleShare}>
-              {language === 'hi' ? 'Share Now \u2192' : 'Share Now \u2192'}
+              {language === 'hi' ? 'अभी शेयर करें →' : 'Share Now →'}
             </button>
           </div>
 
@@ -351,28 +351,28 @@ export default function MePage() {
               <Link href="/help" className={styles.linkItem}>
                 <span className={styles.linkIcon}>{'\u2753'}</span>
                 <span className={styles.linkLabel}>
-                  {language === 'hi' ? 'Help & Support' : 'Help & Support'}
+                  {language === 'hi' ? 'सहायता' : 'Help & Support'}
                 </span>
                 <span className={styles.linkArrow}>{'\u203A'}</span>
               </Link>
               <Link href="/about" className={styles.linkItem}>
                 <span className={styles.linkIcon}>{'\u2139\uFE0F'}</span>
                 <span className={styles.linkLabel}>
-                  {language === 'hi' ? 'About Upaya' : 'About Upaya'}
+                  {language === 'hi' ? 'Upaya के बारे में' : 'About Upaya'}
                 </span>
                 <span className={styles.linkArrow}>{'\u203A'}</span>
               </Link>
               <Link href="/privacy" className={styles.linkItem}>
                 <span className={styles.linkIcon}>{'\uD83D\uDD12'}</span>
                 <span className={styles.linkLabel}>
-                  {language === 'hi' ? 'Privacy Policy' : 'Privacy Policy'}
+                  {language === 'hi' ? 'गोपनीयता नीति' : 'Privacy Policy'}
                 </span>
                 <span className={styles.linkArrow}>{'\u203A'}</span>
               </Link>
               <Link href="/me/settings" className={styles.linkItem}>
                 <span className={styles.linkIcon}>{'\u2699\uFE0F'}</span>
                 <span className={styles.linkLabel}>
-                  {language === 'hi' ? 'Settings' : 'Settings'}
+                  {language === 'hi' ? 'सेटिंग्स' : 'Settings'}
                 </span>
                 <span className={styles.linkArrow}>{'\u203A'}</span>
               </Link>

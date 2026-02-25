@@ -26,16 +26,50 @@ type ChatPhase =
 
 // ---- Qualifying question chip sets per problem type ----
 
-const QUALIFYING_CHIPS: Record<string, { label: string; value: string }[]> = {
+const QUALIFYING_CHIPS_HI: Record<string, { label: string; value: string }[]> = {
   marriage_delay: [
-    { label: '< 1 saal', value: '< 1 saal' },
-    { label: '1-3 saal', value: '1-3 saal' },
-    { label: '3+ saal', value: '3+ saal' },
+    { label: '< 1 साल', value: '< 1 साल' },
+    { label: '1-3 साल', value: '1-3 साल' },
+    { label: '3+ साल', value: '3+ साल' },
   ],
   career_stuck: [
-    { label: '< 1 saal', value: '< 1 saal' },
-    { label: '1-3 saal', value: '1-3 saal' },
-    { label: '3+ saal', value: '3+ saal' },
+    { label: '< 1 साल', value: '< 1 साल' },
+    { label: '1-3 साल', value: '1-3 साल' },
+    { label: '3+ साल', value: '3+ साल' },
+  ],
+  money_problems: [
+    { label: 'अचानक', value: 'अचानक' },
+    { label: 'धीरे-धीरे', value: 'धीरे-धीरे' },
+    { label: 'हमेशा से', value: 'हमेशा से' },
+  ],
+  health_issues: [
+    { label: 'हाल ही में', value: 'हाल ही में' },
+    { label: 'कुछ महीने', value: 'कुछ महीने' },
+    { label: 'काफ़ी समय से', value: 'काफ़ी समय से' },
+  ],
+  legal_matters: [
+    { label: 'संपत्ति', value: 'संपत्ति' },
+    { label: 'पारिवारिक', value: 'पारिवारिक' },
+    { label: 'व्यापार', value: 'व्यापार' },
+    { label: 'अन्य', value: 'अन्य' },
+  ],
+  family_conflict: [
+    { label: 'हाल ही में', value: 'हाल ही में' },
+    { label: 'कुछ महीने', value: 'कुछ महीने' },
+    { label: 'सालों से', value: 'सालों से' },
+  ],
+};
+
+const QUALIFYING_CHIPS_EN: Record<string, { label: string; value: string }[]> = {
+  marriage_delay: [
+    { label: '< 1 year', value: '< 1 year' },
+    { label: '1-3 years', value: '1-3 years' },
+    { label: '3+ years', value: '3+ years' },
+  ],
+  career_stuck: [
+    { label: '< 1 year', value: '< 1 year' },
+    { label: '1-3 years', value: '1-3 years' },
+    { label: '3+ years', value: '3+ years' },
   ],
   money_problems: [
     { label: 'Sudden', value: 'Suddenly' },
@@ -220,7 +254,8 @@ function ChatPageContent() {
       setTimeout(() => {
         setIsTyping(false);
         const qText = QUALIFYING_QUESTIONS[lang][problemType] || QUALIFYING_QUESTIONS[lang].something_else;
-        const chips = QUALIFYING_CHIPS[problemType] || undefined;
+        const chipSet = lang === 'hi' ? QUALIFYING_CHIPS_HI : QUALIFYING_CHIPS_EN;
+        const chips = chipSet[problemType] || undefined;
         const aiMsg: ChatMsg = {
           id: generateId(),
           role: 'assistant',
@@ -237,7 +272,8 @@ function ChatPageContent() {
       setTimeout(() => {
         setIsTyping(false);
         const qText = QUALIFYING_QUESTIONS[lang][problemType] || QUALIFYING_QUESTIONS[lang].something_else;
-        const chips = QUALIFYING_CHIPS[problemType] || undefined;
+        const chipSet = lang === 'hi' ? QUALIFYING_CHIPS_HI : QUALIFYING_CHIPS_EN;
+        const chips = chipSet[problemType] || undefined;
         const aiMsg: ChatMsg = {
           id: generateId(),
           role: 'assistant',

@@ -93,16 +93,16 @@ export const hi = {
 
   // --- Home / Chat Entry ---
   home: {
-    greeting: 'Welcome back, {{name}} 🙏',
+    greeting: 'फिर से स्वागत है, {{name}} 🙏',
     mainPrompt: 'आज आपको क्या परेशान कर रहा है?',
-    mainPromptSub: 'Tell me what\'s worrying you today',
+    mainPromptSub: 'अपनी समस्या बताएं',
     inputPlaceholder: 'अपनी बात यहाँ लिखें...',
     returningUser: {
-      continueChat: 'पिछली chat जारी रखें',
-      newProblem: 'नई Problem',
-      activeProtocol: 'आपका Active Remedy Plan',
-      transitAlert: 'Transit Alert',
-      viewDetails: 'Details देखें',
+      continueChat: 'पिछली बातचीत जारी रखें',
+      newProblem: 'नई समस्या',
+      activeProtocol: 'आपका चालू उपाय योजना',
+      transitAlert: 'ग्रह गोचर सूचना',
+      viewDetails: 'विवरण देखें',
       recent: 'हाल की बातचीत',
     },
   },
@@ -124,8 +124,8 @@ export const hi = {
     typingIndicator: 'टाइप कर रहा है...',
     inputPlaceholder: 'अपनी बात यहाँ लिखें...',
     voiceHint: 'बोलकर बताएं',
-    birthDetailsCta: 'अपनी Birth Details दें',
-    birthDetailsSub: '2 minute में कुंडली तैयार',
+    birthDetailsCta: 'अपनी जन्म विवरण दें',
+    birthDetailsSub: '2 मिनट में कुंडली तैयार',
   },
 
   // --- AI Chat Messages (Templates) ---
@@ -181,14 +181,14 @@ export const hi = {
 
   // --- Birth Details ---
   birthDetails: {
-    title: 'Birth Details',
-    subtitle: 'Accurate कुंडली के लिए ये details ज़रूरी हैं:',
+    title: 'जन्म विवरण',
+    subtitle: 'सटीक कुंडली के लिए ये विवरण ज़रूरी हैं:',
     dateOfBirth: 'जन्म तिथि',
     dateFormat: 'DD / MM / YYYY',
     timeOfBirth: 'जन्म का समय',
     timeFormat: 'HH : MM',
-    unknownTime: 'Exact time नहीं पता?',
-    unknownTimeSub: 'Approximate use करेंगे',
+    unknownTime: 'सही समय नहीं पता?',
+    unknownTimeSub: 'अनुमानित समय इस्तेमाल करेंगे',
     approximateTime: {
       morning: 'सुबह (6 AM - 12 PM)',
       afternoon: 'दोपहर (12 PM - 4 PM)',
@@ -197,11 +197,11 @@ export const hi = {
       dontKnow: 'बिल्कुल नहीं पता',
     },
     approximateNote:
-      'Approximate time से भी कुंडली बनती है, लेकिन exact time से ज़्यादा accurate होती है।',
+      'अनुमानित समय से भी कुंडली बनती है, लेकिन सही समय से ज़्यादा सटीक होती है।',
     placeOfBirth: 'जन्म स्थान',
-    placeSearch: 'शहर/गाँव खोजें...',
+    placeSearch: 'शहर या गाँव का नाम लिखें...',
     generateButton: 'मेरी कुंडली बनाएं',
-    generateButtonSub: 'Generate My Kundli',
+    generateButtonSub: 'कुंडली 2 मिनट में तैयार',
   },
 
   // --- Kundli Animation ---
@@ -313,10 +313,10 @@ export const hi = {
 
   // --- Bottom Tabs ---
   tabs: {
-    home: 'Home',
-    remedies: 'Remedies',
-    explore: 'Explore',
-    me: 'Me',
+    home: 'होम',
+    remedies: 'उपाय',
+    explore: 'खोजें',
+    me: 'प्रोफ़ाइल',
   },
 
   // --- Puja Booking (Phase 2) ---
@@ -805,36 +805,36 @@ export const hi = {
 
   // --- Phase 4: Profile / Me Tab (S15) ---
   profile: {
-    title: 'Me',
-    memberSince: 'Member since {{date}}',
-    karma: 'Karma',
-    streak: 'Streak',
-    days: 'days',
-    myKundli: 'My Kundli',
-    currentDasha: 'Current Dasha',
-    viewFullKundli: 'View Full →',
-    familyVault: 'Family Kundli Vault',
-    addFamilyMember: '+ Add Family Member',
-    familyVaultDesc: 'Store your family\'s kundlis and get cross-analysis insights',
-    myReports: 'My Reports',
-    myOrders: 'My Orders',
-    referAndEarn: 'Refer & Earn',
-    referDesc: 'Share Upaya with friends. They get free kundli analysis. You get ₹50 store credit per friend who buys a report.',
-    shareNow: 'Share Now →',
-    referralCode: 'Your code: {{code}}',
-    referralCredits: '₹{{amount}} earned',
-    helpSupport: 'Help & Support (WhatsApp)',
-    aboutUpaya: 'About Upaya',
-    privacyPolicy: 'Privacy Policy',
-    settings: 'Settings',
-    logout: 'Logout',
-    logoutConfirm: 'क्या आप logout करना चाहते हैं?',
+    title: 'प्रोफ़ाइल',
+    memberSince: '{{date}} से सदस्य',
+    karma: 'कर्म',
+    streak: 'लगातार',
+    days: 'दिन',
+    myKundli: 'मेरी कुंडली',
+    currentDasha: 'वर्तमान दशा',
+    viewFullKundli: 'पूरी देखें →',
+    familyVault: 'परिवार कुंडली',
+    addFamilyMember: '+ सदस्य जोड़ें',
+    familyVaultDesc: 'अपने परिवार की कुंडलियाँ सहेजें और विश्लेषण पाएं',
+    myReports: 'मेरी रिपोर्ट्स',
+    myOrders: 'मेरे ऑर्डर्स',
+    referAndEarn: 'रेफ़र करें और कमाएं',
+    referDesc: 'दोस्तों को शेयर करें। उन्हें मुफ़्त कुंडली मिलेगी। आपको हर रिपोर्ट खरीद पर ₹50 मिलेंगे।',
+    shareNow: 'अभी शेयर करें →',
+    referralCode: 'आपका कोड: {{code}}',
+    referralCredits: '₹{{amount}} कमाए',
+    helpSupport: 'सहायता',
+    aboutUpaya: 'Upaya के बारे में',
+    privacyPolicy: 'गोपनीयता नीति',
+    settings: 'सेटिंग्स',
+    logout: 'लॉग आउट',
+    logoutConfirm: 'क्या आप लॉग आउट करना चाहते हैं?',
   },
 
   // --- Phase 4: Full Kundli View (S15.2) ---
   kundliView: {
-    title: 'My Kundli',
-    share: 'Share',
+    title: 'मेरी कुंडली',
+    share: 'शेयर करें',
     tabChart: 'Chart',
     tabPlanets: 'Planets',
     tabDashas: 'Dashas',
