@@ -8,6 +8,7 @@ import { kundliRouter } from './routes/kundli';
 import { diagnosisRouter } from './routes/diagnosis';
 import { reportRouter } from './routes/report';
 import { paymentRouter } from './routes/payment';
+import { referralRouter } from './routes/referral';
 import { errorHandler } from './middleware/error';
 import { requestLogger } from './middleware/logger';
 
@@ -40,6 +41,7 @@ app.use('/api/kundli', kundliRouter);
 app.use('/api/diagnosis', diagnosisRouter);
 app.use('/api/reports', reportRouter);
 app.use('/api/payments', paymentRouter);
+app.use('/api/referrals', referralRouter);
 
 // --- Error Handler (must be last) ---
 app.use(errorHandler);

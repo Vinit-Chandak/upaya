@@ -18,6 +18,9 @@ export default function RootLayout() {
         <Stack.Screen name="home" options={{ animation: 'fade' }} />
         <Stack.Screen name="chat" />
         <Stack.Screen name="kundli-animation" options={{ animation: 'fade' }} />
+        <Stack.Screen name="diagnosis" options={{ animation: 'fade' }} />
+        <Stack.Screen name="paywall" options={{ animation: 'slide_from_bottom', presentation: 'transparentModal' }} />
+        <Stack.Screen name="report" options={{ animation: 'fade' }} />
       </Stack>
     </>
   );

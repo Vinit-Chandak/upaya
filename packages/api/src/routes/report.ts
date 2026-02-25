@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { query, queryOne } from '../db/connection';
 import { requireAuth, type AuthenticatedRequest } from '../middleware/auth';
 import { AppError } from '../middleware/error';
+import { generateFullReport } from '../services/report';
 import type { Report } from '@upaya/shared';
 
 export const reportRouter = Router();
@@ -45,7 +46,11 @@ reportRouter.post('/', requireAuth, async (req: AuthenticatedRequest, res, next)
       [user.id, body.diagnosisId],
     );
 
-    // TODO: Trigger async PDF generation job
+    // Trigger async report generation (fire-and-forget)
+    const reportId = rows[0].id;
+    generateFullReport(reportId).catch((err) => {
+      console.error(`[Report] Async generation failed for ${reportId}:`, err);
+    });
 
     res.status(201).json({ report: rows[0] });
   } catch (error) {

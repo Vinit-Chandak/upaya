@@ -80,6 +80,7 @@ export default function KundliAnimationScreen() {
     tob?: string;
     place?: string;
     lang?: string;
+    problem?: string;
   }>();
 
   const dob = params.dob || '';
@@ -256,8 +257,11 @@ export default function KundliAnimationScreen() {
   }, [phase]);
 
   const handleViewDiagnosis = useCallback(() => {
-    router.push('/home');
-  }, [router]);
+    router.push({
+      pathname: '/diagnosis',
+      params: { problem: params.problem || 'marriage_delay', lang, dob, place },
+    });
+  }, [router, params.problem, lang, dob, place]);
 
   // Phase titles
   const phaseTitle = (() => {

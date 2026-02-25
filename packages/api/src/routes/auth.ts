@@ -12,12 +12,18 @@ const registerSchema = z.object({
   firebaseIdToken: z.string().min(1),
   name: z.string().optional(),
   language: z.enum(['hi', 'en']).default('hi'),
+  /** Optional anonymous session IDs to migrate to the new authenticated account */
+  anonymousSessionIds: z.array(z.string().uuid()).optional(),
+  anonymousKundliIds: z.array(z.string().uuid()).optional(),
 });
 
 /**
  * POST /api/auth/register
  * Register or login a user with a Firebase ID token.
  * Creates a new user record if one doesn't exist for this Firebase UID.
+ * Supports anonymous→authenticated session migration:
+ *   Pass anonymousSessionIds and/or anonymousKundliIds to transfer
+ *   previously created anonymous data to the newly authenticated account.
  */
 authRouter.post('/register', async (req, res, next) => {
   try {
@@ -30,8 +36,9 @@ authRouter.post('/register', async (req, res, next) => {
       [decoded.uid],
     );
 
+    let isNewUser = false;
     if (!user) {
-      // Create new user
+      isNewUser = true;
       const rows = await query<User>(
         `INSERT INTO users (firebase_uid, phone, email, name, language)
          VALUES ($1, $2, $3, $4, $5)
@@ -47,7 +54,36 @@ authRouter.post('/register', async (req, res, next) => {
       user = rows[0];
     }
 
-    res.json({ user });
+    // Migrate anonymous sessions to the authenticated user
+    let migratedSessions = 0;
+    let migratedKundlis = 0;
+
+    if (user && body.anonymousSessionIds && body.anonymousSessionIds.length > 0) {
+      const result = await query(
+        `UPDATE chat_sessions SET user_id = $1
+         WHERE session_id = ANY($2) AND user_id IS NULL`,
+        [user.id, body.anonymousSessionIds],
+      );
+      migratedSessions = result.length;
+    }
+
+    if (user && body.anonymousKundliIds && body.anonymousKundliIds.length > 0) {
+      const result = await query(
+        `UPDATE kundlis SET user_id = $1
+         WHERE id = ANY($2) AND user_id IS NULL`,
+        [user.id, body.anonymousKundliIds],
+      );
+      migratedKundlis = result.length;
+    }
+
+    res.json({
+      user,
+      isNewUser,
+      migration: {
+        sessions: migratedSessions,
+        kundlis: migratedKundlis,
+      },
+    });
   } catch (error) {
     if (error instanceof z.ZodError) {
       next(new AppError(400, 'Invalid request body', 'VALIDATION_ERROR'));

@@ -382,6 +382,7 @@ export default function ChatScreen() {
           tob: bdTime,
           place: bdPlace,
           lang: language,
+          problem: problemType,
         },
       });
     }, 500);

@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { query, queryOne } from '../db/connection';
 import { llmService } from '../services/llm';
+import { buildChatSystemPrompt } from '../services/llm/prompts';
 import { optionalAuth, type AuthenticatedRequest } from '../middleware/auth';
 import { AppError } from '../middleware/error';
 import type { ChatSession, ChatMessage } from '@upaya/shared';
@@ -92,14 +93,15 @@ chatRouter.post(
         [session.id],
       );
 
-      // Generate AI response
+      // Generate AI response with proper system prompt
+      const chatLanguage = (session.language as 'hi' | 'en') || 'hi';
       const aiResponse = await llmService.generateChatResponse({
         messages: history.map((m) => ({
           role: m.role as 'user' | 'assistant',
           content: m.content,
         })),
-        systemPrompt: '',
-        language: session.language as 'hi' | 'en',
+        systemPrompt: buildChatSystemPrompt(chatLanguage),
+        language: chatLanguage,
       });
 
       // Save AI response
