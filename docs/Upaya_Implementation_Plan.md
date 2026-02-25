@@ -36,7 +36,7 @@
 | React Native project | Engineer | Init with Expo (managed workflow for faster dev). Configure for Android + iOS. Set up Noto Sans + Noto Sans Devanagari fonts |
 | Next.js web app | Engineer | Init Next.js 14+ with App Router. This serves as secondary web target and admin dashboard host |
 | Node.js API server | Engineer | Express + TypeScript. Set up project structure: routes, controllers, services, middleware |
-| PostgreSQL setup | Engineer | Provision PostgreSQL (Supabase hosted or Railway for cost efficiency). Design initial schema (users, kundlis, chats, reports, orders) |
+| PostgreSQL setup | Engineer | Provision PostgreSQL on Azure Ubuntu VM (B1ms, India Central region). Design initial schema (users, kundlis, chats, reports, orders) |
 | Firebase Auth | Engineer | Configure Firebase project. Enable Phone OTP + Google Sign-In. Integrate with React Native and API server |
 | Razorpay sandbox | Engineer | Create Razorpay test account. Integrate SDK in React Native. Set up webhook endpoint in API |
 | CI/CD pipeline | Engineer | GitHub Actions: lint, test, build for both mobile and API. EAS Build for React Native (Expo Application Services) |
@@ -68,7 +68,7 @@
 | Company registration | Register LLP or Private Limited (₹10-15K via Vakilsearch/Cleartax) |
 | Privacy policy + Terms | Draft privacy policy (birth data handling, DPDP Act compliance), terms of service, refund policy |
 | Razorpay live account | KYC, bank account linkage, go live for payments |
-| Domain + hosting | Register upaya.app or similar. Set up Vercel (Next.js), Railway/Render (API), Supabase (PostgreSQL) |
+| Domain + hosting | Register upaya.app or similar. Set up Vercel (Next.js web), Azure Ubuntu VM (Express API + PostgreSQL + Redis). Point API subdomain to VM |
 | Analytics setup | Integrate Mixpanel or Amplitude for event tracking. PostHog as self-hosted alternative |
 
 ### 0.5 Phase 0 Deliverables
@@ -741,8 +741,8 @@ muhurta_queries (id, user_id, query_text, category, recommended_dates_json, paym
             │                        │
             ▼                        ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│                      API GATEWAY / LOAD BALANCER                  │
-│                   (Nginx / AWS ALB / Vercel Edge)                 │
+│                      API GATEWAY / REVERSE PROXY                  │
+│                     (Nginx on Azure Ubuntu VM)                    │
 └──────────────────────────┬───────────────────────────────────────┘
                            │
 ┌──────────────────────────▼───────────────────────────────────────┐
@@ -784,7 +784,7 @@ muhurta_queries (id, user_id, query_text, category, recommended_dates_json, paym
 │                                                                   │
 │  ┌──────────────────┐  ┌──────────────────┐                      │
 │  │ PostgreSQL        │  │ Redis             │                      │
-│  │ (Supabase/Railway)│  │ (Cache + Sessions │                      │
+│  │ (Azure Ubuntu VM) │  │ (Cache + Sessions │                      │
 │  │                   │  │  + Rate Limiting)  │                      │
 │  │ • Users           │  │                   │                      │
 │  │ • Kundlis         │  └──────────────────┘                      │
@@ -809,8 +809,8 @@ muhurta_queries (id, user_id, query_text, category, recommended_dates_json, paym
 | **Mobile** | React Native (Expo) | Cross-platform Android + iOS. Expo managed workflow for faster dev. OTA updates without app store approval |
 | **Web** | Next.js 14+ (App Router) | SEO pages (free kundli tool, blog), Temple CMS, Admin panel. Server-side rendering for SEO |
 | **API** | Node.js + Express + TypeScript | Same language as frontend. Fast development. Strong ecosystem |
-| **Database** | PostgreSQL (Supabase/Railway) | Reliable, scalable, good JSON support for flexible data. Start with one DB, shard later if needed |
-| **Cache** | Redis (Upstash) | Session management, rate limiting, kundli calculation cache, LLM response cache |
+| **Database** | PostgreSQL (Azure Ubuntu VM) | Reliable, scalable, good JSON support for flexible data. Self-hosted on VM for full control and cost efficiency |
+| **Cache** | Redis (Azure Ubuntu VM) | Session management, rate limiting, kundli calculation cache, LLM response cache |
 | **Auth** | Firebase Auth | Phone OTP + Google Sign-In out of box. Free tier generous. React Native SDK |
 | **Payments** | Razorpay (India) + Stripe (NRI) | UPI, cards, net banking, wallets. Stripe for USD payments |
 | **LLM** | Claude / GPT / Gemini (abstracted) | Provider-agnostic service. Switch based on cost, quality, availability. Prompt templates per provider |
@@ -821,7 +821,7 @@ muhurta_queries (id, user_id, query_text, category, recommended_dates_json, paym
 | **Shipping** | Shiprocket / Delhivery API | Prasad + product shipping. Tracking integration. Pan-India coverage |
 | **Analytics** | Mixpanel / PostHog | Event tracking, funnels, cohorts, retention. PostHog self-hosted for cost savings |
 | **CI/CD** | GitHub Actions + EAS Build | Automated lint, test, build. Expo Application Services for mobile builds |
-| **Hosting** | Vercel (web) + Railway (API) + Supabase (DB) | Low cost, auto-scaling, managed services. Total ~₹5-10K/month to start |
+| **Hosting** | Vercel (web) + Azure Ubuntu VM (API + DB + Redis) | Low cost, full control. VM ~₹1.2K/month (B1ms India Central), Vercel free tier for web |
 
 ### LLM Abstraction Layer Design
 
@@ -870,13 +870,13 @@ If rules detect a dosha LLM missed → add to diagnosis.
 | Founder (no salary or minimal) | ₹0-50K |
 | 1 Full-stack engineer | ₹80K-1.2L |
 | LLM API costs (Claude/GPT/Gemini) | ₹10-20K |
-| Hosting (Vercel + Railway + Supabase) | ₹5-10K |
-| Swiss Ephemeris | ₹0 (open source) |
-| Firebase Auth (free tier) | ₹0 |
+| Hosting (Vercel free + Azure VM B1ms) | ₹1.5-3K |
+| Swiss Ephemeris | ₹0 (open source, runs on Azure VM) |
+| Firebase Auth (free tier, 10K OTP/month) | ₹0 |
 | Domain + tools (GitHub, Figma, etc.) | ₹5K |
 | Temple travel (founder) | ₹15-20K |
-| **Total monthly burn** | **₹1.2-1.7L** |
-| **Phase cost (2 months)** | **₹2.5-3.5L** |
+| **Total monthly burn** | **₹1-1.5L** |
+| **Phase cost (2 months)** | **₹2-3L** |
 
 ### Phase 2-3 (Months 3-5): Growth
 
@@ -885,7 +885,7 @@ If rules detect a dosha LLM missed → add to diagnosis.
 | Founder (minimal salary) | ₹30-50K |
 | 1 Engineer | ₹80K-1.2L |
 | LLM API costs (growing usage) | ₹20-40K |
-| Hosting (scaling) | ₹10-20K |
+| Hosting (Azure VM upgrade to B2s if needed) | ₹3-5K |
 | Razorpay fees (2% of revenue) | ₹2-6K |
 | WhatsApp Business API | ₹5-10K |
 | Shiprocket/Delhivery | Per-order |
@@ -943,7 +943,7 @@ If rules detect a dosha LLM missed → add to diagnosis.
 |------|-----------|
 | **LLM gives inaccurate astrology** | Rule engine validates all AI output. Confidence scoring (High/Medium/Low). Human pandit review for paid reports in early months. Classical text cross-reference. Never claim 100% accuracy |
 | **Swiss Ephemeris calculation errors** | Validate against 20+ known kundli charts (from established tools like Jagannatha Hora). Automated test suite comparing output with reference data |
-| **Scalability bottleneck** | Start with managed services (Supabase, Railway, Vercel) that auto-scale. Monitor performance from Day 1. Cache kundli calculations (same DOB/TOB/POB = same result) |
+| **Scalability bottleneck** | Start with Azure VM (B1ms). Upgrade to B2s or split API/DB to separate VMs when needed. Monitor performance from Day 1. Cache kundli calculations (same DOB/TOB/POB = same result). Move to Azure Database for PostgreSQL when scale demands it |
 | **App store rejection** | Follow Apple/Google guidelines for astrology apps. Include clear disclaimers. Don't make health claims. Submit early for review feedback |
 | **Data breach (birth data is sensitive)** | Encrypt PII at rest (PostgreSQL pgcrypto) and in transit (TLS). Firebase Auth for secure authentication. DPDP Act compliance from Day 1. Minimal data retention policy |
 
@@ -1029,10 +1029,10 @@ If rules detect a dosha LLM missed → add to diagnosis.
 | Funding path | Bootstrap first (₹7-10L) | Earn the right to raise. Better valuation at ₹3-5L MRR. 10-15% equity saved | ₹3 Cr seed (too much dilution pre-traction), ₹25-50L angel (viable fallback) |
 | Platform | Android + iOS (React Native) | User's primary devices in India. React Native for cross-platform efficiency | Web-first PWA (faster to ship but worse UX), Android-only (misses iOS NRI users) |
 | Backend | Node.js (Express) | Same language as React Native/Next.js. Easier for 2-person team | FastAPI Python (better for ML, but adds language complexity), Next.js API routes (simpler but less scalable) |
-| Database | PostgreSQL only | Start simple. JSON columns for flexible data. Add Neo4j only when knowledge graph complexity warrants it | PostgreSQL + Neo4j (premature for MVP), Supabase BaaS (too constrained) |
+| Database | PostgreSQL (self-hosted on Azure VM) | Start simple. JSON columns for flexible data. Full control, no vendor lock-in. Add Neo4j only when knowledge graph complexity warrants it | PostgreSQL + Neo4j (premature for MVP), Supabase BaaS (too constrained), Railway managed DB (adds cost) |
 | LLM | Multi-provider abstraction | Flexibility to switch based on cost, quality, availability. No vendor lock-in | Single provider (risky if pricing changes or quality degrades) |
 | Kundli engine | Self-hosted Swiss Ephemeris | Full control, zero per-request cost, no dependency on third-party uptime. Open source | Third-party API (faster to integrate but per-request cost and dependency) |
-| Auth | Firebase Auth | Phone OTP + Google built-in. Free tier generous. Good React Native SDK | Supabase Auth (good but less mature mobile SDKs), Custom OTP (unnecessary complexity) |
+| Auth | Firebase Auth | Phone OTP + Google built-in. Free 10K OTP/month. Battle-tested in India. Good React Native SDK | Supabase Auth (needs Twilio for OTP — extra cost), Custom OTP (unnecessary complexity) |
 | Temple supply | Build CMS early | Long-term moat. Self-serve onboarding enables scaling beyond personal visits. Khatabook playbook for temples | Manual-only onboarding (doesn't scale), Aggregate from others (no control) |
 
 ---

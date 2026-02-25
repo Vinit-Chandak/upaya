@@ -30,7 +30,7 @@ Upaya is an AI-powered Vedic astrology platform. Users describe their life probl
 | Caching | Redis |
 | Storage | Cloudflare R2 (S3-compatible) |
 | CI/CD | GitHub Actions |
-| Hosting | Vercel (web), Railway/Render (API), Supabase (DB) |
+| Hosting | Vercel (web), Azure Ubuntu VM (API + PostgreSQL + Redis) |
 
 ---
 
@@ -264,6 +264,7 @@ UI specs: `docs/Upaya_MVP_UI_Flow.md`
 4. **Hindi first.** All UI strings are written natively in Hindi, not translated. English is the secondary language.
 5. **LLM with fallback.** If the primary provider (Anthropic) fails, automatically falls back to the secondary (OpenAI). No single point of failure.
 6. **Responsive everywhere.** Web uses fluid `clamp()` typography and spacing. Mobile uses proportional scaling functions. Everything adapts to any screen size.
+7. **Firebase Auth + self-hosted backend.** Firebase handles Phone OTP + Google Sign-In (free tier, battle-tested in India). Everything else (Express API, PostgreSQL, Redis, Swiss Ephemeris) runs on a single Azure Ubuntu VM (B1ms, India Central). Web stays on Vercel free tier. No Supabase, no Railway, no managed DB — full control at ~₹1.2K/month.
 
 ---
 
@@ -308,3 +309,4 @@ These are enforced in `packages/api/src/services/llm/prompts.ts`:
 |------|---------|---------|
 | 2026-02-24 | Phase 0 | Initial monorepo setup, all packages scaffolded, design system, DB schema, LLM abstraction, Swiss Ephemeris, Firebase Auth, Razorpay, i18n, CI/CD, web landing page, mobile splash/language/onboarding |
 | 2026-02-24 | Docs | Added Setup Guide (`docs/Upaya_Setup_Guide.md`) and this CLAUDE.md |
+| 2026-02-26 | Arch | Architecture decision: Firebase Auth (OTP) + Azure Ubuntu VM (API + PostgreSQL + Redis + Swiss Ephemeris) + Vercel (web). Dropped Supabase, Railway, Render |

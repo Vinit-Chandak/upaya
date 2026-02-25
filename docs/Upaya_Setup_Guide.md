@@ -34,7 +34,7 @@ This document lists **every external account, API key, service, and local tool**
 | **Node.js** | >= 20.x | `nvm install 20` or [nodejs.org](https://nodejs.org) | Runtime for API, web, and build tools |
 | **pnpm** | 9.x | `corepack enable && corepack prepare pnpm@9.1.0 --activate` | Package manager (the monorepo uses pnpm workspaces) |
 | **Git** | Latest | Pre-installed on most systems | Version control |
-| **PostgreSQL** | >= 15.x | `brew install postgresql@15` (Mac) or [postgresql.org](https://www.postgresql.org/download/) | Local database. Alternatively use Supabase/Railway cloud |
+| **PostgreSQL** | >= 15.x | `brew install postgresql@15` (Mac) or [postgresql.org](https://www.postgresql.org/download/) | Local database for dev. Production runs on Azure Ubuntu VM |
 | **Redis** | >= 7.x | `brew install redis` (Mac) or [redis.io](https://redis.io/download/) | Caching and job queues. **(Can Defer)** — API works without it |
 
 **Optional (for mobile development):**
@@ -89,21 +89,26 @@ DATABASE_URL=postgresql://YOUR_USER@localhost:5432/upaya
 DATABASE_SSL=false
 ```
 
-### Option B: Supabase (Free Hosted)
+### Option B: Azure Ubuntu VM (Production)
 
-1. Go to [supabase.com](https://supabase.com) and create a new project
-2. Project Settings → Database → Connection string → Copy the URI
-3. Set in `packages/api/.env`:
+1. Create an Azure VM (B1ms, Ubuntu 22.04 LTS, India Central region)
+2. SSH into the VM and install PostgreSQL:
+   ```bash
+   sudo apt update && sudo apt install -y postgresql postgresql-contrib
+   sudo -u postgres createuser --superuser upaya
+   sudo -u postgres createdb upaya
+   sudo -u postgres psql -c "ALTER USER upaya PASSWORD 'your-secure-password';"
    ```
-   DATABASE_URL=postgresql://postgres:[YOUR-PASSWORD]@db.[YOUR-REF].supabase.co:5432/postgres
-   DATABASE_SSL=true
+3. Configure PostgreSQL to accept connections from localhost only (default — secure)
+4. Set in `packages/api/.env`:
    ```
-
-### Option C: Railway
-
-1. Go to [railway.app](https://railway.app) and create a new PostgreSQL service
-2. Copy the `DATABASE_URL` from the service variables
-3. Paste into `packages/api/.env`
+   DATABASE_URL=postgresql://upaya:your-secure-password@localhost:5432/upaya
+   DATABASE_SSL=false
+   ```
+5. For remote access during development, use SSH tunnel:
+   ```bash
+   ssh -L 5432:localhost:5432 azureuser@your-vm-ip
+   ```
 
 ### Run Migrations
 
@@ -282,17 +287,18 @@ redis-server          # start server
 redis-cli ping        # should return PONG
 ```
 
-### Cloud (Upstash — Free Tier)
+### Production (Azure VM)
 
-1. Go to [upstash.com](https://upstash.com/)
-2. Create a Redis database
-3. Copy the connection URL
+Redis is installed alongside PostgreSQL and Express on the same Azure VM:
+
+```bash
+sudo apt install -y redis-server
+sudo systemctl enable redis-server
+```
 
 **Env var to set:**
 ```
 REDIS_URL=redis://localhost:6379
-# or for Upstash:
-REDIS_URL=rediss://default:xxxx@xxx-xxx.upstash.io:6379
 ```
 
 ---
@@ -338,15 +344,65 @@ For iOS builds and TestFlight/App Store, you need an Apple Developer account ($9
 
 ---
 
-## 11. Vercel (Web Hosting)
+## 11. Hosting Architecture
 
-**(Can Defer)** — For deploying the Next.js web app.
+### Web: Vercel (Free Tier)
 
 1. Go to [vercel.com](https://vercel.com/) and connect your GitHub
 2. Import the `upaya` repo
 3. Set Root Directory to `apps/web`
 4. Add environment variables (API URL, Firebase client keys)
 5. Deploy
+
+### API + DB + Redis: Azure Ubuntu VM
+
+Production architecture runs everything on a single Azure VM:
+
+```
+Azure VM (B1ms — 1 vCPU, 2GB RAM, India Central ~₹1.2K/month)
+├── Nginx          (reverse proxy + SSL via Let's Encrypt)
+├── Express API    (PM2 process manager, port 3001)
+├── PostgreSQL 16  (localhost:5432)
+├── Redis 7        (localhost:6379, when needed)
+└── Swiss Ephemeris (native C compilation via build-essential)
+```
+
+**VM Setup:**
+```bash
+# Install everything
+sudo apt update && sudo apt install -y nodejs npm postgresql redis-server nginx certbot python3-certbot-nginx build-essential
+
+# Install pnpm and PM2
+npm install -g pnpm pm2
+
+# Clone and build
+git clone https://github.com/Vinit-Chandak/upaya.git
+cd upaya && pnpm install
+pnpm --filter @upaya/shared build
+pnpm --filter @upaya/api build
+
+# Run with PM2
+pm2 start packages/api/dist/index.js --name upaya-api
+pm2 save && pm2 startup
+
+# Configure Nginx reverse proxy
+# api.upaya.app → localhost:3001
+# SSL via: sudo certbot --nginx -d api.upaya.app
+```
+
+**Firewall:**
+```bash
+sudo ufw allow 22    # SSH
+sudo ufw allow 80    # HTTP (redirects to HTTPS)
+sudo ufw allow 443   # HTTPS
+sudo ufw enable
+```
+
+**Automated PostgreSQL backups:**
+```bash
+# Cron job: daily pg_dump to Azure Blob Storage or local backup
+0 3 * * * pg_dump upaya | gzip > /backups/upaya_$(date +\%Y\%m\%d).sql.gz
+```
 
 ---
 
@@ -355,8 +411,8 @@ For iOS builds and TestFlight/App Store, you need an Apple Developer account ($9
 **(Can Defer)** — Needed before public launch.
 
 1. Register domain: `upaya.app` or `getupaya.com` or similar
-2. Point DNS to Vercel (web) and Railway/Render (API)
-3. Configure SSL (automatic with Vercel and Railway)
+2. Point DNS: `upaya.app` → Vercel, `api.upaya.app` → Azure VM public IP
+3. Configure SSL: automatic with Vercel (web), Certbot/Let's Encrypt on Azure VM (API)
 
 ---
 
@@ -379,7 +435,7 @@ For iOS builds and TestFlight/App Store, you need an Apple Developer account ($9
 | `RAZORPAY_KEY_ID` | Can Defer | Razorpay Dashboard | Test/Live key ID |
 | `RAZORPAY_KEY_SECRET` | Can Defer | Razorpay Dashboard | Key secret |
 | `RAZORPAY_WEBHOOK_SECRET` | Can Defer | Razorpay Dashboard | Webhook secret |
-| `REDIS_URL` | Can Defer | Local or Upstash | Redis connection URL |
+| `REDIS_URL` | Can Defer | Local (dev) or Azure VM (prod) | Redis connection URL |
 | `NODE_ENV` | Yes | — | `development` / `production` |
 | `PORT` | Yes | — | API server port (default: 3001) |
 | `CORS_ORIGINS` | Yes | — | Comma-separated allowed origins |
@@ -434,10 +490,11 @@ node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 - [ ] Razorpay live account KYC complete
 - [ ] Razorpay live keys set
 - [ ] Domain registered and DNS configured
-- [ ] Web app deployed on Vercel
-- [ ] API deployed on Railway/Render
-- [ ] PostgreSQL on Supabase/Railway (not local)
-- [ ] Redis on Upstash (not local)
+- [ ] Web app deployed on Vercel (free tier)
+- [ ] Azure Ubuntu VM provisioned (B1ms, India Central)
+- [ ] API deployed on Azure VM (PM2 + Nginx)
+- [ ] PostgreSQL running on Azure VM with daily backups
+- [ ] Redis running on Azure VM
 - [ ] Object storage bucket created (Cloudflare R2)
 - [ ] Firebase production project (separate from dev)
 - [ ] All env vars set in production
