@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { query, queryOne } from '../db/connection';
 import { llmService } from '../services/llm';
+import { buildChatSystemPrompt } from '../services/llm/prompts';
 import { optionalAuth, type AuthenticatedRequest } from '../middleware/auth';
 import { AppError } from '../middleware/error';
 import type { ChatSession, ChatMessage } from '@upaya/shared';
@@ -98,7 +99,7 @@ chatRouter.post(
           role: m.role as 'user' | 'assistant',
           content: m.content,
         })),
-        systemPrompt: '',
+        systemPrompt: buildChatSystemPrompt(session.language as 'hi' | 'en'),
         language: session.language as 'hi' | 'en',
       });
 

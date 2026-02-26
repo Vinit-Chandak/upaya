@@ -1,25 +1,27 @@
-import OpenAI from 'openai';
+import { AzureOpenAI } from 'openai';
 import { config } from '../../config';
 import type { LLMProvider, DiagnosisInput, DiagnosisOutput, ChatInput, ChatOutput } from './types';
 import { buildDiagnosisPrompt, parseDiagnosisResponse } from './prompts';
 
-export class OpenAIProvider implements LLMProvider {
-  readonly name = 'openai';
-  private client: OpenAI;
-  private model: string;
+export class AzureOpenAIProvider implements LLMProvider {
+  readonly name = 'azure_openai';
+  private client: AzureOpenAI;
+  private deploymentName: string;
 
   constructor() {
-    this.client = new OpenAI({
-      apiKey: config.llm.openai.apiKey,
+    this.client = new AzureOpenAI({
+      endpoint: config.llm.azureOpenai.endpoint,
+      apiKey: config.llm.azureOpenai.apiKey,
+      apiVersion: config.llm.azureOpenai.apiVersion,
     });
-    this.model = config.llm.openai.model;
+    this.deploymentName = config.llm.azureOpenai.deploymentName;
   }
 
   async generateDiagnosis(input: DiagnosisInput): Promise<DiagnosisOutput> {
     const prompt = buildDiagnosisPrompt(input);
 
     const response = await this.client.chat.completions.create({
-      model: this.model,
+      model: this.deploymentName,
       max_tokens: 4096,
       messages: [
         { role: 'system', content: prompt.system },
@@ -33,7 +35,7 @@ export class OpenAIProvider implements LLMProvider {
 
   async generateChatResponse(input: ChatInput): Promise<ChatOutput> {
     const response = await this.client.chat.completions.create({
-      model: this.model,
+      model: this.deploymentName,
       max_tokens: 1024,
       messages: [
         { role: 'system', content: input.systemPrompt },

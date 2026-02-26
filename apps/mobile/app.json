@@ -25,6 +25,9 @@
     "plugins": ["expo-router", "expo-font"],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "apiUrl": "http://localhost:3001"
     }
   }
 }

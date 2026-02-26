@@ -11,8 +11,9 @@ import {
   Easing,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { colors } from '@upaya/shared';
+import { colors, PLANET_NAMES, type PlanetPosition } from '@upaya/shared';
 import { fp, wp, hp } from '../theme';
+import { getKundli, generateDiagnosis } from '../services/api';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -76,12 +77,20 @@ function generateStars(count: number) {
 export default function KundliAnimationScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{
+    kundliId?: string;
+    sessionId?: string;
+    problemType?: string;
+    qualifyingAnswer?: string;
     dob?: string;
     tob?: string;
     place?: string;
     lang?: string;
   }>();
 
+  const kundliId = params.kundliId || '';
+  const sessionIdParam = params.sessionId || '';
+  const problemType = params.problemType || 'something_else';
+  const qualifyingAnswer = params.qualifyingAnswer || '';
   const dob = params.dob || '';
   const tob = params.tob || '';
   const place = params.place || '';
@@ -95,6 +104,12 @@ export default function KundliAnimationScreen() {
   const [revealedCount, setRevealedCount] = useState(0);
   const [doshaChecks, setDoshaChecks] = useState<DoshaCheckItem[]>([]);
   const [discoveryMessages, setDiscoveryMessages] = useState<string[]>([]);
+  const [diagnosisId, setDiagnosisId] = useState<string | null>(null);
+  const [diagnosisError, setDiagnosisError] = useState(false);
+
+  // Refs for real kundli data
+  const realPlanetsRef = useRef<PlanetPosition[]>([]);
+  const diagnosisStartedRef = useRef(false);
 
   const wheelRotation = useRef(new Animated.Value(0)).current;
   const starAnims = useRef(
@@ -127,6 +142,32 @@ export default function KundliAnimationScreen() {
           ],
     [lang]
   );
+
+  // Fetch real kundli data and build planet list from it
+  useEffect(() => {
+    if (!kundliId) return;
+    (async () => {
+      try {
+        const { kundli } = await getKundli(kundliId);
+        const planetaryData = kundli.planetary_data ?? kundli.planetaryData;
+        if (planetaryData?.planetaryPositions) {
+          realPlanetsRef.current = planetaryData.planetaryPositions;
+          // Update the planet list with real house data
+          const updated: PlanetData[] = planetaryData.planetaryPositions.map(
+            (pp: PlanetPosition) => ({
+              symbol: PLANET_NAMES[pp.planet]?.symbol || '?',
+              name: PLANET_NAMES[pp.planet]?.en || pp.planet,
+              house: pp.house,
+              revealed: false,
+            }),
+          );
+          setPlanets(updated);
+        }
+      } catch (err) {
+        console.warn('[KundliAnim] Failed to fetch kundli, using defaults:', err);
+      }
+    })();
+  }, [kundliId]);
 
   // Continuous wheel rotation
   useEffect(() => {
@@ -182,42 +223,64 @@ export default function KundliAnimationScreen() {
     return () => clearInterval(interval);
   }, [phase]);
 
-  // Phase 2: Scanning planets (25-60%)
+  // Phase 2: Scanning planets (25-60%) — uses real planet data when available
   useEffect(() => {
     if (phase !== 2) return;
 
     let currentPlanet = 0;
     const planetInterval = setInterval(() => {
-      if (currentPlanet >= PLANETS.length) {
-        clearInterval(planetInterval);
-        setTimeout(() => setPhase(3), 500);
-        return;
-      }
+      setPlanets((currentPlanets) => {
+        const total = currentPlanets.length;
+        if (currentPlanet >= total) {
+          clearInterval(planetInterval);
+          setTimeout(() => setPhase(3), 500);
+          return currentPlanets;
+        }
 
-      const idx = currentPlanet;
-      setPlanets((prev) =>
-        prev.map((p, i) => (i === idx ? { ...p, revealed: true } : p))
-      );
-      setRevealedCount((c) => c + 1);
+        const idx = currentPlanet;
+        const planet = currentPlanets[idx];
+        const msg = `${planet.symbol} ${planet.name} → ${planet.house}th house`;
+        setDiscoveryMessages((prev) => [...prev.slice(-3), msg]);
+        setRevealedCount(idx + 1);
+        setProgress(25 + Math.round(((idx + 1) / total) * 35));
+        currentPlanet++;
 
-      const planet = PLANETS[idx];
-      const msg = `${planet.symbol} ${planet.name} → ${planet.house}th house`;
-      setDiscoveryMessages((prev) => [...prev.slice(-3), msg]);
-
-      setProgress(25 + Math.round(((idx + 1) / PLANETS.length) * 35));
-      currentPlanet++;
+        return currentPlanets.map((p, i) =>
+          i === idx ? { ...p, revealed: true } : p,
+        );
+      });
     }, 400);
 
     return () => clearInterval(planetInterval);
   }, [phase]);
 
-  // Phase 3: Analyzing doshas (60-90%)
+  // Phase 3: Analyzing doshas (60-90%) + trigger diagnosis API in parallel
   useEffect(() => {
     if (phase !== 3) return;
 
     setDoshaChecks(
       doshaCheckLabels.map((d) => ({ ...d, status: 'pending' as const }))
     );
+
+    // Start diagnosis generation in background (runs while animation plays)
+    if (kundliId && !diagnosisStartedRef.current) {
+      diagnosisStartedRef.current = true;
+      generateDiagnosis({
+        kundliId,
+        chatSessionId: sessionIdParam || undefined,
+        problemType,
+        emotionalContext: qualifyingAnswer,
+        qualifyingAnswer,
+        language: lang,
+      })
+        .then((res) => {
+          setDiagnosisId(res.diagnosis.id);
+        })
+        .catch((err) => {
+          console.error('[KundliAnim] Diagnosis generation failed:', err);
+          setDiagnosisError(true);
+        });
+    }
 
     let currentCheck = 0;
     const checkInterval = setInterval(() => {
@@ -246,7 +309,7 @@ export default function KundliAnimationScreen() {
     }, 500);
 
     return () => clearInterval(checkInterval);
-  }, [phase, doshaCheckLabels]);
+  }, [phase, doshaCheckLabels, kundliId, sessionIdParam, problemType, qualifyingAnswer, lang]);
 
   // Phase 4: Complete (100%)
   useEffect(() => {
@@ -256,8 +319,17 @@ export default function KundliAnimationScreen() {
   }, [phase]);
 
   const handleViewDiagnosis = useCallback(() => {
-    router.push('/home');
-  }, [router]);
+    if (diagnosisId) {
+      router.push({
+        pathname: '/diagnosis',
+        params: { id: diagnosisId, lang },
+      });
+    } else if (diagnosisError) {
+      // If diagnosis failed, go back to home
+      router.push('/home');
+    }
+    // If diagnosis is still loading, button is disabled (see below)
+  }, [router, diagnosisId, diagnosisError, lang]);
 
   // Phase titles
   const phaseTitle = (() => {
@@ -285,8 +357,8 @@ export default function KundliAnimationScreen() {
         return `Computing planetary positions for ${dob}, ${tob || 'approximate'}, ${place}...`;
       case 2:
         return lang === 'hi'
-          ? `${revealedCount}/${PLANETS.length} ग्रह scan हुए`
-          : `${revealedCount}/${PLANETS.length} planets scanned`;
+          ? `${revealedCount}/${planets.length} ग्रह scan हुए`
+          : `${revealedCount}/${planets.length} planets scanned`;
       case 3:
         return lang === 'hi'
           ? 'सभी दोषों की जाँच हो रही है...'
@@ -453,17 +525,33 @@ export default function KundliAnimationScreen() {
             <Text style={s.completeIcon}>✨</Text>
             <Text style={s.completeTitle}>Analysis Complete</Text>
             <Text style={s.completeSub}>
-              {lang === 'hi'
-                ? 'आपकी कुंडली analysis तैयार है'
-                : 'Your kundli analysis is ready'}
+              {!diagnosisId && !diagnosisError
+                ? lang === 'hi'
+                  ? 'Diagnosis तैयार हो रही है...'
+                  : 'Preparing your diagnosis...'
+                : diagnosisError
+                  ? lang === 'hi'
+                    ? 'Diagnosis में error आया'
+                    : 'Error generating diagnosis'
+                  : lang === 'hi'
+                    ? 'आपकी कुंडली analysis तैयार है'
+                    : 'Your kundli analysis is ready'}
             </Text>
             <TouchableOpacity
-              style={s.viewDiagnosisButton}
+              style={[
+                s.viewDiagnosisButton,
+                !diagnosisId && !diagnosisError && { opacity: 0.5 },
+              ]}
               onPress={handleViewDiagnosis}
               activeOpacity={0.8}
+              disabled={!diagnosisId && !diagnosisError}
             >
               <Text style={s.viewDiagnosisText}>
-                {lang === 'hi' ? 'अपनी Diagnosis देखें' : 'View Your Diagnosis'}
+                {diagnosisError
+                  ? lang === 'hi' ? 'वापस जाएं' : 'Go Back'
+                  : !diagnosisId
+                    ? lang === 'hi' ? 'कृपया प्रतीक्षा करें...' : 'Please wait...'
+                    : lang === 'hi' ? 'अपनी Diagnosis देखें' : 'View Your Diagnosis'}
               </Text>
             </TouchableOpacity>
           </View>

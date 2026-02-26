@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { config } from '../../config';
 import type { LLMProvider, DiagnosisInput, DiagnosisOutput, ChatInput, ChatOutput } from './types';
-import { buildDiagnosisPrompt, buildChatSystemPrompt, parseDiagnosisResponse } from './prompts';
+import { buildDiagnosisPrompt, parseDiagnosisResponse } from './prompts';
 
 export class GeminiProvider implements LLMProvider {
   readonly name = 'gemini';
@@ -27,10 +27,9 @@ export class GeminiProvider implements LLMProvider {
   }
 
   async generateChatResponse(input: ChatInput): Promise<ChatOutput> {
-    const systemPrompt = buildChatSystemPrompt(input.language);
     const model = this.genAI.getGenerativeModel({
       model: this.model,
-      systemInstruction: systemPrompt,
+      systemInstruction: input.systemPrompt,
     });
 
     const chat = model.startChat({
