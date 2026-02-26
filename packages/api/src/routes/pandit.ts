@@ -13,7 +13,7 @@ export const panditRouter = Router();
  */
 panditRouter.get('/', async (req, res, next) => {
   try {
-    const { speciality, available } = req.query;
+    const { speciality } = req.query;
 
     let sql = `SELECT * FROM pandits WHERE status = 'active'`;
     const params: unknown[] = [];

@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { query, queryOne } from '../db/connection';
 import { requireAuth, type AuthenticatedRequest } from '../middleware/auth';
 import { AppError } from '../middleware/error';
-import type { ProductOrder, ProductOrderWithItems } from '@upaya/shared';
+import type { ProductOrder } from '@upaya/shared';
 
 export const productOrderRouter = Router();
 
