@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { query, queryOne } from '../db/connection';
-import { requireAuth, optionalAuth, type AuthenticatedRequest } from '../middleware/auth';
+import { requireAuth, type AuthenticatedRequest } from '../middleware/auth';
 import { AppError } from '../middleware/error';
 
 export const protocolRouter = Router();

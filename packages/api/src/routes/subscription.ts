@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { query, queryOne } from '../db/connection';
+import { queryOne } from '../db/connection';
 import { requireAuth, type AuthenticatedRequest } from '../middleware/auth';
 import { AppError } from '../middleware/error';
 import { SUBSCRIPTION_PLANS } from '@upaya/shared';

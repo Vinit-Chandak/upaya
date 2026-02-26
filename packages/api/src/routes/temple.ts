@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { z } from 'zod';
 import { query, queryOne } from '../db/connection';
 import { AppError } from '../middleware/error';
 import type { Temple } from '@upaya/shared';

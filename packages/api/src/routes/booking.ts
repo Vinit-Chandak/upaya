@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { query, queryOne } from '../db/connection';
 import { requireAuth, type AuthenticatedRequest } from '../middleware/auth';
 import { AppError } from '../middleware/error';
-import type { BookingWithDetails, BookingStatus } from '@upaya/shared';
+import type { BookingWithDetails } from '@upaya/shared';
 
 export const bookingRouter = Router();
 
@@ -196,8 +196,9 @@ bookingRouter.get('/:id', requireAuth, async (req: AuthenticatedRequest, res, ne
     );
 
     // Get delivery address
-    const address = booking.delivery_address_id
-      ? await queryOne('SELECT * FROM addresses WHERE id = $1', [booking.delivery_address_id])
+    const bookingRecord = booking as BookingWithDetails & { delivery_address_id?: string };
+    const address = bookingRecord.delivery_address_id
+      ? await queryOne('SELECT * FROM addresses WHERE id = $1', [bookingRecord.delivery_address_id])
       : null;
 
     res.json({ booking, statusLog, video, certificate, shipping, address });

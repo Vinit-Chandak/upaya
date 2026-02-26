@@ -77,7 +77,7 @@ export const paymentService = {
       orderId: receiptId,
       razorpayOrderId: order.id,
       amount: order.amount,
-      currency: order.currency,
+      currency: order.currency as 'INR',
       keyId: config.razorpay.keyId,
     };
   },

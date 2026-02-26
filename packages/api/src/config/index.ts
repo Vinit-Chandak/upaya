@@ -23,11 +23,13 @@ export const config = {
     defaultProvider: (process.env.LLM_DEFAULT_PROVIDER || 'anthropic') as
       | 'anthropic'
       | 'openai'
-      | 'gemini',
+      | 'gemini'
+      | 'azure_openai',
     fallbackProvider: (process.env.LLM_FALLBACK_PROVIDER || 'openai') as
       | 'anthropic'
       | 'openai'
-      | 'gemini',
+      | 'gemini'
+      | 'azure_openai',
     anthropic: {
       apiKey: process.env.ANTHROPIC_API_KEY || '',
       model: 'claude-sonnet-4-20250514',
@@ -39,6 +41,12 @@ export const config = {
     gemini: {
       apiKey: process.env.GOOGLE_GEMINI_API_KEY || '',
       model: 'gemini-2.0-flash',
+    },
+    azureOpenai: {
+      endpoint: process.env.AZURE_OPENAI_ENDPOINT || '',
+      apiKey: process.env.AZURE_OPENAI_API_KEY || '',
+      deploymentName: process.env.AZURE_OPENAI_DEPLOYMENT_NAME || '',
+      apiVersion: process.env.AZURE_OPENAI_API_VERSION || '2024-12-01-preview',
     },
   },
 

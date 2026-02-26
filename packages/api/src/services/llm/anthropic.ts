@@ -1,7 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { config } from '../../config';
 import type { LLMProvider, DiagnosisInput, DiagnosisOutput, ChatInput, ChatOutput } from './types';
-import { buildDiagnosisPrompt, buildChatSystemPrompt, parseDiagnosisResponse } from './prompts';
+import { buildDiagnosisPrompt, parseDiagnosisResponse } from './prompts';
 
 export class AnthropicProvider implements LLMProvider {
   readonly name = 'anthropic';
@@ -32,12 +32,10 @@ export class AnthropicProvider implements LLMProvider {
   }
 
   async generateChatResponse(input: ChatInput): Promise<ChatOutput> {
-    const systemPrompt = buildChatSystemPrompt(input.language);
-
     const response = await this.client.messages.create({
       model: this.model,
       max_tokens: 1024,
-      system: systemPrompt,
+      system: input.systemPrompt,
       messages: input.messages.map((m) => ({
         role: m.role,
         content: m.content,
