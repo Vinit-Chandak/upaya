@@ -93,14 +93,17 @@ chatRouter.post(
         [session.id],
       );
 
+      // Detect language from the user's actual message (Devanagari = hi, else en)
+      const detectedLanguage: 'hi' | 'en' = /[\u0900-\u097F]/.test(body.content) ? 'hi' : 'en';
+
       // Generate AI response
       const aiResponse = await llmService.generateChatResponse({
         messages: history.map((m) => ({
           role: m.role as 'user' | 'assistant',
           content: m.content,
         })),
-        systemPrompt: buildChatSystemPrompt(session.language as 'hi' | 'en'),
-        language: session.language as 'hi' | 'en',
+        systemPrompt: buildChatSystemPrompt(detectedLanguage),
+        language: detectedLanguage,
       });
 
       // Save AI response

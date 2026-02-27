@@ -2,7 +2,7 @@
 
 import { Suspense, useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { PROBLEM_TYPES, type ProblemType, type ChatMessageType } from '@upaya/shared';
+import { PROBLEM_TYPES, getTranslations, interpolate, detectLanguage, type TranslationKeys, type ProblemType, type ChatMessageType } from '@upaya/shared';
 import BirthDetailsCard from './BirthDetailsCard';
 import styles from './page.module.css';
 
@@ -24,149 +24,50 @@ type ChatPhase =
   | 'birth_details'   // Birth details form shown
   | 'generating';     // Kundli generation started
 
-// ---- Qualifying question chip sets per problem type ----
+// ---- Build qualifying chips from i18n ----
 
-const QUALIFYING_CHIPS_HI: Record<string, { label: string; value: string }[]> = {
-  marriage_delay: [
-    { label: '< 1 साल', value: '< 1 साल' },
-    { label: '1-3 साल', value: '1-3 साल' },
-    { label: '3+ साल', value: '3+ साल' },
-  ],
-  career_stuck: [
-    { label: '< 1 साल', value: '< 1 साल' },
-    { label: '1-3 साल', value: '1-3 साल' },
-    { label: '3+ साल', value: '3+ साल' },
-  ],
-  money_problems: [
-    { label: 'अचानक', value: 'अचानक' },
-    { label: 'धीरे-धीरे', value: 'धीरे-धीरे' },
-    { label: 'हमेशा से', value: 'हमेशा से' },
-  ],
-  health_issues: [
-    { label: 'हाल ही में', value: 'हाल ही में' },
-    { label: 'कुछ महीने', value: 'कुछ महीने' },
-    { label: 'काफ़ी समय से', value: 'काफ़ी समय से' },
-  ],
-  legal_matters: [
-    { label: 'संपत्ति', value: 'संपत्ति' },
-    { label: 'पारिवारिक', value: 'पारिवारिक' },
-    { label: 'व्यापार', value: 'व्यापार' },
-    { label: 'अन्य', value: 'अन्य' },
-  ],
-  family_conflict: [
-    { label: 'हाल ही में', value: 'हाल ही में' },
-    { label: 'कुछ महीने', value: 'कुछ महीने' },
-    { label: 'सालों से', value: 'सालों से' },
-  ],
-};
-
-const QUALIFYING_CHIPS_EN: Record<string, { label: string; value: string }[]> = {
-  marriage_delay: [
-    { label: '< 1 year', value: '< 1 year' },
-    { label: '1-3 years', value: '1-3 years' },
-    { label: '3+ years', value: '3+ years' },
-  ],
-  career_stuck: [
-    { label: '< 1 year', value: '< 1 year' },
-    { label: '1-3 years', value: '1-3 years' },
-    { label: '3+ years', value: '3+ years' },
-  ],
-  money_problems: [
-    { label: 'Sudden', value: 'Suddenly' },
-    { label: 'Gradually', value: 'Gradually' },
-    { label: 'Always', value: 'Always been' },
-  ],
-  health_issues: [
-    { label: 'Recently', value: 'Recently' },
-    { label: 'Few months', value: 'Few months' },
-    { label: 'Long time', value: 'Long time' },
-  ],
-  legal_matters: [
-    { label: 'Property', value: 'Property' },
-    { label: 'Family', value: 'Family' },
-    { label: 'Business', value: 'Business' },
-    { label: 'Other', value: 'Other' },
-  ],
-  family_conflict: [
-    { label: 'Recently', value: 'Recently' },
-    { label: 'Few months', value: 'Few months' },
-    { label: 'Years', value: 'Years' },
-  ],
-};
-
-// ---- Qualifying questions per language and problem type ----
-
-const QUALIFYING_QUESTIONS: Record<string, Record<string, string>> = {
-  hi: {
-    marriage_delay:
-      'शादी में देरी — मैं समझ सकता हूँ यह कितना मुश्किल है, आपके लिए भी और family के लिए भी।\n\nमुझे थोड़ा और बताएं — कब से यह चल रहा है?',
-    career_stuck:
-      'करियर में रुकावट — मैं समझता हूँ कि effort लगाने के बाद भी progress न हो तो कितना frustrating होता है।\n\nकब से same position में हैं?',
-    money_problems:
-      'पैसों की problem — मैं समझता हूँ यह कितना stressful होता है।\n\nयह sudden हुआ या धीरे-धीरे?',
-    health_issues:
-      'स्वास्थ्य की चिंता — मैं समझता हूँ यह कितना परेशान करने वाला है।\n\nकब से यह health issue है?',
-    legal_matters:
-      'कानूनी मामला — मैं समझता हूँ यह कितना तनावपूर्ण होता है।\n\nकिस type का matter है?',
-    family_conflict:
-      'परिवार में तनाव — मैं समझता हूँ यह कितना दिल दुखाने वाला है।\n\nकब से यह tension है?',
-    get_kundli: 'ज़रूर! आपकी कुंडली बनाने के लिए मुझे birth details चाहिए।',
-    something_else: 'बिल्कुल, मैं सुन रहा हूँ। थोड़ा और बताएं — क्या problem है?',
-  },
-  en: {
-    marriage_delay:
-      "Marriage delay — I understand how difficult this must be, for you and your family.\n\nTell me a bit more — how long has this been going on?",
-    career_stuck:
-      "Career stuck — I understand how frustrating it is when progress doesn't come despite your efforts.\n\nHow long have you been in the same position?",
-    money_problems:
-      "Money problems — I understand how stressful this can be.\n\nDid this happen suddenly or gradually?",
-    health_issues:
-      "Health concerns — I understand how worrying this must be.\n\nHow long have you been dealing with this health issue?",
-    legal_matters:
-      "Legal matters — I understand how stressful this can be.\n\nWhat type of matter is it?",
-    family_conflict:
-      "Family tension — I understand how heartbreaking this can be.\n\nHow long has this tension been going on?",
-    get_kundli: 'Of course! I need your birth details to generate your kundli.',
-    something_else: "Of course, I'm listening. Tell me more — what's the problem?",
-  },
-};
-
-// ---- Curiosity bridge templates ----
-
-const CURIOSITY_BRIDGES: Record<string, Record<string, string>> = {
-  hi: {
-    marriage_delay:
-      '{{answer}} से रिश्ते आके टूटना — यह एक specific pattern है जो बहुत cases में दिखता है।\n\n💡 अक्सर यह तब होता है जब कोई planetary combination directly 7th house (marriage house) को affect कर रहा हो। यह permanent नहीं होता — सही remedies से इसके effects significantly कम होते हैं।\n\nमैं आपकी exact कुंडली से confirm कर सकता हूँ कि कौनसा ग्रह यह कर रहा है और क्या remedy सबसे effective होगी।',
-    career_stuck:
-      '{{answer}} से करियर में रुकावट — despite effort — यह अक्सर तब होता है जब 10th house (career house) या उसके lord पे कोई ग्रह pressure डाल रहा हो। यह temporary phase होता है और specific remedies से breakthrough possible है।\n\nमैं आपकी exact कुंडली से confirm कर सकता हूँ कि कौनसा ग्रह यह कर रहा है और क्या remedy सबसे effective होगी।',
-    money_problems:
-      'Financial instability का pattern अक्सर 2nd house (wealth) या 11th house (income) के planets से जुड़ा होता है। कुंडली से पता चलता है कि कौनसा ग्रह pressure डाल रहा है और कैसे fix करना है।\n\nमैं आपकी exact कुंडली से confirm कर सकता हूँ।',
-    health_issues:
-      'Health issues frequently connect to 6th house afflictions in the chart. Understanding which planet is causing this helps identify the most effective remedies — both spiritual and practical.\n\nमैं आपकी exact कुंडली से confirm कर सकता हूँ।',
-    legal_matters:
-      'कानूनी विवाद अक्सर 6th house (litigation) या 8th house में planetary combinations से linked होते हैं। कुंडली analysis से पता चलता है कि कब favorable period आएगा और कौनसी remedies case के outcome को positively influence कर सकती हैं।',
-    family_conflict:
-      'Family में ongoing tension अक्सर 4th house (domestic peace) पे ग्रह influence से होती है। Specific remedies से घर का माहौल significantly improve हो सकता है।\n\nमैं आपकी exact कुंडली से confirm कर सकता हूँ।',
-    something_else:
-      'मैं समझता हूँ। आपकी कुंडली से बहुत कुछ पता चल सकता है — कौनसा ग्रह यह situation बना रहा है और क्या remedy सबसे effective होगी।',
-  },
-  en: {
-    marriage_delay:
-      "Proposals falling through for {{answer}} — this is a specific pattern seen in many cases.\n\n💡 This often happens when a planetary combination is directly affecting the 7th house (marriage house). It's not permanent — the right remedies can significantly reduce its effects.\n\nI can confirm from your exact kundli which planet is causing this and what remedy would be most effective.",
-    career_stuck:
-      "Career stuck for {{answer}} — despite effort — this often happens when a planet is putting pressure on the 10th house (career house) or its lord. This is a temporary phase and a breakthrough is possible with specific remedies.\n\nI can confirm from your exact kundli which planet is causing this.",
-    money_problems:
-      'Financial instability patterns are often connected to planets in the 2nd house (wealth) or 11th house (income). Your kundli can reveal which planet is creating pressure and how to address it.',
-    health_issues:
-      'Health issues frequently connect to 6th house afflictions in the chart. Understanding which planet is causing this helps identify the most effective remedies — both spiritual and practical.',
-    legal_matters:
-      'Legal disputes are often linked to planetary combinations in the 6th house (litigation) or 8th house. Kundli analysis can reveal when favorable periods will come and which remedies can positively influence the outcome.',
-    family_conflict:
-      'Ongoing family tension often stems from planetary influence on the 4th house (domestic peace). Specific remedies can significantly improve the household environment.',
-    something_else:
-      "I understand. Your kundli can reveal a lot — which planet is creating this situation and what remedy would be most effective.",
-  },
-};
+function getChips(
+  problemType: string,
+  t: TranslationKeys,
+): { label: string; value: string }[] | undefined {
+  const { durationChips, moneyChips, healthChips, legalChips, familyChips } = t.aiMessages;
+  switch (problemType) {
+    case 'marriage_delay':
+    case 'career_stuck':
+      return [
+        { label: durationChips.lessThanYear, value: durationChips.lessThanYear },
+        { label: durationChips.oneToThreeYears, value: durationChips.oneToThreeYears },
+        { label: durationChips.moreThanThreeYears, value: durationChips.moreThanThreeYears },
+      ];
+    case 'money_problems':
+      return [
+        { label: moneyChips.sudden, value: moneyChips.sudden },
+        { label: moneyChips.gradually, value: moneyChips.gradually },
+        { label: moneyChips.always, value: moneyChips.always },
+      ];
+    case 'health_issues':
+      return [
+        { label: healthChips.recent, value: healthChips.recent },
+        { label: healthChips.fewMonths, value: healthChips.fewMonths },
+        { label: healthChips.longTime, value: healthChips.longTime },
+      ];
+    case 'legal_matters':
+      return [
+        { label: legalChips.property, value: legalChips.property },
+        { label: legalChips.family, value: legalChips.family },
+        { label: legalChips.business, value: legalChips.business },
+        { label: legalChips.other, value: legalChips.other },
+      ];
+    case 'family_conflict':
+      return [
+        { label: familyChips.recent, value: familyChips.recent },
+        { label: familyChips.fewMonths, value: familyChips.fewMonths },
+        { label: familyChips.longTime, value: familyChips.longTime },
+      ];
+    default:
+      return undefined;
+  }
+}
 
 // ---- Helpers ----
 
@@ -219,12 +120,15 @@ function ChatPageContent() {
 
     const lang = stored || 'hi';
 
+    const t_lang = getTranslations(lang);
+    const qq = t_lang.aiMessages.qualifyingQuestions;
+
     // For "get_kundli" problem type, skip directly to birth details
     if (problemType === 'get_kundli') {
       const aiMsg: ChatMsg = {
         id: generateId(),
         role: 'assistant',
-        content: QUALIFYING_QUESTIONS[lang].get_kundli,
+        content: qq.get_kundli,
         messageType: 'text',
         showBirthDetailsCta: true,
         createdAt: new Date(),
@@ -249,13 +153,11 @@ function ChatPageContent() {
       };
       setMessages([userMsg]);
 
-      // AI responds with qualifying question
       setIsTyping(true);
       setTimeout(() => {
         setIsTyping(false);
-        const qText = QUALIFYING_QUESTIONS[lang][problemType] || QUALIFYING_QUESTIONS[lang].something_else;
-        const chipSet = lang === 'hi' ? QUALIFYING_CHIPS_HI : QUALIFYING_CHIPS_EN;
-        const chips = chipSet[problemType] || undefined;
+        const qText = (qq[problemType as keyof typeof qq] as string | undefined) || qq.something_else;
+        const chips = getChips(problemType, t_lang);
         const aiMsg: ChatMsg = {
           id: generateId(),
           role: 'assistant',
@@ -271,9 +173,8 @@ function ChatPageContent() {
       setIsTyping(true);
       setTimeout(() => {
         setIsTyping(false);
-        const qText = QUALIFYING_QUESTIONS[lang][problemType] || QUALIFYING_QUESTIONS[lang].something_else;
-        const chipSet = lang === 'hi' ? QUALIFYING_CHIPS_HI : QUALIFYING_CHIPS_EN;
-        const chips = chipSet[problemType] || undefined;
+        const qText = (qq[problemType as keyof typeof qq] as string | undefined) || qq.something_else;
+        const chips = getChips(problemType, t_lang);
         const aiMsg: ChatMsg = {
           id: generateId(),
           role: 'assistant',
@@ -317,16 +218,19 @@ function ChatPageContent() {
     };
     setMessages((prev) => [...prev, userMsg]);
 
+    // Mirror the language the user typed in, not the stored app language
+    const replyLang = detectLanguage(text);
+    const t = getTranslations(replyLang);
+
     if (chatPhase === 'exchange_1') {
       // User answered the qualifying question → send curiosity bridge (Exchange 2)
       setIsTyping(true);
 
       setTimeout(() => {
         setIsTyping(false);
-        const bridgeTemplate =
-          CURIOSITY_BRIDGES[language][problemType] ||
-          CURIOSITY_BRIDGES[language].something_else;
-        const bridgeText = bridgeTemplate.replace('{{answer}}', text);
+        const cb = t.curiosityBridge;
+        const bridgeTemplate = (cb[problemType as keyof typeof cb] as string | undefined) || t.errors.offlineFallback;
+        const bridgeText = interpolate(bridgeTemplate, { duration: text, answer: text });
         const aiMsg: ChatMsg = {
           id: generateId(),
           role: 'assistant',
@@ -339,18 +243,14 @@ function ChatPageContent() {
         setChatPhase('exchange_2');
       }, 1000);
     } else if (chatPhase === 'exchange_2' || chatPhase === 'birth_details') {
-      // After curiosity bridge, any user message is freeform chat
+      // After curiosity bridge, redirect to birth details
       setIsTyping(true);
       setTimeout(() => {
         setIsTyping(false);
-        const followUp =
-          language === 'hi'
-            ? 'मैं समझता हूँ। आपकी कुंडली से और detail पता चलेगी। नीचे birth details दें और हम आगे बढ़ते हैं।'
-            : 'I understand. Your kundli will reveal more details. Please share your birth details below so we can proceed.';
         const aiMsg: ChatMsg = {
           id: generateId(),
           role: 'assistant',
-          content: followUp,
+          content: t.errors.offlineFallback,
           messageType: 'text',
           showBirthDetailsCta: true,
           createdAt: new Date(),
@@ -396,10 +296,7 @@ function ChatPageContent() {
     const confirmMsg: ChatMsg = {
       id: generateId(),
       role: 'user',
-      content:
-        language === 'hi'
-          ? `DOB: ${details.dateOfBirth}\nTime: ${details.timeOfBirth || 'Approximate'}\nPlace: ${details.placeOfBirth}`
-          : `DOB: ${details.dateOfBirth}\nTime: ${details.timeOfBirth || 'Approximate'}\nPlace: ${details.placeOfBirth}`,
+      content: `${details.dateOfBirth} · ${details.timeOfBirth || getTranslations(language).birthDetails.unknownTimeSub} · ${details.placeOfBirth}`,
       messageType: 'text',
       createdAt: new Date(),
     };
@@ -441,7 +338,7 @@ function ChatPageContent() {
           </svg>
         </button>
 
-        <span className={styles.topBarTitle}>Upaya AI</span>
+        <span className={styles.topBarTitle}>{getTranslations(language).chat.aiTitle}</span>
 
         <span className={styles.problemChipBadge}>
           {problemInfo.emoji} {language === 'hi' ? problemInfo.hi : problemInfo.en}
@@ -534,11 +431,9 @@ function ChatPageContent() {
                       <button className={styles.birthDetailsCta} onClick={handleBirthDetailsCta}>
                         <span className={styles.birthDetailsCtaIcon}>📋</span>
                         <span className={styles.birthDetailsCtaContent}>
-                          <span>
-                            {language === 'hi' ? 'अपनी Birth Details दें' : 'Share your Birth Details'}
-                          </span>
+                          <span>{getTranslations(language).chat.birthDetailsCta}</span>
                           <span className={styles.birthDetailsCtaSub}>
-                            {language === 'hi' ? '2 minute में कुंडली तैयार' : 'Kundli ready in 2 minutes'}
+                            {getTranslations(language).chat.birthDetailsSub}
                           </span>
                         </span>
                       </button>
@@ -588,11 +483,7 @@ function ChatPageContent() {
             ref={inputRef}
             type="text"
             className={styles.input}
-            placeholder={
-              language === 'hi'
-                ? 'अपनी बात यहाँ लिखें...'
-                : 'Type here...'
-            }
+            placeholder={getTranslations(language).chat.inputPlaceholder}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}

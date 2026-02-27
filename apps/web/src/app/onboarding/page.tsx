@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { getTranslations } from '@upaya/shared';
 import styles from './page.module.css';
 
 const TRUST_BADGES = [
@@ -192,9 +193,7 @@ export default function OnboardingPage() {
           <div className={styles.screen}>
             <div className={styles.screenContent}>
               <h2 className={styles.screenTitle}>
-                {language === 'hi'
-                  ? 'आपका spiritual problem solver'
-                  : 'Trusted & Proven'}
+                {getTranslations(language).onboarding.screen3.title}
               </h2>
               <div className={styles.badgeGrid}>
                 {TRUST_BADGES.map((badge) => (

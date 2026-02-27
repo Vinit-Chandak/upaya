@@ -18,11 +18,8 @@ export default function SplashScreen() {
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const taglineFade = useRef(new Animated.Value(0)).current;
   const taglineSlide = useRef(new Animated.Value(20)).current;
-  const taglineEnFade = useRef(new Animated.Value(0)).current;
-  const taglineEnSlide = useRef(new Animated.Value(20)).current;
 
   useEffect(() => {
-    // Start animations
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -57,20 +54,6 @@ export default function SplashScreen() {
           useNativeDriver: true,
         }),
       ]),
-      Animated.parallel([
-        Animated.timing(taglineEnFade, {
-          toValue: 0.7,
-          duration: 600,
-          delay: 500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(taglineEnSlide, {
-          toValue: 0,
-          duration: 600,
-          delay: 500,
-          useNativeDriver: true,
-        }),
-      ]),
     ]).start();
 
     // Navigate after 1.5s based on stored state
@@ -92,7 +75,7 @@ export default function SplashScreen() {
     }, 1500);
 
     return () => clearTimeout(timer);
-  }, [router, fadeAnim, pulseAnim, taglineFade, taglineSlide, taglineEnFade, taglineEnSlide]);
+  }, [router, fadeAnim, pulseAnim, taglineFade, taglineSlide]);
 
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
@@ -106,15 +89,6 @@ export default function SplashScreen() {
         style={[
           styles.tagline,
           { opacity: taglineFade, transform: [{ translateY: taglineSlide }] },
-        ]}
-      >
-        आपका spiritual problem solver
-      </Animated.Text>
-
-      <Animated.Text
-        style={[
-          styles.taglineEn,
-          { opacity: taglineEnFade, transform: [{ translateY: taglineEnSlide }] },
         ]}
       >
         Your spiritual problem solver
@@ -166,12 +140,6 @@ const styles = StyleSheet.create({
     fontSize: fp(18),
     color: colors.neutral.cream,
     marginTop: hp(16),
-    textAlign: 'center',
-  },
-  taglineEn: {
-    fontSize: fp(14),
-    color: colors.neutral.cream,
-    marginTop: hp(4),
     textAlign: 'center',
   },
   particles: {

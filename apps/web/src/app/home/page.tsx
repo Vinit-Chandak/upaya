@@ -2,35 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { PROBLEM_TYPES, getTranslations } from '@upaya/shared';
 import TopBar from '@/components/TopBar';
 import BottomTabBar from '@/components/BottomTabBar';
 import styles from './page.module.css';
 
-const PROBLEM_CHIPS = [
-  { key: 'marriage_delay', emoji: '💍', hi: 'शादी में देरी', en: 'Marriage Delay' },
-  { key: 'career_stuck', emoji: '💼', hi: 'करियर में रुकावट', en: 'Career Stuck' },
-  { key: 'money_problems', emoji: '💰', hi: 'पैसे की समस्या', en: 'Money Problems' },
-  { key: 'health_issues', emoji: '🏥', hi: 'स्वास्थ्य समस्या', en: 'Health Issues' },
-  { key: 'legal_matters', emoji: '⚖️', hi: 'कानूनी विवाद', en: 'Legal Matters' },
-  { key: 'family_conflict', emoji: '👨‍👩‍👧‍👦', hi: 'पारिवारिक कलह', en: 'Family Conflict' },
-  { key: 'get_kundli', emoji: '📖', hi: 'कुंडली बनवाएं', en: 'Get My Kundli' },
-  { key: 'something_else', emoji: '🔮', hi: 'कुछ और पूछना है', en: 'Something Else' },
-];
-
-/**
- * Greeting illustration based on time of day
- */
 function getTimeGreeting(language: 'hi' | 'en'): { emoji: string; text: string } {
+  const t = getTranslations(language);
   const hour = new Date().getHours();
-  if (hour >= 5 && hour < 12) {
-    return { emoji: '🌅', text: language === 'hi' ? 'शुभ प्रभात' : 'Good Morning' };
-  } else if (hour >= 12 && hour < 17) {
-    return { emoji: '☀️', text: language === 'hi' ? 'शुभ दोपहर' : 'Good Afternoon' };
-  } else if (hour >= 17 && hour < 21) {
-    return { emoji: '🪔', text: language === 'hi' ? 'शुभ संध्या' : 'Good Evening' };
-  } else {
-    return { emoji: '🌙', text: language === 'hi' ? 'शुभ रात्रि' : 'Good Night' };
-  }
+  if (hour >= 5 && hour < 12) return { emoji: '🌅', text: t.greetings.morning };
+  if (hour >= 12 && hour < 17) return { emoji: '☀️', text: t.greetings.afternoon };
+  if (hour >= 17 && hour < 21) return { emoji: '🪔', text: t.greetings.evening };
+  return { emoji: '🌙', text: t.greetings.night };
 }
 
 export default function HomePage() {
@@ -87,32 +70,21 @@ export default function HomePage() {
 
             {/* Main prompt */}
             <div className={styles.promptSection}>
-              <h1 className={styles.mainPrompt}>
-                {language === 'hi'
-                  ? 'आज आपको क्या परेशान कर रहा है?'
-                  : "Tell me what's worrying you today"}
-              </h1>
-              <p className={styles.mainPromptSub}>
-                {language === 'hi'
-                  ? "Tell me what's worrying you today"
-                  : 'आज आपको क्या परेशान कर रहा है?'}
-              </p>
+              <h1 className={styles.mainPrompt}>{getTranslations(language).home.mainPrompt}</h1>
+              <p className={styles.mainPromptSub}>{getTranslations(language).home.mainPromptSub}</p>
             </div>
 
             {/* Problem chips */}
             <div className={styles.chipGrid}>
-              {PROBLEM_CHIPS.map((chip) => (
+              {Object.entries(PROBLEM_TYPES).map(([key, info]) => (
                 <button
-                  key={chip.key}
+                  key={key}
                   className={styles.chip}
-                  onClick={() => handleChipClick(chip.key)}
+                  onClick={() => handleChipClick(key)}
                 >
-                  <span className={styles.chipEmoji}>{chip.emoji}</span>
+                  <span className={styles.chipEmoji}>{info.emoji}</span>
                   <span className={styles.chipTextPrimary}>
-                    {language === 'hi' ? chip.hi : chip.en}
-                  </span>
-                  <span className={styles.chipTextSecondary}>
-                    {language === 'hi' ? chip.en : chip.hi}
+                    {language === 'hi' ? info.hi : info.en}
                   </span>
                 </button>
               ))}
@@ -126,11 +98,7 @@ export default function HomePage() {
             <input
               type="text"
               className={styles.input}
-              placeholder={
-                language === 'hi'
-                  ? 'अपनी बात यहाँ लिखें... / Type your concern here...'
-                  : 'Type your concern here... / अपनी बात यहाँ लिखें...'
-              }
+              placeholder={getTranslations(language).home.inputPlaceholder}
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -171,66 +139,34 @@ export default function HomePage() {
       <main className={styles.mainContent}>
         <div className={styles.container}>
           {/* Welcome message */}
-          <div className={styles.welcomeSection}>
-            <h1 className={styles.welcomeText}>
-              {language === 'hi'
-                ? `फिर से स्वागत है${userName ? `, ${userName}` : ''} 🙏`
-                : `Welcome back${userName ? `, ${userName}` : ''} 🙏`}
-            </h1>
-          </div>
+          {(() => {
+            const t = getTranslations(language);
+            return (
+              <>
+                <div className={styles.welcomeSection}>
+                  <h1 className={styles.welcomeText}>
+                    {userName
+                      ? t.home.greeting.replace('{{name}}', userName)
+                      : (language === 'hi' ? 'फिर से स्वागत है 🙏' : 'Welcome back 🙏')}
+                  </h1>
+                </div>
 
-          {/* Active Remedy Plan Progress Card (placeholder) */}
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <span className={styles.cardIcon}>📿</span>
-              <h3 className={styles.cardTitle}>
-                {language === 'hi' ? 'आपका चालू उपाय योजना' : 'Your Active Remedy Plan'}
-              </h3>
-            </div>
-            <div className={styles.progressBar}>
-              <div className={styles.progressFill} style={{ width: '35%' }} />
-            </div>
-            <p className={styles.cardMeta}>
-              {language === 'hi' ? '63 में से 8वाँ दिन · 35% पूरा' : 'Day 8 of 63 · 35% complete'}
-            </p>
-          </div>
+                {/* Recent Chats */}
+                <div className={styles.recentSection}>
+                  <h3 className={styles.sectionTitle}>{t.home.returningUser.recent}</h3>
+                  <div className={styles.emptyState}>
+                    <p className={styles.emptyText}>{language === 'hi' ? 'कोई हालिया बातचीत नहीं' : 'No recent chats'}</p>
+                  </div>
+                </div>
 
-          {/* Transit Alert Card (placeholder) */}
-          <div className={styles.alertCard}>
-            <div className={styles.cardHeader}>
-              <span className={styles.cardIcon}>⚡</span>
-              <h3 className={styles.cardTitle}>
-                {language === 'hi' ? 'ग्रह गोचर सूचना' : 'Transit Alert'}
-              </h3>
-            </div>
-            <p className={styles.alertText}>
-              {language === 'hi'
-                ? 'राहु गोचर 12 दिन में — सुरक्षात्मक उपाय उपलब्ध हैं'
-                : 'Rahu transit in 12 days — protective remedies available'}
-            </p>
-          </div>
-
-          {/* Recent Chats */}
-          <div className={styles.recentSection}>
-            <h3 className={styles.sectionTitle}>
-              {language === 'hi' ? 'हाल की बातचीत' : 'Recent conversations'}
-            </h3>
-            <div className={styles.emptyState}>
-              <p className={styles.emptyText}>
-                {language === 'hi' ? 'कोई हालिया बातचीत नहीं' : 'No recent chats'}
-              </p>
-            </div>
-          </div>
-
-          {/* Two CTAs */}
-          <div className={styles.ctaRow}>
-            <button className={styles.ctaSecondary}>
-              {language === 'hi' ? 'पिछली बातचीत जारी रखें' : 'Continue last chat'}
-            </button>
-            <button className={styles.ctaPrimary}>
-              {language === 'hi' ? 'नई समस्या' : 'New Problem'}
-            </button>
-          </div>
+                {/* Two CTAs */}
+                <div className={styles.ctaRow}>
+                  <button className={styles.ctaSecondary}>{t.home.returningUser.continueChat}</button>
+                  <button className={styles.ctaPrimary}>{t.home.returningUser.newProblem}</button>
+                </div>
+              </>
+            );
+          })()}
         </div>
       </main>
 

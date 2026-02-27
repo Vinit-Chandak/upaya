@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { colors } from '@upaya/shared';
+import { colors, getTranslations } from '@upaya/shared';
 import { fp, wp, hp } from '../theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -182,9 +182,7 @@ export default function OnboardingScreen() {
         {/* Screen 3: Trust & CTA */}
         <View style={styles.page}>
           <Text style={styles.pageTitle}>
-            {language === 'hi'
-              ? 'आपका spiritual problem solver'
-              : 'Trusted & Proven'}
+            {getTranslations(language).onboarding.screen3.title}
           </Text>
           <View style={styles.badgeGrid}>
             {[

@@ -92,11 +92,20 @@ export const en: TranslationKeys = {
     nextButton: 'Next',
   },
 
+  // --- Greetings ---
+  greetings: {
+    morning: 'Good Morning',
+    afternoon: 'Good Afternoon',
+    evening: 'Good Evening',
+    night: 'Good Night',
+  },
+
   // --- Home / Chat Entry ---
   home: {
     greeting: 'Welcome back, {{name}} 🙏',
+    welcomeBack: 'Welcome back 🙏',
     mainPrompt: "Tell me what's worrying you today",
-    mainPromptSub: 'आज आपको क्या परेशान कर रहा है?',
+    mainPromptSub: 'Choose or describe your concern below',
     inputPlaceholder: 'Type your concern here...',
     returningUser: {
       continueChat: 'Continue last chat',
@@ -105,6 +114,7 @@ export const en: TranslationKeys = {
       transitAlert: 'Transit Alert',
       viewDetails: 'View Details',
       recent: 'Recent conversations',
+      noRecentChats: 'No recent chats',
     },
   },
 
@@ -122,6 +132,7 @@ export const en: TranslationKeys = {
 
   // --- Chat ---
   chat: {
+    aiTitle: 'Upaya AI',
     typingIndicator: 'Typing...',
     inputPlaceholder: 'Type your concern here...',
     voiceHint: 'Speak to share',
@@ -170,6 +181,11 @@ export const en: TranslationKeys = {
       business: 'Business',
       other: 'Other',
     },
+    familyChips: {
+      recent: 'Recently',
+      fewMonths: 'Few months',
+      longTime: 'Years',
+    },
   },
 
   // --- Curiosity Bridge Templates ---
@@ -209,8 +225,8 @@ export const en: TranslationKeys = {
       'Kundli can be generated with approximate time too, but exact time gives more accurate results.',
     placeOfBirth: 'Place of Birth',
     placeSearch: 'Search city/town...',
-    generateButton: 'Generate My Kundli',
-    generateButtonSub: 'मेरी कुंडली बनाएं',
+    generateButton: '✨ Generate My Kundli',
+    generateButtonSub: 'Kundli ready in 2 minutes',
   },
 
   // --- Kundli Animation ---
@@ -901,5 +917,7 @@ export const en: TranslationKeys = {
     networkError: 'Please check your internet connection and try again',
     serverError: 'Server is having issues. Please try again in a moment',
     sessionExpired: 'Your session has expired. Please login again',
+    kundliGenerationError: 'Error generating kundli. Please try again.',
+    offlineFallback: 'I understand. Your kundli can reveal a lot. Please share your birth details below.',
   },
 } as const;

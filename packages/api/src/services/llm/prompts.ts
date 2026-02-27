@@ -9,8 +9,8 @@ export function buildDiagnosisPrompt(input: DiagnosisInput): {
 } {
   const languageInstruction =
     input.language === 'hi'
-      ? 'Respond in Hindi (Devanagari + Roman transliteration where appropriate). Use natural, empathetic Hindi — not translated English.'
-      : 'Respond in English. Be empathetic and warm.';
+      ? 'Respond in PURE Hindi using Devanagari script only. Do NOT use any English words — translate everything to Hindi.'
+      : 'Respond in PURE English. Do NOT include any Hindi or Devanagari.';
 
   const system = `You are Upaya's AI astrology diagnosis engine. You analyze Vedic kundli (birth chart) data and provide accurate, empathetic diagnosis.
 
@@ -74,10 +74,10 @@ Provide a complete diagnosis with:
  * Build the system prompt for chat responses.
  */
 export function buildChatSystemPrompt(language: 'hi' | 'en'): string {
-  const languageInstruction =
+  const defaultLang =
     language === 'hi'
-      ? 'Respond in natural Hindi. Mix in common English words where Indians naturally would (like "problem", "solution", "career"). Use Devanagari script.'
-      : 'Respond in English. Be warm and empathetic. Use simple language accessible to Indian users.';
+      ? 'Default to Hindi if the user\'s language cannot be determined.'
+      : 'Default to English if the user\'s language cannot be determined.';
 
   return `You are Upaya's AI spiritual advisor. You help users understand their problems through the lens of Vedic astrology.
 
@@ -100,7 +100,12 @@ SAFETY RULES:
 - If user asks about gambling/lottery: Redirect to financial stability remedies.
 - NEVER promise specific outcomes.
 
-${languageInstruction}`;
+LANGUAGE RULES:
+- Detect the language of the user's latest message and ALWAYS respond in the SAME language.
+- If the user writes in Hindi (Devanagari script or Roman Hindi), respond in PURE Hindi using Devanagari script. Do NOT mix in any English words — translate everything to Hindi.
+- If the user writes in English, respond in PURE English. Do NOT include any Hindi or Devanagari.
+- If the user switches language mid-conversation, switch immediately and maintain purity.
+- ${defaultLang}`;
 }
 
 /**
@@ -109,8 +114,8 @@ ${languageInstruction}`;
 export function buildPanditSummaryPrompt(language: 'hi' | 'en'): string {
   const languageInstruction =
     language === 'hi'
-      ? 'Respond in Hindi (Devanagari + Roman transliteration). Use natural Hindi.'
-      : 'Respond in English.';
+      ? 'Respond in PURE Hindi using Devanagari script only. Do NOT use any English words.'
+      : 'Respond in PURE English. Do NOT include any Hindi or Devanagari.';
 
   return `You are Upaya's AI assistant that summarizes pandit consultation sessions.
 
@@ -161,15 +166,15 @@ The brief should help the pandit quickly understand the user's situation without
  * Build the system prompt for post-diagnosis deepening chat.
  */
 export function buildDeepeningChatPrompt(language: 'hi' | 'en'): string {
-  const languageInstruction =
+  const defaultLang =
     language === 'hi'
-      ? 'Respond in natural Hindi with mixed English where appropriate.'
-      : 'Respond in English.';
+      ? 'Default to Hindi if the user\'s language cannot be determined.'
+      : 'Default to English if the user\'s language cannot be determined.';
 
   return `You are Upaya's AI advisor in a post-diagnosis deepening conversation.
 
 The user has already received their free diagnosis and remedies. Now you are:
-1. Confirming if the diagnosis resonated ("Kya yeh problems match karti hain?")
+1. Confirming if the diagnosis resonated
 2. If YES: Guide them to start free remedies or upgrade to the complete plan
 3. If MORE: Explore related life areas (career + health + family alongside primary problem)
    - Ask about related areas naturally
@@ -183,7 +188,12 @@ SAFETY RULES:
 - If user seems angry about results: Empathize + offer protocol adjustment + suggest pandit consultation
 - NEVER promise specific outcomes.
 
-${languageInstruction}`;
+LANGUAGE RULES:
+- Detect the language of the user's latest message and ALWAYS respond in the SAME language.
+- If the user writes in Hindi (Devanagari script or Roman Hindi), respond in PURE Hindi using Devanagari script. Do NOT mix in any English words — translate everything to Hindi.
+- If the user writes in English, respond in PURE English. Do NOT include any Hindi or Devanagari.
+- If the user switches language mid-conversation, switch immediately and maintain purity.
+- ${defaultLang}`;
 }
 
 /**

@@ -23,6 +23,14 @@ export function getTranslations(language: Language): TranslationKeys {
  * interpolate('Hello, {{name}}!', { name: 'Mohit' })
  * // => 'Hello, Mohit!'
  */
+/**
+ * Detect whether a string is Hindi (contains Devanagari characters) or English.
+ * Used to mirror the user's typing language in AI responses.
+ */
+export function detectLanguage(text: string): 'hi' | 'en' {
+  return /[\u0900-\u097F]/.test(text) ? 'hi' : 'en';
+}
+
 export function interpolate(
   template: string,
   values: Record<string, string | number>,

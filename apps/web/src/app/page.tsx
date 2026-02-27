@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { en } from '@upaya/shared';
 import styles from './page.module.css';
 
 /**
@@ -12,18 +13,17 @@ import styles from './page.module.css';
 export default function SplashScreen() {
   const router = useRouter();
   const [fadeIn, setFadeIn] = useState(false);
-
   useEffect(() => {
-    // Trigger fade-in animation
     requestAnimationFrame(() => setFadeIn(true));
 
+    const stored = localStorage.getItem('upaya_language') as 'hi' | 'en' | null;
+
     const timer = setTimeout(() => {
-      const language = localStorage.getItem('upaya_language');
       const onboardingDone = localStorage.getItem('upaya_onboarding_completed');
 
-      if (language && onboardingDone === 'true') {
+      if (stored && onboardingDone === 'true') {
         router.replace('/home');
-      } else if (language) {
+      } else if (stored) {
         router.replace('/onboarding');
       } else {
         router.replace('/language');
@@ -41,8 +41,7 @@ export default function SplashScreen() {
           <h1 className={styles.splashLogoText}>UPAYA</h1>
           <span className={styles.splashSymbol}>&#10048;</span>
         </div>
-        <p className={styles.splashTagline}>आपका spiritual problem solver</p>
-        <p className={styles.splashTaglineEn}>Your spiritual problem solver</p>
+        <p className={styles.splashTagline}>{en.common.tagline}</p>
       </div>
 
       {/* Decorative particles */}

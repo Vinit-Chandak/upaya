@@ -11,40 +11,23 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { colors } from '@upaya/shared';
+import { colors, PROBLEM_TYPES, getTranslations } from '@upaya/shared';
 import { fp, wp, hp } from '../theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const PROBLEM_CHIPS = [
-  { key: 'marriage_delay', emoji: '💍', hi: 'शादी में देरी', en: 'Marriage Delay' },
-  { key: 'career_stuck', emoji: '💼', hi: 'करियर में रुकावट', en: 'Career Stuck' },
-  { key: 'money_problems', emoji: '💰', hi: 'पैसे की समस्या', en: 'Money Problems' },
-  { key: 'health_issues', emoji: '🏥', hi: 'स्वास्थ्य समस्या', en: 'Health Issues' },
-  { key: 'legal_matters', emoji: '⚖️', hi: 'कानूनी विवाद', en: 'Legal Matters' },
-  { key: 'family_conflict', emoji: '👨‍👩‍👧‍👦', hi: 'पारिवारिक कलह', en: 'Family Conflict' },
-  { key: 'get_kundli', emoji: '📖', hi: 'कुंडली बनवाएं', en: 'Get My Kundli' },
-  { key: 'something_else', emoji: '🔮', hi: 'कुछ और पूछना है', en: 'Something Else' },
-];
-
-const TAB_ITEMS = [
-  { key: 'home', label: 'Home', icon: '🏠' },
-  { key: 'remedies', label: 'Remedies', icon: '📿' },
-  { key: 'explore', label: 'Explore', icon: '🛕' },
-  { key: 'me', label: 'Me', icon: '👤' },
-];
+const TAB_KEYS = ['home', 'remedies', 'explore', 'me'] as const;
+const TAB_ICONS: Record<string, string> = {
+  home: '🏠', remedies: '📿', explore: '🛕', me: '👤',
+};
 
 function getTimeGreeting(language: 'hi' | 'en'): { emoji: string; text: string } {
+  const t = getTranslations(language);
   const hour = new Date().getHours();
-  if (hour >= 5 && hour < 12) {
-    return { emoji: '🌅', text: language === 'hi' ? 'शुभ प्रभात' : 'Good Morning' };
-  } else if (hour >= 12 && hour < 17) {
-    return { emoji: '☀️', text: language === 'hi' ? 'शुभ दोपहर' : 'Good Afternoon' };
-  } else if (hour >= 17 && hour < 21) {
-    return { emoji: '🪔', text: language === 'hi' ? 'शुभ संध्या' : 'Good Evening' };
-  } else {
-    return { emoji: '🌙', text: language === 'hi' ? 'शुभ रात्रि' : 'Good Night' };
-  }
+  if (hour >= 5 && hour < 12) return { emoji: '🌅', text: t.greetings.morning };
+  if (hour >= 12 && hour < 17) return { emoji: '☀️', text: t.greetings.afternoon };
+  if (hour >= 17 && hour < 21) return { emoji: '🪔', text: t.greetings.evening };
+  return { emoji: '🌙', text: t.greetings.night };
 }
 
 /**
@@ -94,6 +77,7 @@ export default function HomeScreen() {
     setInputValue('');
   };
 
+  const t = getTranslations(language);
   const timeGreeting = getTimeGreeting(language);
   const chipWidth = (SCREEN_WIDTH - wp(24) * 2 - wp(10)) / 2;
 
@@ -133,37 +117,26 @@ export default function HomeScreen() {
 
             {/* Main prompt */}
             <View style={styles.promptSection}>
-              <Text style={styles.mainPrompt}>
-                {language === 'hi'
-                  ? 'आज आपको क्या परेशान कर रहा है?'
-                  : "Tell me what's worrying you today"}
-              </Text>
-              <Text style={styles.mainPromptSub}>
-                {language === 'hi'
-                  ? "Tell me what's worrying you today"
-                  : 'आज आपको क्या परेशान कर रहा है?'}
-              </Text>
+              <Text style={styles.mainPrompt}>{t.home.mainPrompt}</Text>
+              <Text style={styles.mainPromptSub}>{t.home.mainPromptSub}</Text>
             </View>
 
             {/* Problem chips */}
             <View style={styles.chipGrid}>
-              {PROBLEM_CHIPS.map((chip) => (
+              {Object.entries(PROBLEM_TYPES).map(([key, info]) => (
                 <TouchableOpacity
-                  key={chip.key}
+                  key={key}
                   style={[
                     styles.chip,
                     { width: chipWidth },
-                    chip.key === 'get_kundli' && styles.chipGold,
+                    key === 'get_kundli' && styles.chipGold,
                   ]}
                   activeOpacity={0.8}
-                  onPress={() => handleChipPress(chip.key)}
+                  onPress={() => handleChipPress(key)}
                 >
-                  <Text style={styles.chipEmoji}>{chip.emoji}</Text>
+                  <Text style={styles.chipEmoji}>{info.emoji}</Text>
                   <Text style={styles.chipTextPrimary}>
-                    {language === 'hi' ? chip.hi : chip.en}
-                  </Text>
-                  <Text style={styles.chipTextSecondary}>
-                    {language === 'hi' ? chip.en : chip.hi}
+                    {language === 'hi' ? info.hi : info.en}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -172,56 +145,40 @@ export default function HomeScreen() {
         ) : (
           /* Returning User View */
           <>
-            <Text style={styles.welcomeText}>Welcome back 🙏</Text>
+            <Text style={styles.welcomeText}>{t.home.welcomeBack}</Text>
 
             {/* Active Remedy Plan */}
             <View style={styles.card}>
               <View style={styles.cardHeader}>
                 <Text style={styles.cardIcon}>📿</Text>
-                <Text style={styles.cardTitle}>
-                  {language === 'hi' ? 'आपका Active Remedy Plan' : 'Your Active Remedy Plan'}
-                </Text>
+                <Text style={styles.cardTitle}>{t.home.returningUser.activeProtocol}</Text>
               </View>
               <View style={styles.progressBar}>
-                <View style={[styles.progressFill, { width: '35%' }]} />
+                <View style={[styles.progressFill, { width: '0%' }]} />
               </View>
-              <Text style={styles.cardMeta}>Day 8 of 63 · 35% complete</Text>
             </View>
 
             {/* Transit Alert */}
             <View style={styles.alertCard}>
               <View style={styles.cardHeader}>
                 <Text style={styles.cardIcon}>⚡</Text>
-                <Text style={styles.cardTitle}>Transit Alert</Text>
+                <Text style={styles.cardTitle}>{t.home.returningUser.transitAlert}</Text>
               </View>
-              <Text style={styles.alertText}>
-                {language === 'hi'
-                  ? 'Rahu transit 12 दिन में — protective remedies available'
-                  : 'Rahu transit in 12 days — protective remedies available'}
-              </Text>
             </View>
 
             {/* Recent Chats */}
-            <Text style={styles.sectionTitle}>
-              {language === 'hi' ? 'हाल की बातचीत' : 'Recent conversations'}
-            </Text>
+            <Text style={styles.sectionTitle}>{t.home.returningUser.recent}</Text>
             <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>
-                {language === 'hi' ? 'कोई recent chat नहीं' : 'No recent chats'}
-              </Text>
+              <Text style={styles.emptyText}>{t.home.returningUser.noRecentChats}</Text>
             </View>
 
             {/* CTAs */}
             <View style={styles.ctaRow}>
               <TouchableOpacity style={styles.ctaSecondary} activeOpacity={0.8}>
-                <Text style={styles.ctaSecondaryText}>
-                  {language === 'hi' ? 'पिछली chat जारी रखें' : 'Continue last chat'}
-                </Text>
+                <Text style={styles.ctaSecondaryText}>{t.home.returningUser.continueChat}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.ctaPrimary} activeOpacity={0.8}>
-                <Text style={styles.ctaPrimaryText}>
-                  {language === 'hi' ? 'नई Problem' : 'New Problem'}
-                </Text>
+                <Text style={styles.ctaPrimaryText}>{t.home.returningUser.newProblem}</Text>
               </TouchableOpacity>
             </View>
           </>
@@ -234,11 +191,7 @@ export default function HomeScreen() {
           <View style={styles.inputBar}>
             <TextInput
               style={styles.input}
-              placeholder={
-                language === 'hi'
-                  ? 'अपनी बात यहाँ लिखें...'
-                  : 'Type your concern here...'
-              }
+              placeholder={t.home.inputPlaceholder}
               placeholderTextColor={colors.neutral.grey400}
               value={inputValue}
               onChangeText={setInputValue}
@@ -260,18 +213,18 @@ export default function HomeScreen() {
 
       {/* Bottom Tab Bar */}
       <View style={styles.tabBar}>
-        {TAB_ITEMS.map((tab) => (
+        {TAB_KEYS.map((key) => (
           <TouchableOpacity
-            key={tab.key}
+            key={key}
             style={styles.tab}
             activeOpacity={0.7}
-            onPress={() => setActiveTab(tab.key)}
+            onPress={() => setActiveTab(key)}
           >
-            <Text style={[styles.tabIcon, activeTab === tab.key && styles.tabIconActive]}>
-              {tab.icon}
+            <Text style={[styles.tabIcon, activeTab === key && styles.tabIconActive]}>
+              {TAB_ICONS[key]}
             </Text>
-            <Text style={[styles.tabLabel, activeTab === tab.key && styles.tabLabelActive]}>
-              {tab.label}
+            <Text style={[styles.tabLabel, activeTab === key && styles.tabLabelActive]}>
+              {t.tabs[key as keyof typeof t.tabs]}
             </Text>
           </TouchableOpacity>
         ))}
