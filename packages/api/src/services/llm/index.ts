@@ -3,17 +3,19 @@ import { AnthropicProvider } from './anthropic';
 import { OpenAIProvider } from './openai';
 import { GeminiProvider } from './gemini';
 import { AzureOpenAIProvider } from './azure-openai';
+import { FoundryProvider } from './foundry';
 import type { LLMProvider, DiagnosisInput, DiagnosisOutput, ChatInput, ChatOutput } from './types';
 
 export type { LLMProvider, DiagnosisInput, DiagnosisOutput, ChatInput, ChatOutput };
 
-type ProviderName = 'anthropic' | 'openai' | 'gemini' | 'azure_openai';
+type ProviderName = 'anthropic' | 'openai' | 'gemini' | 'azure_openai' | 'foundry';
 
 const providers: Record<ProviderName, () => LLMProvider> = {
   anthropic: () => new AnthropicProvider(),
   openai: () => new OpenAIProvider(),
   gemini: () => new GeminiProvider(),
   azure_openai: () => new AzureOpenAIProvider(),
+  foundry: () => new FoundryProvider(),
 };
 
 // Cache provider instances

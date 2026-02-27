@@ -25,7 +25,28 @@ RULES:
 - Reference specific Vedic houses and planets in your explanation.
 - ${languageInstruction}
 
-OUTPUT FORMAT: Respond with a JSON object matching the DiagnosisOutput schema. Do NOT wrap in markdown code blocks.`;
+OUTPUT FORMAT: Respond with a valid JSON object using EXACTLY these camelCase keys. Do NOT wrap in markdown code blocks:
+{
+  "rootDosha": "string (e.g. MangalDosha, ShanidDosha, KaalSarpYog)",
+  "rootPlanets": ["array of planet names"],
+  "affectedHouses": [1, 7],
+  "severityLevel": "significant | moderate | mild",
+  "responsivenessLevel": "highly_responsive | responsive | moderately_responsive",
+  "isCommonlyAddressed": true,
+  "impactedAreas": { "primary": "string", "secondary": ["string"] },
+  "positiveMessage": "string",
+  "freeRemedies": [
+    {
+      "name": "string",
+      "type": "mantra | fasting | daan | daily_practice",
+      "description": "string",
+      "mantraText": { "roman": "string", "devanagari": "string" },
+      "frequency": "string",
+      "duration": "string"
+    }
+  ],
+  "fullRemedies": [{ "name": "string", "description": "string" }]
+}`;
 
   const user = `Analyze this kundli for a user experiencing "${input.problemType}":
 
@@ -170,11 +191,23 @@ ${languageInstruction}`;
  */
 export function parseDiagnosisResponse(text: string): DiagnosisOutput {
   try {
-    // Try parsing as JSON directly
     const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-    return JSON.parse(cleaned) as DiagnosisOutput;
+    const raw = JSON.parse(cleaned);
+
+    // Normalize: LLM may return snake_case keys despite instructions
+    return {
+      rootDosha: raw.rootDosha ?? raw.root_dosha ?? 'unknown',
+      rootPlanets: raw.rootPlanets ?? raw.root_planets ?? [],
+      affectedHouses: raw.affectedHouses ?? raw.affected_houses ?? [],
+      severityLevel: raw.severityLevel ?? raw.severity_level ?? 'moderate',
+      responsivenessLevel: raw.responsivenessLevel ?? raw.responsiveness_level ?? 'responsive',
+      isCommonlyAddressed: raw.isCommonlyAddressed ?? raw.is_commonly_addressed ?? true,
+      impactedAreas: raw.impactedAreas ?? raw.impacted_areas ?? { primary: 'General life areas', secondary: [] },
+      positiveMessage: raw.positiveMessage ?? raw.positive_message ?? '',
+      freeRemedies: raw.freeRemedies ?? raw.free_remedies ?? [],
+      fullRemedies: raw.fullRemedies ?? raw.full_remedies ?? [],
+    };
   } catch {
-    // If JSON parsing fails, return a fallback structure
     console.warn('[LLM] Failed to parse diagnosis response as JSON, using fallback');
     return {
       rootDosha: 'unknown',

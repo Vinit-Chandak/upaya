@@ -136,6 +136,7 @@ export default function ChatScreen() {
   const [chatPhase, setChatPhase] = useState<ChatPhase>('exchange_1');
   const [showBirthForm, setShowBirthForm] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessionDbId, setSessionDbId] = useState<string | null>(null); // UUID PK for diagnosis FK
   const [isSubmittingBirth, setIsSubmittingBirth] = useState(false);
 
   // Track user's qualifying answer for diagnosis context
@@ -204,9 +205,12 @@ export default function ChatScreen() {
       } catch { /* default hi */ }
 
       // Create a real chat session in the backend
+      let createdSessionId: string | null = null;
       try {
         const { session } = await createChatSession(problemType, lang);
-        setSessionId(session.session_id ?? session.sessionId);
+        createdSessionId = session.session_id ?? session.sessionId;
+        setSessionId(createdSessionId);
+        setSessionDbId(session.id); // UUID PK — used for diagnosis FK
       } catch (err) {
         console.warn('[Chat] Failed to create session, continuing offline:', err);
       }
@@ -238,8 +242,29 @@ export default function ChatScreen() {
         }]);
       }
 
-      // Exchange 1: Show hardcoded qualifying question (fast, no network needed)
+      // Exchange 1: Get qualifying question from real API
       setIsTyping(true);
+      if (createdSessionId && initialMessage) {
+        try {
+          const response = await sendChatMessage(createdSessionId, initialMessage);
+          setIsTyping(false);
+          const chips = QUALIFYING_CHIPS[problemType] || undefined;
+          const aiMsg: ChatMsg = {
+            id: generateId(),
+            role: 'assistant',
+            content: response.aiMessage.content,
+            messageType: 'text',
+            quickReplies: chips,
+            createdAt: new Date(),
+          };
+          setMessages((prev) => [...prev, aiMsg]);
+          return;
+        } catch (err) {
+          console.warn('[Chat] Exchange 1 API failed, using fallback:', err);
+        }
+      }
+
+      // Fallback: hardcoded qualifying question (offline or no session)
       setTimeout(() => {
         setIsTyping(false);
         const qText = QUALIFYING_QUESTIONS[lang][problemType] || QUALIFYING_QUESTIONS[lang].something_else;
@@ -253,7 +278,7 @@ export default function ChatScreen() {
           createdAt: new Date(),
         };
         setMessages((prev) => [...prev, aiMsg]);
-      }, initialMessage ? 1000 : 800);
+      }, 800);
     };
     init();
   }, [problemType, initialMessage]);
@@ -422,7 +447,7 @@ export default function ChatScreen() {
         pathname: '/kundli-animation',
         params: {
           kundliId: kundli.id,
-          sessionId: sessionId || '',
+          sessionId: sessionDbId || '', // UUID PK — diagnosis.chat_session_id FK
           problemType,
           qualifyingAnswer: qualifyingAnswerRef.current,
           dob: bdDob,

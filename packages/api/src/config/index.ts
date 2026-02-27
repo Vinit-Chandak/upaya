@@ -24,12 +24,14 @@ export const config = {
       | 'anthropic'
       | 'openai'
       | 'gemini'
-      | 'azure_openai',
+      | 'azure_openai'
+      | 'foundry',
     fallbackProvider: (process.env.LLM_FALLBACK_PROVIDER || 'openai') as
       | 'anthropic'
       | 'openai'
       | 'gemini'
-      | 'azure_openai',
+      | 'azure_openai'
+      | 'foundry',
     anthropic: {
       apiKey: process.env.ANTHROPIC_API_KEY || '',
       model: 'claude-sonnet-4-20250514',
@@ -47,6 +49,11 @@ export const config = {
       apiKey: process.env.AZURE_OPENAI_API_KEY || '',
       deploymentName: process.env.AZURE_OPENAI_DEPLOYMENT_NAME || '',
       apiVersion: process.env.AZURE_OPENAI_API_VERSION || '2024-12-01-preview',
+    },
+    foundry: {
+      baseURL: process.env.FOUNDRY_BASE_URL || 'https://finixodinemodel.services.ai.azure.com/openai/v1',
+      apiKey: process.env.FOUNDRY_API_KEY || '',
+      model: process.env.FOUNDRY_MODEL || 'gpt-4.1-mini',
     },
   },
 
