@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "Bash(pnpm:*)",
+      "Bash(git:*)",
+      "Bash(psql:*)",
+      "Bash(redis-cli:*)",
+      "Bash(test:*)",
+      "Bash(corepack:*)",
+      "Bash(npm install:*)",
+      "Bash(npm root:*)",
+      "Bash(\"C:/Users/defoz/AppData/Roaming/npm/pnpm\":*)",
+      "Bash(echo:*)",
+      "Bash(export:*)",
+      "Bash(\"/c/Program Files/PostgreSQL/17/bin/psql.exe\":*)",
+      "Bash(\"/c/Program Files/PostgreSQL/17/bin/pg_isready.exe\":*)",
+      "Bash(java:*)",
+      "Bash(javac:*)",
+      "Bash(xargs:*)",
+      "Bash(npx kill-port:*)",
+      "Bash(curl:*)"
+    ]
+  }
+}

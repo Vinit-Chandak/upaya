@@ -1,0 +1,63 @@
+# ============================================================
+# Upaya Setup Configuration
+# ============================================================
+# Copy this file to setup.conf and fill in YOUR machine's values.
+# This file is gitignored — safe to put passwords here.
+# ============================================================
+
+# --- PostgreSQL ---
+DB_USER=postgres
+DB_PASS=upaya_dev_2026
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=upaya
+
+# Path to PostgreSQL bin directory (containing psql.exe, pg_isready.exe)
+# Common: /c/Program Files/PostgreSQL/<version>/bin
+PG_BIN="/c/Program Files/PostgreSQL/17/bin"
+
+# --- Android SDK ---
+# Path to Android SDK root (containing platform-tools/, emulator/, etc.)
+# Common: /c/Users/<you>/AppData/Local/Android/Sdk
+ANDROID_SDK="/c/Users/$USER/AppData/Local/Android/Sdk"
+
+# Name of the Android Virtual Device to launch
+AVD_NAME=ae
+
+# --- LLM Provider ---
+# Which LLM to use: anthropic | openai | gemini | azure_openai | foundry
+LLM_DEFAULT_PROVIDER=foundry
+LLM_FALLBACK_PROVIDER=foundry
+
+# Fill in at least one provider's keys:
+ANTHROPIC_API_KEY=
+OPENAI_API_KEY=
+GOOGLE_GEMINI_API_KEY=
+
+# Azure AI Foundry (if using foundry provider)
+FOUNDRY_BASE_URL=
+FOUNDRY_API_KEY=
+FOUNDRY_MODEL=gpt-4.1-mini
+
+# Azure OpenAI (if using azure_openai provider)
+AZURE_OPENAI_ENDPOINT=
+AZURE_OPENAI_API_KEY=
+AZURE_OPENAI_DEPLOYMENT_NAME=
+AZURE_OPENAI_API_VERSION=2024-12-01-preview
+
+# --- Firebase (optional — leave blank to defer) ---
+FIREBASE_PROJECT_ID=
+FIREBASE_CLIENT_EMAIL=
+FIREBASE_PRIVATE_KEY=
+FIREBASE_API_KEY=
+FIREBASE_AUTH_DOMAIN=
+
+# --- Razorpay (optional — leave blank to defer) ---
+RAZORPAY_KEY_ID=
+RAZORPAY_KEY_SECRET=
+RAZORPAY_WEBHOOK_SECRET=
+
+# --- Ports ---
+API_PORT=3001
+EXPO_PORT=8081
+WEB_PORT=3000

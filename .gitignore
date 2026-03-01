@@ -45,3 +45,6 @@ apps/mobile/ios/
 # Database
 *.sqlite
 *.sqlite3
+
+# Machine-specific config (contains passwords, paths)
+scripts/setup.conf
