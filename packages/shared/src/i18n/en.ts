@@ -150,7 +150,7 @@ export const en: TranslationKeys = {
       money_problems:
         "Money problems — I understand how stressful this can be.\n\nDid this happen suddenly or gradually?",
       health_issues:
-        "Health concerns — I understand how worrying this must be.\n\nHow long have you been dealing with this health issue?",
+        'Health concerns — who is this about?',
       legal_matters:
         "Legal matters — I understand how stressful this can be.\n\nWhat type of matter is it?",
       family_conflict:
@@ -186,6 +186,12 @@ export const en: TranslationKeys = {
       fewMonths: 'Few months',
       longTime: 'Years',
     },
+    whoChips: {
+      self: 'Myself',
+      family: 'Family member',
+      pet: 'My pet',
+    },
+    exchange2Fallback: 'I understand. Can you tell me a bit more about how this is affecting your day-to-day life?',
   },
 
   // --- Curiosity Bridge Templates ---

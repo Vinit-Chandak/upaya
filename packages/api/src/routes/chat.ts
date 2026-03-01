@@ -13,6 +13,7 @@ export const chatRouter = Router();
 const createSessionSchema = z.object({
   problemType: z.string().optional(),
   language: z.enum(['hi', 'en']).default('hi'),
+  seedMessage: z.string().optional(), // First AI qualifying question shown client-side
 });
 
 /**
@@ -40,6 +41,16 @@ chatRouter.post('/sessions', optionalAuth, async (req: AuthenticatedRequest, res
        RETURNING *`,
       [userId, sessionId, body.problemType || null, body.language],
     );
+
+    // Seed the qualifying question as the first assistant message so the LLM
+    // has full context when the user replies (exchange 2).
+    if (body.seedMessage) {
+      await query(
+        `INSERT INTO chat_messages (session_id, role, content, message_type)
+         VALUES ($1, 'assistant', $2, 'text')`,
+        [rows[0].id, body.seedMessage],
+      );
+    }
 
     res.status(201).json({ session: rows[0] });
   } catch (error) {
@@ -96,13 +107,21 @@ chatRouter.post(
       // Detect language from the user's actual message (Devanagari = hi, else en)
       const detectedLanguage: 'hi' | 'en' = /[\u0900-\u097F]/.test(body.content) ? 'hi' : 'en';
 
+      // Detect which exchange we're in by counting AI responses already in history.
+      // Exchange 2 (deepening follow-up): AI has replied once (assistantCount === 1).
+      // Exchange 3 (curiosity bridge + CTA): AI has replied twice (assistantCount === 2).
+      // Using assistantCount alone works regardless of how many user messages came first.
+      const assistantCount = history.filter((m) => m.role === 'assistant').length;
+      const isExchange2 = assistantCount === 1;
+      const isExchange3 = assistantCount === 2;
+
       // Generate AI response
       const aiResponse = await llmService.generateChatResponse({
         messages: history.map((m) => ({
           role: m.role as 'user' | 'assistant',
           content: m.content,
         })),
-        systemPrompt: buildChatSystemPrompt(detectedLanguage),
+        systemPrompt: buildChatSystemPrompt(detectedLanguage, { isExchange2, isExchange3 }),
         language: detectedLanguage,
       });
 

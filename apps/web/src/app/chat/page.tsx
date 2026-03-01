@@ -3,6 +3,7 @@
 import { Suspense, useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { PROBLEM_TYPES, getTranslations, interpolate, detectLanguage, type TranslationKeys, type ProblemType, type ChatMessageType } from '@upaya/shared';
+import { createChatSession, sendChatMessage } from '../../lib/api';
 import BirthDetailsCard from './BirthDetailsCard';
 import styles from './page.module.css';
 
@@ -30,7 +31,7 @@ function getChips(
   problemType: string,
   t: TranslationKeys,
 ): { label: string; value: string }[] | undefined {
-  const { durationChips, moneyChips, healthChips, legalChips, familyChips } = t.aiMessages;
+  const { durationChips, moneyChips, whoChips, legalChips, familyChips } = t.aiMessages;
   switch (problemType) {
     case 'marriage_delay':
     case 'career_stuck':
@@ -47,9 +48,9 @@ function getChips(
       ];
     case 'health_issues':
       return [
-        { label: healthChips.recent, value: healthChips.recent },
-        { label: healthChips.fewMonths, value: healthChips.fewMonths },
-        { label: healthChips.longTime, value: healthChips.longTime },
+        { label: whoChips.self, value: whoChips.self },
+        { label: whoChips.family, value: whoChips.family },
+        { label: whoChips.pet, value: whoChips.pet },
       ];
     case 'legal_matters':
       return [
@@ -92,10 +93,13 @@ function ChatPageContent() {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [chatPhase, setChatPhase] = useState<ChatPhase>('exchange_1');
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessionDbId, setSessionDbId] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const hasInitialized = useRef(false);
+  const qualifyingAnswerRef = useRef('');
 
   const problemInfo = PROBLEM_TYPES[problemType];
 
@@ -110,50 +114,86 @@ function ChatPageContent() {
     scrollToBottom();
   }, [messages, isTyping, scrollToBottom]);
 
-  // Initialize: load language, send first AI message
+  // Initialize: load language, create session, send first AI message
   useEffect(() => {
     if (hasInitialized.current) return;
     hasInitialized.current = true;
 
-    const stored = localStorage.getItem('upaya_language') as 'hi' | 'en' | null;
-    if (stored) setLanguage(stored);
+    const init = async () => {
+      const stored = localStorage.getItem('upaya_language') as 'hi' | 'en' | null;
+      if (stored) setLanguage(stored);
 
-    const lang = stored || 'hi';
+      const lang = stored || 'hi';
+      const t_lang = getTranslations(lang);
+      const qq = t_lang.aiMessages.qualifyingQuestions;
 
-    const t_lang = getTranslations(lang);
-    const qq = t_lang.aiMessages.qualifyingQuestions;
+      let createdSessionId: string | null = null;
+      try {
+        const { session } = await createChatSession(problemType, lang);
+        const rawSession = session as unknown as Record<string, string>;
+        createdSessionId = rawSession.session_id ?? session.sessionId;
+        setSessionId(createdSessionId);
+        setSessionDbId(rawSession.id ?? session.id);
+      } catch (err) {
+        console.warn('[Chat] Failed to create session, continuing offline:', err);
+      }
 
-    // For "get_kundli" problem type, skip directly to birth details
-    if (problemType === 'get_kundli') {
-      const aiMsg: ChatMsg = {
-        id: generateId(),
-        role: 'assistant',
-        content: qq.get_kundli,
-        messageType: 'text',
-        showBirthDetailsCta: true,
-        createdAt: new Date(),
-      };
+      // get_kundli skips conversation and goes straight to birth details
+      if (problemType === 'get_kundli') {
+        setIsTyping(true);
+        setTimeout(() => {
+          setIsTyping(false);
+          setMessages([{
+            id: generateId(),
+            role: 'assistant',
+            content: qq.get_kundli,
+            messageType: 'text',
+            showBirthDetailsCta: true,
+            createdAt: new Date(),
+          }]);
+          setChatPhase('birth_details');
+        }, 800);
+        return;
+      }
+
+      // Exchange 1 — fully LLM-powered for all flows:
+      // • Chip flow:          send the problem label (not shown in UI); AI opens the conversation
+      // • initialMessage flow: send the user's own text (shown in UI); AI responds to it
+      const exchange1Message = initialMessage || (lang === 'hi' ? problemInfo.hi : problemInfo.en);
+
+      if (initialMessage) {
+        setMessages([{
+          id: generateId(),
+          role: 'user',
+          content: initialMessage,
+          messageType: 'text',
+          createdAt: new Date(),
+        }]);
+      }
+
       setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        setMessages([aiMsg]);
-        setChatPhase('birth_details');
-      }, 800);
-      return;
-    }
 
-    // If user typed a custom message, add it first, then AI responds
-    if (initialMessage) {
-      const userMsg: ChatMsg = {
-        id: generateId(),
-        role: 'user',
-        content: initialMessage,
-        messageType: 'text',
-        createdAt: new Date(),
-      };
-      setMessages([userMsg]);
+      if (createdSessionId) {
+        try {
+          const response = await sendChatMessage(createdSessionId, exchange1Message);
+          setIsTyping(false);
+          const chips = getChips(problemType, t_lang);
+          const aiMsg: ChatMsg = {
+            id: generateId(),
+            role: 'assistant',
+            content: response.aiMessage.content,
+            messageType: 'text',
+            quickReplies: chips,
+            createdAt: new Date(),
+          };
+          setMessages((prev) => initialMessage ? [...prev, aiMsg] : [aiMsg]);
+          return;
+        } catch (err) {
+          console.warn('[Chat] Exchange 1 LLM failed, using i18n fallback:', err);
+        }
+      }
 
-      setIsTyping(true);
+      // Fallback: i18n qualifying question (offline / API unavailable)
       setTimeout(() => {
         setIsTyping(false);
         const qText = (qq[problemType as keyof typeof qq] as string | undefined) || qq.something_else;
@@ -166,43 +206,32 @@ function ChatPageContent() {
           quickReplies: chips,
           createdAt: new Date(),
         };
-        setMessages((prev) => [...prev, aiMsg]);
-      }, 1000);
-    } else {
-      // No initial message — AI starts with qualifying question immediately
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        const qText = (qq[problemType as keyof typeof qq] as string | undefined) || qq.something_else;
-        const chips = getChips(problemType, t_lang);
-        const aiMsg: ChatMsg = {
-          id: generateId(),
-          role: 'assistant',
-          content: qText,
-          messageType: 'text',
-          quickReplies: chips,
-          createdAt: new Date(),
-        };
-        setMessages([aiMsg]);
+        setMessages((prev) => initialMessage ? [...prev, aiMsg] : [aiMsg]);
       }, 800);
-    }
+    };
+
+    init();
   }, [problemType, initialMessage]);
+
+  // Ref is updated after handleUserReply is defined (below) so callbacks
+  // with empty deps always call the latest closure (never a stale sessionId).
+  const handleUserReplyRef = useRef<((text: string) => void) | null>(null);
 
   // Handle sending a message (from text input)
   const handleSendMessage = useCallback(() => {
     const text = inputValue.trim();
     if (!text) return;
     setInputValue('');
-    handleUserReply(text);
+    handleUserReplyRef.current?.(text);
   }, [inputValue]);
 
   // Handle a quick-reply chip tap
   const handleChipTap = useCallback((value: string) => {
-    handleUserReply(value);
+    handleUserReplyRef.current?.(value);
   }, []);
 
   // Core reply handler
-  const handleUserReply = (text: string) => {
+  const handleUserReply = async (text: string) => {
     // Remove quick replies from previous AI messages
     setMessages((prev) =>
       prev.map((m) => (m.quickReplies ? { ...m, quickReplies: undefined } : m))
@@ -218,47 +247,80 @@ function ChatPageContent() {
     };
     setMessages((prev) => [...prev, userMsg]);
 
-    // Mirror the language the user typed in, not the stored app language
-    const replyLang = detectLanguage(text);
-    const t = getTranslations(replyLang);
-
+    // Save qualifying answer for diagnosis context
     if (chatPhase === 'exchange_1') {
-      // User answered the qualifying question → send curiosity bridge (Exchange 2)
-      setIsTyping(true);
+      qualifyingAnswerRef.current = text;
+    }
 
+    setIsTyping(true);
+
+    // CTA only appears on exchange 3 (second user reply → curiosity bridge)
+    const showCta = chatPhase === 'exchange_2';
+
+    if (chatPhase === 'exchange_1' || chatPhase === 'exchange_2') {
+      // Try LLM (exchange 2 = follow-up, exchange 3 = curiosity bridge)
+      if (sessionId) {
+        try {
+          const response = await sendChatMessage(sessionId, text);
+          setIsTyping(false);
+          setMessages((prev) => [...prev, {
+            id: generateId(),
+            role: 'assistant',
+            content: response.aiMessage.content,
+            messageType: 'text',
+            showBirthDetailsCta: showCta,
+            createdAt: new Date(),
+          }]);
+          if (chatPhase === 'exchange_1') setChatPhase('exchange_2');
+          return;
+        } catch (err) {
+          console.warn('[Chat] API call failed, using fallback:', err);
+        }
+      }
+
+      // Offline fallback
+      const replyLang = detectLanguage(text);
+      const t = getTranslations(replyLang);
       setTimeout(() => {
         setIsTyping(false);
-        const cb = t.curiosityBridge;
-        const bridgeTemplate = (cb[problemType as keyof typeof cb] as string | undefined) || t.errors.offlineFallback;
-        const bridgeText = interpolate(bridgeTemplate, { duration: text, answer: text });
-        const aiMsg: ChatMsg = {
+        const fallbackText = showCta
+          ? (() => {
+              const cb = t.curiosityBridge;
+              const tmpl = (cb[problemType as keyof typeof cb] as string | undefined) || t.errors.offlineFallback;
+              return interpolate(tmpl, { duration: qualifyingAnswerRef.current, answer: qualifyingAnswerRef.current });
+            })()
+          : t.aiMessages.exchange2Fallback;
+        setMessages((prev) => [...prev, {
           id: generateId(),
           role: 'assistant',
-          content: bridgeText,
+          content: fallbackText,
           messageType: 'text',
-          showBirthDetailsCta: true,
+          showBirthDetailsCta: showCta,
           createdAt: new Date(),
-        };
-        setMessages((prev) => [...prev, aiMsg]);
-        setChatPhase('exchange_2');
+        }]);
+        if (chatPhase === 'exchange_1') setChatPhase('exchange_2');
       }, 1000);
-    } else if (chatPhase === 'exchange_2' || chatPhase === 'birth_details') {
-      // After curiosity bridge, redirect to birth details
-      setIsTyping(true);
+    } else if (chatPhase === 'birth_details') {
+      // Form already shown — any further typing gets a gentle nudge
+      const replyLang = detectLanguage(text);
+      const t = getTranslations(replyLang);
       setTimeout(() => {
         setIsTyping(false);
-        const aiMsg: ChatMsg = {
+        setMessages((prev) => [...prev, {
           id: generateId(),
           role: 'assistant',
           content: t.errors.offlineFallback,
           messageType: 'text',
           showBirthDetailsCta: true,
           createdAt: new Date(),
-        };
-        setMessages((prev) => [...prev, aiMsg]);
+        }]);
       }, 800);
     }
   };
+
+  // Keep ref current so handleChipTap / handleSendMessage always have
+  // the latest closure (with up-to-date sessionId and chatPhase).
+  handleUserReplyRef.current = handleUserReply;
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -312,6 +374,7 @@ function ChatPageContent() {
       lng: String(details.placeOfBirthLng),
       problem: problemType,
       lang: language,
+      sessionId: sessionDbId || '',
     });
 
     setTimeout(() => {

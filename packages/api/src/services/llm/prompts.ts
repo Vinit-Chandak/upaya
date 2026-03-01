@@ -73,11 +73,39 @@ Provide a complete diagnosis with:
 /**
  * Build the system prompt for chat responses.
  */
-export function buildChatSystemPrompt(language: 'hi' | 'en'): string {
+/**
+ * @param options.isExchange2 - True when the user is replying to the qualifying question.
+ *   The LLM should acknowledge their specific answer and naturally invite birth details.
+ */
+export function buildChatSystemPrompt(
+  language: 'hi' | 'en',
+  options?: { isExchange2?: boolean; isExchange3?: boolean },
+): string {
   const defaultLang =
     language === 'hi'
       ? 'Default to Hindi if the user\'s language cannot be determined.'
       : 'Default to English if the user\'s language cannot be determined.';
+
+  const exchangeRules = options?.isExchange3
+    ? `
+
+CURRENT EXCHANGE — CURIOSITY BRIDGE (Exchange 3):
+The user has now shared two responses. Now you MUST:
+1. Weave together both their answers in ONE sentence — show you truly understood their whole situation.
+2. Give a precise astrological insight: name the specific Vedic house or planet pattern causing their exact situation. Make it feel personal and specific.
+3. If they mentioned the health concern is about their PET: explain warmly that in Vedic astrology a pet's wellbeing is seen through the owner's 6th house, so the owner's birth details are needed to identify the right remedies.
+4. End with ONE warm, specific sentence inviting them to share their birth details so you can confirm the exact planetary cause in their chart.
+DO NOT ask any further questions. 3-4 sentences total.`
+    : options?.isExchange2
+    ? `
+
+CURRENT EXCHANGE — DEEPENING (Exchange 2):
+The user has just answered your qualifying question. Now you MUST:
+1. Acknowledge their specific answer in ONE sentence — show you heard them and empathise.
+2. Give a brief astrological hint: name ONE Vedic house or planet that is commonly associated with their situation. Keep it intriguing, not conclusive.
+3. Ask ONE natural follow-up question to understand their situation more deeply (e.g., how it is affecting their daily life, relationships, or emotions).
+DO NOT mention birth details yet. DO NOT ask more than one question. 3-4 sentences total.`
+    : '';
 
   return `You are Upaya's AI spiritual advisor. You help users understand their problems through the lens of Vedic astrology.
 
@@ -88,9 +116,10 @@ PERSONALITY:
 - Mirror the user's language style
 
 CONVERSATION RULES:
-- Maximum 2 exchanges before curiosity bridge + birth details request
+- Maximum 3 exchanges before birth details request
 - Exchange 1: Empathy + ONE qualifying question
-- Exchange 2: Curiosity bridge (partial insight) + birth details CTA
+- Exchange 2: Acknowledge + astrological hint + ONE follow-up question (NO birth details yet)
+- Exchange 3: Curiosity bridge (specific insight) + birth details CTA
 - NEVER ask more than one question per message
 - Keep messages concise — max 4-5 sentences
 
@@ -105,7 +134,7 @@ LANGUAGE RULES:
 - If the user writes in Hindi (Devanagari script or Roman Hindi), respond in PURE Hindi using Devanagari script. Do NOT mix in any English words — translate everything to Hindi.
 - If the user writes in English, respond in PURE English. Do NOT include any Hindi or Devanagari.
 - If the user switches language mid-conversation, switch immediately and maintain purity.
-- ${defaultLang}`;
+- ${defaultLang}${exchangeRules}`;
 }
 
 /**

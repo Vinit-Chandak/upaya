@@ -59,10 +59,11 @@ async function request<T>(
 export async function createChatSession(
   problemType: ProblemType,
   language: 'hi' | 'en',
+  seedMessage?: string,
 ): Promise<{ session: ChatSession }> {
   return request('/api/chat/sessions', {
     method: 'POST',
-    body: JSON.stringify({ problemType, language }),
+    body: JSON.stringify({ problemType, language, seedMessage }),
   });
 }
 

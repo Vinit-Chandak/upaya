@@ -44,7 +44,7 @@ function getChips(
   problemType: string,
   t: TranslationKeys,
 ): { label: string; value: string }[] | undefined {
-  const { durationChips, moneyChips, healthChips, legalChips, familyChips } = t.aiMessages;
+  const { durationChips, moneyChips, whoChips, legalChips, familyChips } = t.aiMessages;
   switch (problemType) {
     case 'marriage_delay':
     case 'career_stuck':
@@ -61,9 +61,9 @@ function getChips(
       ];
     case 'health_issues':
       return [
-        { label: healthChips.recent, value: healthChips.recent },
-        { label: healthChips.fewMonths, value: healthChips.fewMonths },
-        { label: healthChips.longTime, value: healthChips.longTime },
+        { label: whoChips.self, value: whoChips.self },
+        { label: whoChips.family, value: whoChips.family },
+        { label: whoChips.pet, value: whoChips.pet },
       ];
     case 'legal_matters':
       return [
@@ -176,19 +176,19 @@ export default function ChatScreen() {
         }
       } catch { /* default hi */ }
 
-      // Create a real chat session in the backend
+      const t_lang = getTranslations(lang);
+
       let createdSessionId: string | null = null;
       try {
         const { session } = await createChatSession(problemType, lang);
-        createdSessionId = session.session_id ?? session.sessionId;
+        createdSessionId = (session as unknown as Record<string, string>).session_id ?? session.sessionId;
         setSessionId(createdSessionId);
         setSessionDbId(session.id); // UUID PK — used for diagnosis FK
       } catch (err) {
         console.warn('[Chat] Failed to create session, continuing offline:', err);
       }
 
-      const t_lang = getTranslations(lang);
-
+      // get_kundli skips the conversation and goes straight to birth details
       if (problemType === 'get_kundli') {
         setIsTyping(true);
         setTimeout(() => {
@@ -206,6 +206,11 @@ export default function ChatScreen() {
         return;
       }
 
+      // Exchange 1 — fully LLM-powered for all flows:
+      // • Chip flow:          send the problem label as context (not shown in UI); AI opens the conversation
+      // • initialMessage flow: send the user's own text (shown in UI); AI responds to it
+      const exchange1Message = initialMessage || (lang === 'hi' ? problemInfo.hi : problemInfo.en);
+
       if (initialMessage) {
         setMessages([{
           id: generateId(),
@@ -216,11 +221,11 @@ export default function ChatScreen() {
         }]);
       }
 
-      // Exchange 1: Get qualifying question from real API
       setIsTyping(true);
-      if (createdSessionId && initialMessage) {
+
+      if (createdSessionId) {
         try {
-          const response = await sendChatMessage(createdSessionId, initialMessage);
+          const response = await sendChatMessage(createdSessionId, exchange1Message);
           setIsTyping(false);
           const chips = getChips(problemType, t_lang);
           const aiMsg: ChatMsg = {
@@ -231,14 +236,14 @@ export default function ChatScreen() {
             quickReplies: chips,
             createdAt: new Date(),
           };
-          setMessages((prev) => [...prev, aiMsg]);
+          setMessages((prev) => initialMessage ? [...prev, aiMsg] : [aiMsg]);
           return;
         } catch (err) {
-          console.warn('[Chat] Exchange 1 API failed, using fallback:', err);
+          console.warn('[Chat] Exchange 1 LLM failed, using i18n fallback:', err);
         }
       }
 
-      // Fallback: qualifying question from i18n (offline or no session)
+      // Fallback: i18n qualifying question (offline / API unavailable)
       setTimeout(() => {
         setIsTyping(false);
         const qq = t_lang.aiMessages.qualifyingQuestions;
@@ -252,21 +257,25 @@ export default function ChatScreen() {
           quickReplies: chips,
           createdAt: new Date(),
         };
-        setMessages((prev) => [...prev, aiMsg]);
+        setMessages((prev) => initialMessage ? [...prev, aiMsg] : [aiMsg]);
       }, 800);
     };
     init();
   }, [problemType, initialMessage]);
 
+  // Ref is updated after handleUserReply is defined (below) so callbacks
+  // with empty deps always call the latest closure (never a stale sessionId).
+  const handleUserReplyRef = useRef<((text: string) => void) | null>(null);
+
   const handleSendMessage = useCallback(() => {
     const text = inputValue.trim();
     if (!text) return;
     setInputValue('');
-    handleUserReply(text);
+    handleUserReplyRef.current?.(text);
   }, [inputValue]);
 
   const handleChipTap = useCallback((value: string) => {
-    handleUserReply(value);
+    handleUserReplyRef.current?.(value);
   }, []);
 
   const handleUserReply = async (text: string) => {
@@ -291,6 +300,9 @@ export default function ChatScreen() {
 
     setIsTyping(true);
 
+    // CTA only appears on exchange 3 (second user reply → curiosity bridge)
+    const showCta = chatPhase === 'exchange_2';
+
     // Try to get real AI response from backend
     if (sessionId) {
       try {
@@ -301,7 +313,7 @@ export default function ChatScreen() {
           role: 'assistant',
           content: response.aiMessage.content,
           messageType: 'text',
-          showBirthDetailsCta: true,
+          showBirthDetailsCta: showCta,
           createdAt: new Date(),
         };
         setMessages((prev) => [...prev, aiMsg]);
@@ -318,13 +330,16 @@ export default function ChatScreen() {
     // Offline fallback if no session or API fails
     setTimeout(() => {
       setIsTyping(false);
-      const fallbackText = getTranslations(detectLanguage(text)).errors.offlineFallback;
+      const t_reply = getTranslations(detectLanguage(text));
+      const fallbackText = showCta
+        ? t_reply.errors.offlineFallback          // exchange 3: curiosity bridge text
+        : t_reply.aiMessages.exchange2Fallback;   // exchange 2: follow-up question
       const aiMsg: ChatMsg = {
         id: generateId(),
         role: 'assistant',
         content: fallbackText,
         messageType: 'text',
-        showBirthDetailsCta: true,
+        showBirthDetailsCta: showCta,
         createdAt: new Date(),
       };
       setMessages((prev) => [...prev, aiMsg]);
@@ -333,6 +348,10 @@ export default function ChatScreen() {
       }
     }, 800);
   };
+
+  // Keep ref current so handleChipTap / handleSendMessage always have
+  // the latest closure (with up-to-date sessionId and chatPhase).
+  handleUserReplyRef.current = handleUserReply;
 
   const handleBirthDetailsCta = () => {
     setChatPhase('birth_details');
