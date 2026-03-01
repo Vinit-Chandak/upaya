@@ -3,6 +3,8 @@ import type {
   ChatSession,
   ChatMessage,
   Kundli,
+  KundliProfile,
+  Relationship,
   ProblemType,
 } from '@upaya/shared';
 
@@ -149,6 +151,61 @@ export async function getDiagnosis(
   id: string,
 ): Promise<DiagnosisResponse> {
   return request(`/api/diagnosis/${id}`);
+}
+
+// ---- Kundli Profiles ----
+
+export async function createKundliProfile(input: {
+  personName: string;
+  relationship: Relationship;
+  dateOfBirth: string;
+  timeOfBirth?: string | null;
+  timeApproximate?: boolean;
+  placeOfBirthName: string;
+  placeOfBirthLat: number;
+  placeOfBirthLng: number;
+  firebaseIdToken?: string; // optional — pass when authenticated
+}): Promise<{ profile: KundliProfile }> {
+  const { firebaseIdToken, ...body } = input;
+  return request('/api/kundli/profiles', {
+    method: 'POST',
+    body: JSON.stringify(body),
+    headers: firebaseIdToken ? { Authorization: `Bearer ${firebaseIdToken}` } : undefined,
+  });
+}
+
+export async function getKundliProfiles(
+  firebaseIdToken: string,
+): Promise<{ profiles: KundliProfile[] }> {
+  return request('/api/kundli/profiles', {
+    headers: { Authorization: `Bearer ${firebaseIdToken}` },
+  });
+}
+
+// ---- Auth ----
+
+export async function registerUser(input: {
+  firebaseIdToken: string;
+  name?: string;
+  language?: 'hi' | 'en';
+}): Promise<{ user: { id: string; name: string | null; language: string } }> {
+  return request('/api/auth/register', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+}
+
+export async function migrateAnonymousData(input: {
+  firebaseIdToken: string;
+  sessionIds?: string[];
+  profileIds?: string[];
+}): Promise<{ migrated: { sessions: number; kundlis: number; profiles: number } }> {
+  const { firebaseIdToken, ...body } = input;
+  return request('/api/auth/migrate-session', {
+    method: 'POST',
+    body: JSON.stringify(body),
+    headers: { Authorization: `Bearer ${firebaseIdToken}` },
+  });
 }
 
 export { ApiError };

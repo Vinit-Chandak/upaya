@@ -431,3 +431,113 @@
     max-width: 52rem;
   }
 }
+
+/* ---- Saved Profiles Card ---- */
+.savedProfilesCard {
+  width: 100%;
+  max-width: var(--chat-ai-max-width);
+  background: var(--color-neutral-white);
+  border: 1.5px solid var(--color-accent-gold-light);
+  border-radius: var(--radius-card);
+  padding: var(--space-card-padding);
+  box-shadow: var(--shadow-card);
+  animation: savedCardSlideIn 0.35s ease both;
+}
+
+@keyframes savedCardSlideIn {
+  from { opacity: 0; transform: translateY(0.75rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.savedProfilesTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-inline-gap);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-secondary-maroon, #4a0e0e);
+  margin-bottom: 0.25rem;
+}
+
+.savedProfilesSub {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-500);
+  margin-bottom: var(--space-component-gap);
+}
+
+.savedProfilesList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: var(--space-component-gap);
+}
+
+.savedProfileItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  background: #fff8f0;
+  border: 1.5px solid var(--color-accent-gold-light);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+  text-align: left;
+  width: 100%;
+}
+
+.savedProfileItem:hover {
+  border-color: var(--color-primary-saffron);
+  background: rgba(255, 140, 0, 0.06);
+}
+
+.savedProfileEmoji {
+  font-size: var(--text-lg);
+  flex-shrink: 0;
+}
+
+.savedProfileInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.savedProfileName {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-neutral-grey-800);
+}
+
+.savedProfileMeta {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-grey-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.savedProfileArrow {
+  font-size: var(--text-base);
+  color: var(--color-primary-saffron);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.addNewProfileBtn {
+  width: 100%;
+  padding: 0.625rem;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-primary-saffron-dark);
+  background: var(--color-neutral-white);
+  border: 1.5px solid var(--color-primary-saffron);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.addNewProfileBtn:hover {
+  background: rgba(255, 140, 0, 0.04);
+}

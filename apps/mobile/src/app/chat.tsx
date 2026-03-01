@@ -11,12 +11,31 @@ import {
   KeyboardAvoidingView,
   Animated,
   Alert,
+  Modal,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { colors, PROBLEM_TYPES, getTranslations, detectLanguage, type TranslationKeys, type ProblemType, type ChatMessageType } from '@upaya/shared';
+import {
+  colors,
+  PROBLEM_TYPES,
+  getTranslations,
+  detectLanguage,
+  type TranslationKeys,
+  type ProblemType,
+  type ChatMessageType,
+  type LocalKundliProfile,
+  type Relationship,
+} from '@upaya/shared';
 import { fp, wp, hp } from '../theme';
-import { createChatSession, sendChatMessage, generateKundli, ApiError } from '../services/api';
+import { createChatSession, sendChatMessage, generateKundli, createKundliProfile, ApiError } from '../services/api';
+import {
+  getLocalProfiles,
+  saveLocalProfile,
+  saveAnonSessionId,
+  saveAnonProfileId,
+} from '../services/localProfiles';
+import BirthDetailsForm, { type BirthDetailsResult } from '../components/BirthDetailsForm';
+import SavedProfilesSheet from '../components/SavedProfilesSheet';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -93,6 +112,14 @@ function formatTime(date: Date): string {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
+// Infer relationship from whoChips answer text
+function inferRelationship(text: string, t: TranslationKeys): Relationship {
+  const { whoChips } = t.aiMessages;
+  if (text === whoChips.family) return 'family';
+  if (text === whoChips.pet) return 'pet';
+  return 'self';
+}
+
 // ---- Component ----
 
 export default function ChatScreen() {
@@ -106,24 +133,20 @@ export default function ChatScreen() {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [chatPhase, setChatPhase] = useState<ChatPhase>('exchange_1');
-  const [showBirthForm, setShowBirthForm] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [sessionDbId, setSessionDbId] = useState<string | null>(null); // UUID PK for diagnosis FK
+  const [sessionDbId, setSessionDbId] = useState<string | null>(null);
+
+  // Birth details flow
+  const [showProfileSheet, setShowProfileSheet] = useState(false);
+  const [showBirthForm, setShowBirthForm] = useState(false);
+  const [savedProfiles, setSavedProfiles] = useState<LocalKundliProfile[]>([]);
+  const [preselectedRel, setPreselectedRel] = useState<Relationship>('self');
   const [isSubmittingBirth, setIsSubmittingBirth] = useState(false);
 
   // Track user's qualifying answer for diagnosis context
   const qualifyingAnswerRef = useRef('');
-
-  // Birth details form state
-  const [bdDob, setBdDob] = useState('');
-  const [bdTime, setBdTime] = useState('');
-  const [bdAmpm, setBdAmpm] = useState<'AM' | 'PM'>('AM');
-  const [bdUnknownTime, setBdUnknownTime] = useState(false);
-  const [bdApprox, setBdApprox] = useState<string | null>(null);
-  const [bdPlace, setBdPlace] = useState('');
-  const [bdPlaceLat, setBdPlaceLat] = useState(0);
-  const [bdPlaceLng, setBdPlaceLng] = useState(0);
-  const [showPlaceDropdown, setShowPlaceDropdown] = useState(false);
+  // Track last whoChip selection for pre-filling relationship
+  const lastWhoChipRef = useRef<string>('');
 
   const scrollViewRef = useRef<ScrollView>(null);
   const hasInitialized = useRef(false);
@@ -150,7 +173,6 @@ export default function ChatScreen() {
     return () => loops.forEach((l) => l.stop());
   }, [isTyping, dotAnim1, dotAnim2, dotAnim3]);
 
-  // Scroll to bottom
   const scrollToBottom = useCallback(() => {
     setTimeout(() => {
       scrollViewRef.current?.scrollToEnd({ animated: true });
@@ -178,17 +200,25 @@ export default function ChatScreen() {
 
       const t_lang = getTranslations(lang);
 
+      // Load saved profiles for picker
+      const profiles = await getLocalProfiles();
+      setSavedProfiles(profiles);
+
       let createdSessionId: string | null = null;
       try {
         const { session } = await createChatSession(problemType, lang);
         createdSessionId = (session as unknown as Record<string, string>).session_id ?? session.sessionId;
         setSessionId(createdSessionId);
-        setSessionDbId(session.id); // UUID PK — used for diagnosis FK
+        setSessionDbId(session.id);
+        // Track this session for anonymous → auth claim
+        if (createdSessionId) {
+          await saveAnonSessionId(createdSessionId);
+        }
       } catch (err) {
         console.warn('[Chat] Failed to create session, continuing offline:', err);
       }
 
-      // get_kundli skips the conversation and goes straight to birth details
+      // get_kundli skips conversation and goes straight to birth details
       if (problemType === 'get_kundli') {
         setIsTyping(true);
         setTimeout(() => {
@@ -206,9 +236,7 @@ export default function ChatScreen() {
         return;
       }
 
-      // Exchange 1 — fully LLM-powered for all flows:
-      // • Chip flow:          send the problem label as context (not shown in UI); AI opens the conversation
-      // • initialMessage flow: send the user's own text (shown in UI); AI responds to it
+      // Exchange 1 — LLM-powered
       const exchange1Message = initialMessage || (lang === 'hi' ? problemInfo.hi : problemInfo.en);
 
       if (initialMessage) {
@@ -243,7 +271,7 @@ export default function ChatScreen() {
         }
       }
 
-      // Fallback: i18n qualifying question (offline / API unavailable)
+      // Fallback: static i18n qualifying question
       setTimeout(() => {
         setIsTyping(false);
         const qq = t_lang.aiMessages.qualifyingQuestions;
@@ -263,8 +291,7 @@ export default function ChatScreen() {
     init();
   }, [problemType, initialMessage]);
 
-  // Ref is updated after handleUserReply is defined (below) so callbacks
-  // with empty deps always call the latest closure (never a stale sessionId).
+  // Ref pattern to avoid stale closures in chip/send callbacks
   const handleUserReplyRef = useRef<((text: string) => void) | null>(null);
 
   const handleSendMessage = useCallback(() => {
@@ -279,7 +306,6 @@ export default function ChatScreen() {
   }, []);
 
   const handleUserReply = async (text: string) => {
-    // Remove quick reply chips from previous messages
     setMessages((prev) =>
       prev.map((m) => (m.quickReplies ? { ...m, quickReplies: undefined } : m))
     );
@@ -293,17 +319,20 @@ export default function ChatScreen() {
     };
     setMessages((prev) => [...prev, userMsg]);
 
-    // Save qualifying answer for diagnosis context
     if (chatPhase === 'exchange_1') {
       qualifyingAnswerRef.current = text;
+      // Track if user selected a whoChip (for pre-filling relationship)
+      const t_curr = getTranslations(language);
+      const { whoChips } = t_curr.aiMessages;
+      if ([whoChips.self, whoChips.family, whoChips.pet].includes(text)) {
+        lastWhoChipRef.current = text;
+      }
     }
 
     setIsTyping(true);
 
-    // CTA only appears on exchange 3 (second user reply → curiosity bridge)
     const showCta = chatPhase === 'exchange_2';
 
-    // Try to get real AI response from backend
     if (sessionId) {
       try {
         const response = await sendChatMessage(sessionId, text);
@@ -323,17 +352,16 @@ export default function ChatScreen() {
         return;
       } catch (err) {
         console.warn('[Chat] API call failed, using fallback:', err);
-        // Fall through to offline fallback below
       }
     }
 
-    // Offline fallback if no session or API fails
+    // Offline fallback
     setTimeout(() => {
       setIsTyping(false);
       const t_reply = getTranslations(detectLanguage(text));
       const fallbackText = showCta
-        ? t_reply.errors.offlineFallback          // exchange 3: curiosity bridge text
-        : t_reply.aiMessages.exchange2Fallback;   // exchange 2: follow-up question
+        ? t_reply.errors.offlineFallback
+        : t_reply.aiMessages.exchange2Fallback;
       const aiMsg: ChatMsg = {
         id: generateId(),
         role: 'assistant',
@@ -349,129 +377,179 @@ export default function ChatScreen() {
     }, 800);
   };
 
-  // Keep ref current so handleChipTap / handleSendMessage always have
-  // the latest closure (with up-to-date sessionId and chatPhase).
   handleUserReplyRef.current = handleUserReply;
 
-  const handleBirthDetailsCta = () => {
+  // ── Birth details CTA tapped ────────────────────────────────────────────────
+
+  const handleBirthDetailsCta = useCallback(async () => {
     setChatPhase('birth_details');
-    setShowBirthForm(true);
-  };
 
-  // Popular cities for the place picker
-  const POPULAR_CITIES = [
-    { name: 'Delhi, India', lat: 28.6139, lng: 77.209 },
-    { name: 'Mumbai, Maharashtra', lat: 19.076, lng: 72.8777 },
-    { name: 'Lucknow, UP', lat: 26.8467, lng: 80.9462 },
-    { name: 'Jaipur, Rajasthan', lat: 26.9124, lng: 75.7873 },
-    { name: 'Varanasi, UP', lat: 25.3176, lng: 82.9739 },
-    { name: 'Kolkata, WB', lat: 22.5726, lng: 88.3639 },
-    { name: 'Chennai, TN', lat: 13.0827, lng: 80.2707 },
-    { name: 'Hyderabad, TS', lat: 17.385, lng: 78.4867 },
-  ];
+    // Determine pre-selected relationship from context
+    const t_curr = getTranslations(language);
+    const rel = lastWhoChipRef.current
+      ? inferRelationship(lastWhoChipRef.current, t_curr)
+      : 'self';
+    setPreselectedRel(rel);
 
-  const filteredCities = bdPlace.trim().length > 0
-    ? POPULAR_CITIES.filter((c) => c.name.toLowerCase().includes(bdPlace.toLowerCase()))
-    : POPULAR_CITIES;
+    // Reload profiles (may have been added in another session)
+    const profiles = await getLocalProfiles();
+    setSavedProfiles(profiles);
 
-  const isBirthFormValid = bdDob.trim().length > 0 && (bdPlace.trim().length > 0 && bdPlaceLat !== 0) && (bdUnknownTime || bdTime.trim().length > 0);
+    if (profiles.length > 0) {
+      setShowProfileSheet(true);
+    } else {
+      setShowBirthForm(true);
+    }
+  }, [language]);
 
-  const handleBirthSubmit = async () => {
-    if (!isBirthFormValid || isSubmittingBirth) return;
-    setIsSubmittingBirth(true);
+  // ── Profile selected from sheet — skip form, generate immediately ───────────
+
+  const handleProfileSelected = useCallback(async (profile: LocalKundliProfile) => {
+    setShowProfileSheet(false);
     setChatPhase('generating');
-    setShowBirthForm(false);
 
     const confirmMsg: ChatMsg = {
       id: generateId(),
       role: 'user',
-      content: `DOB: ${bdDob}\nTime: ${bdTime || 'Approximate'}\nPlace: ${bdPlace}`,
+      content: `${profile.personName} · ${profile.dateOfBirth} · ${profile.placeOfBirthName}`,
       messageType: 'text',
       createdAt: new Date(),
     };
     setMessages((prev) => [...prev, confirmMsg]);
 
-    // Parse DOB from DD/MM/YYYY to YYYY-MM-DD for API
-    const dobParts = bdDob.split('/');
-    const isoDate = dobParts.length === 3
-      ? `${dobParts[2]}-${dobParts[1].padStart(2, '0')}-${dobParts[0].padStart(2, '0')}`
-      : bdDob;
-
-    // Parse time to 24hr format for API
-    let time24 = bdTime;
-    if (bdTime && bdAmpm) {
-      const [hStr, mStr] = bdTime.split(':');
-      let h = parseInt(hStr, 10);
-      const m = mStr || '00';
-      if (bdAmpm === 'PM' && h < 12) h += 12;
-      if (bdAmpm === 'AM' && h === 12) h = 0;
-      time24 = `${h.toString().padStart(2, '0')}:${m}`;
-    }
-
-    // Determine approximate time if exact time unknown
-    const approxTimeMap: Record<string, string> = {
-      morning: '09:00',
-      afternoon: '14:00',
-      evening: '18:00',
-      night: '22:00',
-      dontknow: '12:00',
-    };
-    if (bdUnknownTime && bdApprox) {
-      time24 = approxTimeMap[bdApprox] || '12:00';
-    } else if (bdUnknownTime) {
-      time24 = '12:00';
-    }
-
     try {
-      // Call real Kundli API
       const { kundli } = await generateKundli({
-        dateOfBirth: isoDate,
-        timeOfBirth: time24,
-        timeApproximate: bdUnknownTime,
-        placeOfBirthName: bdPlace,
-        placeOfBirthLat: bdPlaceLat,
-        placeOfBirthLng: bdPlaceLng,
+        dateOfBirth: profile.dateOfBirth,
+        timeOfBirth: profile.timeOfBirth ?? undefined,
+        timeApproximate: profile.timeApproximate,
+        placeOfBirthName: profile.placeOfBirthName,
+        placeOfBirthLat: profile.placeOfBirthLat,
+        placeOfBirthLng: profile.placeOfBirthLng,
       });
 
-      // Navigate with real kundli data
       router.push({
         pathname: '/kundli-animation',
         params: {
           kundliId: kundli.id,
-          sessionId: sessionDbId || '', // UUID PK — diagnosis.chat_session_id FK
+          sessionId: sessionDbId || '',
           problemType,
           qualifyingAnswer: qualifyingAnswerRef.current,
-          dob: bdDob,
-          tob: bdTime || (bdApprox ? approxTimeMap[bdApprox] : ''),
-          place: bdPlace,
+          dob: profile.dateOfBirth,
+          tob: profile.timeOfBirth || '',
+          place: profile.placeOfBirthName,
           lang: language,
+          personName: profile.personName,
+        },
+      });
+    } catch (err) {
+      setChatPhase('birth_details');
+      const t = getTranslations(language);
+      Alert.alert(t.common.error, t.errors.kundliGenerationError);
+      console.error('[Chat] Kundli generation from profile failed:', err);
+    }
+  }, [sessionDbId, problemType, language, router]);
+
+  // ── Birth form submitted ────────────────────────────────────────────────────
+
+  const handleBirthFormSubmit = useCallback(async (details: BirthDetailsResult) => {
+    setShowBirthForm(false);
+    setIsSubmittingBirth(true);
+    setChatPhase('generating');
+
+    const confirmMsg: ChatMsg = {
+      id: generateId(),
+      role: 'user',
+      content: `${details.personName} · ${details.dateOfBirth} · ${details.placeOfBirthName}`,
+      messageType: 'text',
+      createdAt: new Date(),
+    };
+    setMessages((prev) => [...prev, confirmMsg]);
+
+    try {
+      // 1. Save profile to server (anonymous or authenticated)
+      let serverId: string | null = null;
+      try {
+        const { profile } = await createKundliProfile({
+          personName: details.personName,
+          relationship: details.relationship,
+          dateOfBirth: details.dateOfBirth,
+          timeOfBirth: details.timeOfBirth,
+          timeApproximate: details.timeApproximate,
+          placeOfBirthName: details.placeOfBirthName,
+          placeOfBirthLat: details.placeOfBirthLat,
+          placeOfBirthLng: details.placeOfBirthLng,
+        });
+        serverId = profile.id ?? null;
+        if (serverId) {
+          await saveAnonProfileId(serverId);
+        }
+      } catch (err) {
+        // Non-fatal — profile just won't be saved on server yet; local storage still works
+        console.warn('[Chat] Failed to save profile to server:', err);
+      }
+
+      // 2. Save profile locally for profile picker
+      const localProfile: LocalKundliProfile = {
+        localId: generateId(),
+        serverId,
+        personName: details.personName,
+        relationship: details.relationship,
+        dateOfBirth: details.dateOfBirth,
+        timeOfBirth: details.timeOfBirth,
+        timeApproximate: details.timeApproximate,
+        placeOfBirthName: details.placeOfBirthName,
+        placeOfBirthLat: details.placeOfBirthLat,
+        placeOfBirthLng: details.placeOfBirthLng,
+        createdAt: new Date().toISOString(),
+      };
+      await saveLocalProfile(localProfile);
+
+      // 3. Generate kundli (non-fatal — profile is already saved locally)
+      let kundliId: string | undefined;
+      try {
+        const { kundli } = await generateKundli({
+          dateOfBirth: details.dateOfBirth,
+          timeOfBirth: details.timeOfBirth ?? undefined,
+          timeApproximate: details.timeApproximate,
+          placeOfBirthName: details.placeOfBirthName,
+          placeOfBirthLat: details.placeOfBirthLat,
+          placeOfBirthLng: details.placeOfBirthLng,
+        });
+        kundliId = kundli.id;
+      } catch (err) {
+        console.warn('[Chat] generateKundli failed (non-fatal), navigating without kundliId:', err);
+      }
+
+      // 4. Navigate to kundli animation (with or without kundliId)
+      router.push({
+        pathname: '/kundli-animation',
+        params: {
+          kundliId: kundliId || '',
+          sessionId: sessionDbId || '',
+          problemType,
+          qualifyingAnswer: qualifyingAnswerRef.current,
+          dob: details.dateOfBirth,
+          tob: details.timeOfBirth || '',
+          place: details.placeOfBirthName,
+          lang: language,
+          personName: details.personName,
         },
       });
     } catch (err) {
       setIsSubmittingBirth(false);
       setChatPhase('birth_details');
-      setShowBirthForm(true);
       const t = getTranslations(language);
       Alert.alert(t.common.error, t.errors.kundliGenerationError);
-      console.error('[Chat] Kundli generation failed:', err);
+      console.error('[Chat] Birth form submission failed:', err);
     }
-  };
+  }, [sessionDbId, problemType, language, router]);
 
   const t = getTranslations(language);
-  const approxTime = t.birthDetails.approximateTime;
-  const APPROX_OPTIONS = [
-    { key: 'morning', label: approxTime.morning },
-    { key: 'afternoon', label: approxTime.afternoon },
-    { key: 'evening', label: approxTime.evening },
-    { key: 'night', label: approxTime.night },
-    { key: 'dontknow', label: approxTime.dontKnow },
-  ];
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
     >
       {/* Top Bar */}
       <View style={styles.topBar}>
@@ -555,12 +633,8 @@ export default function ChatScreen() {
                     >
                       <Text style={styles.birthDetailsCtaIcon}>📋</Text>
                       <View>
-                        <Text style={styles.birthDetailsCtaText}>
-                          {t.chat.birthDetailsCta}
-                        </Text>
-                        <Text style={styles.birthDetailsCtaSub}>
-                          {t.chat.birthDetailsSub}
-                        </Text>
+                        <Text style={styles.birthDetailsCtaText}>{t.chat.birthDetailsCta}</Text>
+                        <Text style={styles.birthDetailsCtaSub}>{t.chat.birthDetailsSub}</Text>
                       </View>
                     </TouchableOpacity>
                   )}
@@ -601,136 +675,6 @@ export default function ChatScreen() {
             </View>
           </View>
         )}
-
-        {/* Birth Details Form */}
-        {showBirthForm && (
-          <View style={[styles.messageRow, styles.messageRowAi]}>
-            <View style={styles.avatarPlaceholder} />
-            <View style={styles.birthFormCard}>
-              <View style={styles.birthFormHeader}>
-                <Text style={styles.birthFormIcon}>📋</Text>
-                <Text style={styles.birthFormTitle}>{t.birthDetails.title}</Text>
-              </View>
-              <Text style={styles.birthFormSubtitle}>{t.birthDetails.subtitle}</Text>
-
-              {/* DOB */}
-              <Text style={styles.fieldLabel}>📅 {t.birthDetails.dateOfBirth}</Text>
-              <TextInput
-                style={styles.fieldInput}
-                placeholder="DD/MM/YYYY"
-                placeholderTextColor={colors.neutral.grey400}
-                value={bdDob}
-                onChangeText={setBdDob}
-                keyboardType="numbers-and-punctuation"
-              />
-
-              {/* Time */}
-              {!bdUnknownTime && (
-                <>
-                  <Text style={styles.fieldLabel}>🕐 {t.birthDetails.timeOfBirth}</Text>
-                  <View style={styles.timeRow}>
-                    <TextInput
-                      style={[styles.fieldInput, styles.timeInput]}
-                      placeholder="HH:MM"
-                      placeholderTextColor={colors.neutral.grey400}
-                      value={bdTime}
-                      onChangeText={setBdTime}
-                      keyboardType="numbers-and-punctuation"
-                    />
-                    <View style={styles.ampmRow}>
-                      <TouchableOpacity
-                        style={[styles.ampmButton, bdAmpm === 'AM' && styles.ampmActive]}
-                        onPress={() => setBdAmpm('AM')}
-                      >
-                        <Text style={[styles.ampmText, bdAmpm === 'AM' && styles.ampmTextActive]}>AM</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={[styles.ampmButton, bdAmpm === 'PM' && styles.ampmActive]}
-                        onPress={() => setBdAmpm('PM')}
-                      >
-                        <Text style={[styles.ampmText, bdAmpm === 'PM' && styles.ampmTextActive]}>PM</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </>
-              )}
-
-              {/* Unknown time */}
-              <TouchableOpacity
-                style={styles.checkboxRow}
-                onPress={() => { setBdUnknownTime(!bdUnknownTime); setBdTime(''); }}
-              >
-                <View style={[styles.checkbox, bdUnknownTime && styles.checkboxChecked]}>
-                  {bdUnknownTime && <Text style={styles.checkboxMark}>✓</Text>}
-                </View>
-                <Text style={styles.checkboxLabel}>{t.birthDetails.unknownTime}</Text>
-              </TouchableOpacity>
-
-              {bdUnknownTime && (
-                <View style={styles.approxOptions}>
-                  {APPROX_OPTIONS.map((opt) => (
-                    <TouchableOpacity
-                      key={opt.key}
-                      style={[styles.approxOption, bdApprox === opt.key && styles.approxOptionActive]}
-                      onPress={() => setBdApprox(opt.key)}
-                    >
-                      <View style={[styles.radio, bdApprox === opt.key && styles.radioActive]} />
-                      <Text style={[styles.approxText, bdApprox === opt.key && styles.approxTextActive]}>
-                        {opt.label}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
-
-              {/* Place */}
-              <Text style={styles.fieldLabel}>📍 {t.birthDetails.placeOfBirth}</Text>
-              <TextInput
-                style={styles.fieldInput}
-                placeholder={t.birthDetails.placeSearch}
-                placeholderTextColor={colors.neutral.grey400}
-                value={bdPlace}
-                onChangeText={(t) => {
-                  setBdPlace(t);
-                  setBdPlaceLat(0);
-                  setBdPlaceLng(0);
-                  setShowPlaceDropdown(true);
-                }}
-                onFocus={() => setShowPlaceDropdown(true)}
-              />
-
-              {showPlaceDropdown && (
-                <View style={styles.placeDropdown}>
-                  {filteredCities.map((city) => (
-                    <TouchableOpacity
-                      key={city.name}
-                      style={styles.placeOption}
-                      onPress={() => {
-                        setBdPlace(city.name);
-                        setBdPlaceLat(city.lat);
-                        setBdPlaceLng(city.lng);
-                        setShowPlaceDropdown(false);
-                      }}
-                    >
-                      <Text style={styles.placeOptionText}>📍 {city.name}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
-
-              {/* Generate button */}
-              <TouchableOpacity
-                style={[styles.generateButton, !isBirthFormValid && styles.generateButtonDisabled]}
-                onPress={handleBirthSubmit}
-                disabled={!isBirthFormValid || isSubmittingBirth}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.generateButtonText}>{t.birthDetails.generateButton}</Text>
-                <Text style={styles.generateButtonSub}>{t.birthDetails.generateButtonSub}</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
       </ScrollView>
 
       {/* Input Bar */}
@@ -761,6 +705,39 @@ export default function ChatScreen() {
           )}
         </View>
       </View>
+
+      {/* Saved Profiles Sheet */}
+      <SavedProfilesSheet
+        visible={showProfileSheet}
+        profiles={savedProfiles}
+        language={language}
+        onSelectProfile={handleProfileSelected}
+        onAddNew={() => { setShowProfileSheet(false); setShowBirthForm(true); }}
+        onDismiss={() => { setShowProfileSheet(false); setChatPhase('exchange_2'); }}
+      />
+
+      {/* Birth Details Form — full-screen modal */}
+      <Modal
+        visible={showBirthForm}
+        animationType="slide"
+        transparent
+        onRequestClose={() => { setShowBirthForm(false); setChatPhase('exchange_2'); }}
+      >
+        <TouchableOpacity
+          style={styles.formOverlay}
+          activeOpacity={1}
+          onPress={() => { setShowBirthForm(false); setChatPhase('exchange_2'); }}
+        />
+        <View style={styles.formSheet}>
+          <View style={styles.formHandleBar} />
+          <BirthDetailsForm
+            language={language}
+            preselectedRel={preselectedRel}
+            onSubmit={handleBirthFormSubmit}
+            onCancel={() => { setShowBirthForm(false); setChatPhase('exchange_2'); }}
+          />
+        </View>
+      </Modal>
     </KeyboardAvoidingView>
   );
 }
@@ -783,416 +760,96 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.neutral.grey100,
   },
-  backButton: {
-    padding: wp(6),
-  },
-  backArrow: {
-    fontSize: fp(20),
-    color: colors.neutral.grey700,
-  },
-  topBarTitle: {
-    flex: 1,
-    fontSize: fp(16),
-    fontWeight: '600',
-    color: colors.secondary.maroon,
-  },
-  problemBadge: {
-    paddingHorizontal: wp(10),
-    paddingVertical: hp(3),
-    backgroundColor: '#FFF8F0',
-    borderRadius: wp(20),
-  },
-  problemBadgeText: {
-    fontSize: fp(11),
-    fontWeight: '500',
-    color: colors.secondary.maroon,
-  },
-  overflowButton: {
-    padding: wp(6),
-  },
-  overflowDots: {
-    fontSize: fp(18),
-    color: colors.neutral.grey500,
-  },
+  backButton: { padding: wp(6) },
+  backArrow: { fontSize: fp(20), color: colors.neutral.grey700 },
+  topBarTitle: { flex: 1, fontSize: fp(16), fontWeight: '600', color: colors.secondary.maroon },
+  problemBadge: { paddingHorizontal: wp(10), paddingVertical: hp(3), backgroundColor: '#FFF8F0', borderRadius: wp(20) },
+  problemBadgeText: { fontSize: fp(11), fontWeight: '500', color: colors.secondary.maroon },
+  overflowButton: { padding: wp(6) },
+  overflowDots: { fontSize: fp(18), color: colors.neutral.grey500 },
 
   /* Messages */
-  messagesArea: {
-    flex: 1,
-  },
-  messagesContent: {
-    paddingHorizontal: wp(12),
-    paddingVertical: hp(12),
-    gap: hp(6),
-  },
-  messageRow: {
-    flexDirection: 'row',
-    gap: wp(6),
-    marginBottom: hp(2),
-  },
-  messageRowAi: {
-    justifyContent: 'flex-start',
-  },
-  messageRowUser: {
-    justifyContent: 'flex-end',
-  },
+  messagesArea: { flex: 1 },
+  messagesContent: { paddingHorizontal: wp(12), paddingVertical: hp(12), gap: hp(6) },
+  messageRow: { flexDirection: 'row', gap: wp(6), marginBottom: hp(2) },
+  messageRowAi: { justifyContent: 'flex-start' },
+  messageRowUser: { justifyContent: 'flex-end' },
   aiAvatar: {
-    width: wp(32),
-    height: wp(32),
-    borderRadius: wp(16),
-    backgroundColor: '#FFF8F0',
-    borderWidth: 1.5,
-    borderColor: colors.accent.goldLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'flex-end',
+    width: wp(32), height: wp(32), borderRadius: wp(16),
+    backgroundColor: '#FFF8F0', borderWidth: 1.5, borderColor: colors.accent.goldLight,
+    alignItems: 'center', justifyContent: 'center', alignSelf: 'flex-end',
   },
-  aiAvatarText: {
-    fontSize: fp(14),
-  },
-  avatarPlaceholder: {
-    width: wp(32),
-  },
-  messageBubble: {
-    paddingHorizontal: wp(12),
-    paddingVertical: hp(8),
-    borderRadius: wp(16),
-    maxWidth: SCREEN_WIDTH * 0.75,
-  },
-  aiBubble: {
-    backgroundColor: '#FFF8F0',
-    borderBottomLeftRadius: wp(4),
-  },
-  userBubble: {
-    backgroundColor: '#FFF3E0',
-    borderBottomRightRadius: wp(4),
-  },
-  messageText: {
-    fontSize: fp(14),
-    lineHeight: fp(14) * 1.5,
-    color: colors.neutral.grey800,
-  },
+  aiAvatarText: { fontSize: fp(14) },
+  avatarPlaceholder: { width: wp(32) },
+  messageBubble: { paddingHorizontal: wp(12), paddingVertical: hp(8), borderRadius: wp(16), maxWidth: SCREEN_WIDTH * 0.75 },
+  aiBubble: { backgroundColor: '#FFF8F0', borderBottomLeftRadius: wp(4) },
+  userBubble: { backgroundColor: '#FFF3E0', borderBottomRightRadius: wp(4) },
+  messageText: { fontSize: fp(14), lineHeight: fp(14) * 1.5, color: colors.neutral.grey800 },
 
-  /* Quick Replies */
-  quickRepliesWrapper: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: wp(6),
-    marginTop: hp(8),
-  },
+  /* Quick replies */
+  quickRepliesWrapper: { flexDirection: 'row', flexWrap: 'wrap', gap: wp(6), marginTop: hp(8) },
   quickReplyChip: {
-    paddingHorizontal: wp(12),
-    paddingVertical: hp(6),
-    borderWidth: 1.5,
-    borderColor: colors.primary.saffronLight,
-    borderRadius: wp(20),
-    backgroundColor: colors.neutral.white,
+    paddingHorizontal: wp(12), paddingVertical: hp(6),
+    borderWidth: 1.5, borderColor: colors.primary.saffronLight,
+    borderRadius: wp(20), backgroundColor: colors.neutral.white,
   },
-  quickReplyText: {
-    fontSize: fp(12),
-    fontWeight: '500',
-    color: colors.primary.saffronDark,
-  },
+  quickReplyText: { fontSize: fp(12), fontWeight: '500', color: colors.primary.saffronDark },
 
   /* Birth Details CTA */
   birthDetailsCta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: wp(8),
-    marginTop: hp(8),
-    paddingHorizontal: wp(12),
-    paddingVertical: hp(10),
-    backgroundColor: colors.primary.saffron,
-    borderRadius: wp(12),
+    flexDirection: 'row', alignItems: 'center', gap: wp(8), marginTop: hp(8),
+    paddingHorizontal: wp(12), paddingVertical: hp(10),
+    backgroundColor: colors.primary.saffron, borderRadius: wp(12),
   },
-  birthDetailsCtaIcon: {
-    fontSize: fp(18),
-  },
-  birthDetailsCtaText: {
-    fontSize: fp(14),
-    fontWeight: '600',
-    color: colors.neutral.white,
-  },
-  birthDetailsCtaSub: {
-    fontSize: fp(11),
-    color: 'rgba(255,255,255,0.85)',
-  },
+  birthDetailsCtaIcon: { fontSize: fp(18) },
+  birthDetailsCtaText: { fontSize: fp(14), fontWeight: '600', color: colors.neutral.white },
+  birthDetailsCtaSub: { fontSize: fp(11), color: 'rgba(255,255,255,0.85)' },
 
   /* Timestamps */
-  timestampRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: wp(4),
-    marginBottom: hp(4),
-  },
-  timestampAi: {
-    justifyContent: 'flex-start',
-    paddingLeft: wp(38),
-  },
-  timestampUser: {
-    justifyContent: 'flex-end',
-  },
-  timestampText: {
-    fontSize: fp(10),
-    color: colors.neutral.grey400,
-  },
-  readReceipt: {
-    fontSize: fp(9),
-    color: colors.neutral.grey400,
-  },
+  timestampRow: { flexDirection: 'row', alignItems: 'center', gap: wp(4), marginBottom: hp(4) },
+  timestampAi: { justifyContent: 'flex-start', paddingLeft: wp(38) },
+  timestampUser: { justifyContent: 'flex-end' },
+  timestampText: { fontSize: fp(10), color: colors.neutral.grey400 },
+  readReceipt: { fontSize: fp(9), color: colors.neutral.grey400 },
 
   /* Typing */
-  typingBubble: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: wp(4),
-    paddingHorizontal: wp(16),
-    paddingVertical: hp(12),
-  },
-  typingDot: {
-    width: wp(7),
-    height: wp(7),
-    borderRadius: wp(4),
-    backgroundColor: colors.neutral.grey400,
-  },
+  typingBubble: { flexDirection: 'row', alignItems: 'center', gap: wp(4), paddingHorizontal: wp(16), paddingVertical: hp(12) },
+  typingDot: { width: wp(7), height: wp(7), borderRadius: wp(4), backgroundColor: colors.neutral.grey400 },
 
-  /* Birth Form */
-  birthFormCard: {
-    maxWidth: SCREEN_WIDTH * 0.78,
-    backgroundColor: colors.neutral.white,
-    borderWidth: 1.5,
-    borderColor: colors.accent.goldLight,
-    borderRadius: wp(12),
-    padding: wp(14),
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  birthFormHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: wp(6),
-    marginBottom: hp(2),
-  },
-  birthFormIcon: {
-    fontSize: fp(16),
-  },
-  birthFormTitle: {
-    fontSize: fp(16),
-    fontWeight: '600',
-    color: colors.neutral.grey800,
-  },
-  birthFormSubtitle: {
-    fontSize: fp(12),
-    color: colors.neutral.grey500,
-    marginBottom: hp(12),
-    lineHeight: fp(12) * 1.4,
-  },
-  fieldLabel: {
-    fontSize: fp(13),
-    fontWeight: '500',
-    color: colors.neutral.grey700,
-    marginTop: hp(8),
-    marginBottom: hp(4),
-  },
-  fieldInput: {
-    backgroundColor: colors.neutral.grey50,
-    borderWidth: 1.5,
-    borderColor: colors.neutral.grey200,
-    borderRadius: wp(8),
-    paddingHorizontal: wp(12),
-    paddingVertical: hp(8),
-    fontSize: fp(14),
-    color: colors.neutral.grey800,
-  },
-  timeRow: {
-    flexDirection: 'row',
-    gap: wp(8),
-    alignItems: 'center',
-  },
-  timeInput: {
-    flex: 1,
-  },
-  ampmRow: {
-    flexDirection: 'row',
-    borderWidth: 1.5,
-    borderColor: colors.neutral.grey200,
-    borderRadius: wp(8),
-    overflow: 'hidden',
-  },
-  ampmButton: {
-    paddingHorizontal: wp(10),
-    paddingVertical: hp(8),
-    backgroundColor: colors.neutral.white,
-  },
-  ampmActive: {
-    backgroundColor: colors.primary.saffron,
-  },
-  ampmText: {
-    fontSize: fp(12),
-    fontWeight: '500',
-    color: colors.neutral.grey500,
-  },
-  ampmTextActive: {
-    color: colors.neutral.white,
-  },
-  checkboxRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: wp(8),
-    marginTop: hp(6),
-  },
-  checkbox: {
-    width: wp(18),
-    height: wp(18),
-    borderWidth: 1.5,
-    borderColor: colors.neutral.grey300,
-    borderRadius: wp(4),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  checkboxChecked: {
-    backgroundColor: colors.primary.saffron,
-    borderColor: colors.primary.saffron,
-  },
-  checkboxMark: {
-    fontSize: fp(11),
-    color: colors.neutral.white,
-    fontWeight: '700',
-  },
-  checkboxLabel: {
-    fontSize: fp(12),
-    color: colors.neutral.grey600,
-    flex: 1,
-  },
-  approxOptions: {
-    gap: hp(4),
-    marginTop: hp(6),
-  },
-  approxOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: wp(8),
-    paddingHorizontal: wp(10),
-    paddingVertical: hp(6),
-    backgroundColor: colors.neutral.grey50,
-    borderWidth: 1.5,
-    borderColor: colors.neutral.grey200,
-    borderRadius: wp(8),
-  },
-  approxOptionActive: {
-    borderColor: colors.primary.saffron,
-    backgroundColor: 'rgba(255,140,0,0.08)',
-  },
-  radio: {
-    width: wp(14),
-    height: wp(14),
-    borderRadius: wp(7),
-    borderWidth: 1.5,
-    borderColor: colors.neutral.grey300,
-  },
-  radioActive: {
-    borderColor: colors.primary.saffron,
-    backgroundColor: colors.primary.saffron,
-  },
-  approxText: {
-    fontSize: fp(12),
-    color: colors.neutral.grey700,
-  },
-  approxTextActive: {
-    color: colors.primary.saffronDark,
-    fontWeight: '500',
-  },
-  placeDropdown: {
-    backgroundColor: colors.neutral.white,
-    borderWidth: 1.5,
-    borderTopWidth: 0,
-    borderColor: colors.neutral.grey200,
-    borderBottomLeftRadius: wp(8),
-    borderBottomRightRadius: wp(8),
-    maxHeight: hp(150),
-  },
-  placeOption: {
-    paddingHorizontal: wp(10),
-    paddingVertical: hp(8),
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.neutral.grey100,
-  },
-  placeOptionText: {
-    fontSize: fp(12),
-    color: colors.neutral.grey700,
-  },
-  generateButton: {
-    marginTop: hp(12),
-    paddingVertical: hp(12),
-    backgroundColor: colors.primary.saffron,
-    borderRadius: wp(12),
-    alignItems: 'center',
-  },
-  generateButtonDisabled: {
-    opacity: 0.5,
-  },
-  generateButtonText: {
-    fontSize: fp(16),
-    fontWeight: '600',
-    color: colors.neutral.white,
-  },
-  generateButtonSub: {
-    fontSize: fp(11),
-    color: 'rgba(255,255,255,0.85)',
-    marginTop: hp(2),
-  },
-
-  /* Input Bar */
+  /* Input bar */
   inputBarWrapper: {
     backgroundColor: colors.neutral.white,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.neutral.grey100,
-    paddingHorizontal: wp(12),
-    paddingVertical: hp(8),
+    borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.neutral.grey100,
+    paddingHorizontal: wp(12), paddingVertical: hp(8),
     paddingBottom: Platform.OS === 'ios' ? hp(24) : hp(8),
   },
   inputBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: wp(8),
-    backgroundColor: colors.neutral.grey50,
-    borderWidth: 1.5,
-    borderColor: colors.neutral.grey200,
-    borderRadius: wp(24),
-    paddingHorizontal: wp(14),
-    paddingVertical: hp(4),
+    flexDirection: 'row', alignItems: 'center', gap: wp(8),
+    backgroundColor: colors.neutral.grey50, borderWidth: 1.5, borderColor: colors.neutral.grey200,
+    borderRadius: wp(24), paddingHorizontal: wp(14), paddingVertical: hp(4),
   },
-  input: {
-    flex: 1,
-    fontSize: fp(14),
-    color: colors.neutral.grey800,
-    paddingVertical: hp(6),
-  },
+  input: { flex: 1, fontSize: fp(14), color: colors.neutral.grey800, paddingVertical: hp(6) },
   sendButton: {
-    width: wp(34),
-    height: wp(34),
-    borderRadius: wp(17),
-    backgroundColor: colors.primary.saffron,
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: wp(34), height: wp(34), borderRadius: wp(17),
+    backgroundColor: colors.primary.saffron, alignItems: 'center', justifyContent: 'center',
   },
-  sendButtonDisabled: {
-    opacity: 0.5,
+  sendButtonDisabled: { opacity: 0.5 },
+  sendIcon: { fontSize: fp(15), color: colors.neutral.white },
+  micButton: { width: wp(34), height: wp(34), borderRadius: wp(17), alignItems: 'center', justifyContent: 'center' },
+  micIcon: { fontSize: fp(16) },
+
+  /* Form modal */
+  formOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)' },
+  formSheet: {
+    position: 'absolute',
+    bottom: 0, left: 0, right: 0,
+    backgroundColor: colors.neutral.white,
+    borderTopLeftRadius: wp(20),
+    borderTopRightRadius: wp(20),
+    maxHeight: '92%',
   },
-  sendIcon: {
-    fontSize: fp(15),
-    color: colors.neutral.white,
-  },
-  micButton: {
-    width: wp(34),
-    height: wp(34),
-    borderRadius: wp(17),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  micIcon: {
-    fontSize: fp(16),
+  formHandleBar: {
+    width: wp(40), height: hp(4), backgroundColor: colors.neutral.grey200,
+    borderRadius: hp(2), alignSelf: 'center', marginTop: hp(12), marginBottom: hp(4),
   },
 });

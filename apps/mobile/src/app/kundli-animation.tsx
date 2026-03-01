@@ -149,7 +149,7 @@ export default function KundliAnimationScreen() {
     (async () => {
       try {
         const { kundli } = await getKundli(kundliId);
-        const planetaryData = kundli.planetary_data ?? kundli.planetaryData;
+        const planetaryData = kundli.planetaryData;
         if (planetaryData?.planetaryPositions) {
           realPlanetsRef.current = planetaryData.planetaryPositions;
           // Update the planet list with real house data

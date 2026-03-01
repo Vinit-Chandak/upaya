@@ -65,6 +65,29 @@ CREATE INDEX IF NOT EXISTS idx_kundlis_user_id ON kundlis(user_id);
 CREATE INDEX IF NOT EXISTS idx_kundlis_dob_place ON kundlis(date_of_birth, place_of_birth_lat, place_of_birth_lng);
 
 -- ============================================
+-- KUNDLI PROFILES (Phase 1)
+-- Stores person identity + birth details for the profile picker.
+-- Deliberately separate from kundlis (which are pure astronomical data,
+-- cached by DOB+TOB+POB and potentially shared across users).
+-- user_id is nullable so anonymous users can have profiles too.
+-- ============================================
+CREATE TABLE IF NOT EXISTS kundli_profiles (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  person_name VARCHAR(255) NOT NULL,
+  relationship VARCHAR(20) NOT NULL DEFAULT 'self',
+  date_of_birth DATE NOT NULL,
+  time_of_birth TIME,
+  time_approximate BOOLEAN NOT NULL DEFAULT FALSE,
+  place_of_birth_name VARCHAR(255) NOT NULL,
+  place_of_birth_lat DECIMAL(10, 7) NOT NULL,
+  place_of_birth_lng DECIMAL(10, 7) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_kundli_profiles_user_id ON kundli_profiles(user_id);
+
+-- ============================================
 -- CHAT SESSIONS
 -- ============================================
 CREATE TABLE IF NOT EXISTS chat_sessions (

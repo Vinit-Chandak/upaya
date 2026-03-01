@@ -13,6 +13,9 @@ export type {
   KundliData,
   Kundli,
   GenerateKundliInput,
+  Relationship,
+  KundliProfile,
+  LocalKundliProfile,
 } from './kundli';
 export { PLANET_NAMES, ZODIAC_NAMES } from './kundli';
 

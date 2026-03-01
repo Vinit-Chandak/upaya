@@ -214,6 +214,21 @@ export const en: TranslationKeys = {
   birthDetails: {
     title: 'Birth Details',
     subtitle: 'These details are needed for an accurate kundli:',
+    // Step indicator
+    step: 'Step {{current}} of {{total}}',
+    // Step 1: Who
+    whoTitle: 'Who is this kundli for?',
+    personName: "Person's Name",
+    personNamePlaceholder: 'e.g. Rahul, Priya...',
+    petNamePlaceholder: "Your pet's name",
+    relationship: {
+      self: 'Myself',
+      family: 'Family Member',
+      pet: 'My Pet',
+    },
+    petNote: "In Vedic astrology, a pet's wellbeing is read through the owner's 6th house. Please fill in your (the owner's) birth details below.",
+    // Step 2: When
+    whenTitle: 'When were they born?',
     dateOfBirth: 'Date of Birth',
     dateFormat: 'DD / MM / YYYY',
     timeOfBirth: 'Time of Birth',
@@ -229,10 +244,27 @@ export const en: TranslationKeys = {
     },
     approximateNote:
       'Kundli can be generated with approximate time too, but exact time gives more accurate results.',
+    // Step 3: Where
+    whereTitle: 'Where were they born?',
     placeOfBirth: 'Place of Birth',
     placeSearch: 'Search city/town...',
-    generateButton: '✨ Generate My Kundli',
+    placeSearching: 'Searching...',
+    placeNoResults: 'No results found',
+    generateButton: '✨ Generate Kundli',
     generateButtonSub: 'Kundli ready in 2 minutes',
+    // Saved profiles
+    savedProfiles: {
+      title: 'Saved Profiles',
+      subtitle: 'Select a saved profile or add a new one',
+      selectLabel: 'Generate kundli for',
+      addNew: '+ Add New Person',
+      relationshipSelf: 'Self',
+      relationshipFamily: 'Family',
+      relationshipPet: 'Pet',
+      savedSuccess: "{{name}}'s details saved",
+      savedSuccessSub: "You won't need to fill this again next time",
+      signInToSave: 'Sign in to save your details permanently',
+    },
   },
 
   // --- Kundli Animation ---

@@ -1,4 +1,4 @@
-import type { ChatSession, ChatMessage } from '@upaya/shared';
+import type { ChatSession, ChatMessage, Kundli, KundliProfile, Relationship } from '@upaya/shared';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -69,6 +69,67 @@ export async function sendChatMessage(
     method: 'POST',
     body: JSON.stringify({ content }),
     timeout: 60000,
+  });
+}
+
+// ---- Kundli ----
+
+export async function generateKundli(input: {
+  dateOfBirth: string;
+  timeOfBirth?: string | null;
+  timeApproximate?: boolean;
+  placeOfBirthName: string;
+  placeOfBirthLat: number;
+  placeOfBirthLng: number;
+}): Promise<{ kundli: Kundli; cached: boolean }> {
+  return request('/api/kundli/generate', {
+    method: 'POST',
+    body: JSON.stringify(input),
+    timeout: 30000,
+  });
+}
+
+// ---- Kundli Profiles ----
+
+export async function createKundliProfile(input: {
+  personName: string;
+  relationship: Relationship;
+  dateOfBirth: string;
+  timeOfBirth?: string | null;
+  timeApproximate?: boolean;
+  placeOfBirthName: string;
+  placeOfBirthLat: number;
+  placeOfBirthLng: number;
+  firebaseIdToken?: string;
+}): Promise<{ profile: KundliProfile }> {
+  const { firebaseIdToken, ...body } = input;
+  return request('/api/kundli/profiles', {
+    method: 'POST',
+    body: JSON.stringify(body),
+    headers: firebaseIdToken ? { Authorization: `Bearer ${firebaseIdToken}` } : undefined,
+  });
+}
+
+export async function getKundliProfiles(
+  firebaseIdToken: string,
+): Promise<{ profiles: KundliProfile[] }> {
+  return request('/api/kundli/profiles', {
+    headers: { Authorization: `Bearer ${firebaseIdToken}` },
+  });
+}
+
+// ---- Auth ----
+
+export async function migrateAnonymousData(input: {
+  firebaseIdToken: string;
+  sessionIds?: string[];
+  profileIds?: string[];
+}): Promise<{ migrated: { sessions: number; kundlis: number; profiles: number } }> {
+  const { firebaseIdToken, ...body } = input;
+  return request('/api/auth/migrate-session', {
+    method: 'POST',
+    body: JSON.stringify(body),
+    headers: { Authorization: `Bearer ${firebaseIdToken}` },
   });
 }
 

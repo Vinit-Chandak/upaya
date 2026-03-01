@@ -2,8 +2,29 @@
 
 import { Suspense, useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { PROBLEM_TYPES, getTranslations, interpolate, detectLanguage, type TranslationKeys, type ProblemType, type ChatMessageType } from '@upaya/shared';
-import { createChatSession, sendChatMessage } from '../../lib/api';
+import {
+  PROBLEM_TYPES,
+  getTranslations,
+  interpolate,
+  detectLanguage,
+  type TranslationKeys,
+  type ProblemType,
+  type ChatMessageType,
+  type LocalKundliProfile,
+  type Relationship,
+} from '@upaya/shared';
+import {
+  createChatSession,
+  sendChatMessage,
+  createKundliProfile,
+  generateKundli,
+} from '../../lib/api';
+import {
+  getLocalProfiles,
+  saveLocalProfile,
+  saveAnonSessionId,
+  saveAnonProfileId,
+} from '../../lib/localProfiles';
 import BirthDetailsCard from './BirthDetailsCard';
 import styles from './page.module.css';
 
@@ -13,17 +34,28 @@ interface ChatMsg {
   id: string;
   role: 'user' | 'assistant';
   content: string;
-  messageType: ChatMessageType;
+  messageType: ChatMessageType | 'saved_profiles_picker';
   quickReplies?: { label: string; value: string }[];
   showBirthDetailsCta?: boolean;
   createdAt: Date;
 }
 
 type ChatPhase =
-  | 'exchange_1'      // AI asked qualifying question, waiting for user answer
-  | 'exchange_2'      // AI showed curiosity bridge + birth details CTA
-  | 'birth_details'   // Birth details form shown
-  | 'generating';     // Kundli generation started
+  | 'exchange_1'    // AI asked qualifying question, waiting for user answer
+  | 'exchange_2'    // AI showed curiosity bridge + birth details CTA
+  | 'birth_details' // Birth details form shown
+  | 'generating';   // Kundli generation started
+
+interface BirthDetails {
+  personName: string;
+  relationship: Relationship;
+  dateOfBirth: string;
+  timeOfBirth: string | null;
+  timeApproximate: boolean;
+  placeOfBirthName: string;
+  placeOfBirthLat: number;
+  placeOfBirthLng: number;
+}
 
 // ---- Build qualifying chips from i18n ----
 
@@ -80,6 +112,71 @@ function formatTime(date: Date): string {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
+function formatDob(iso: string): string {
+  // YYYY-MM-DD → DD/MM/YYYY
+  const parts = iso.split('-');
+  if (parts.length !== 3) return iso;
+  return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
+
+// ---- Saved Profiles Card (inline web component) ----
+
+interface SavedProfilesCardProps {
+  profiles: LocalKundliProfile[];
+  language: 'hi' | 'en';
+  onSelectProfile: (profile: LocalKundliProfile) => void;
+  onAddNew: () => void;
+}
+
+function SavedProfilesCard({ profiles, language, onSelectProfile, onAddNew }: SavedProfilesCardProps) {
+  const relLabel = (rel: string) => {
+    if (rel === 'self') return language === 'hi' ? 'मेरे लिए' : 'For Me';
+    if (rel === 'family') return language === 'hi' ? 'परिवार' : 'Family';
+    if (rel === 'pet') return language === 'hi' ? 'पालतू' : 'Pet';
+    return rel;
+  };
+
+  return (
+    <div className={styles.savedProfilesCard}>
+      <div className={styles.savedProfilesTitle}>
+        <span>👥</span>
+        <span>{language === 'hi' ? 'सेव की गई कुंडली' : 'Saved Profiles'}</span>
+      </div>
+      <p className={styles.savedProfilesSub}>
+        {language === 'hi'
+          ? 'किसके लिए कुंडली देखनी है?'
+          : 'Select a profile to generate kundli instantly'}
+      </p>
+
+      <div className={styles.savedProfilesList}>
+        {profiles.map((profile) => (
+          <button
+            key={profile.localId}
+            className={styles.savedProfileItem}
+            onClick={() => onSelectProfile(profile)}
+            type="button"
+          >
+            <span className={styles.savedProfileEmoji}>
+              {profile.relationship === 'pet' ? '🐾' : profile.relationship === 'self' ? '🙏' : '👨‍👩‍👦'}
+            </span>
+            <div className={styles.savedProfileInfo}>
+              <span className={styles.savedProfileName}>{profile.personName}</span>
+              <span className={styles.savedProfileMeta}>
+                {relLabel(profile.relationship)} · {formatDob(profile.dateOfBirth)} · {profile.placeOfBirthName.split(',')[0]}
+              </span>
+            </div>
+            <span className={styles.savedProfileArrow}>→</span>
+          </button>
+        ))}
+      </div>
+
+      <button className={styles.addNewProfileBtn} onClick={onAddNew} type="button">
+        + {language === 'hi' ? 'नया प्रोफ़ाइल जोड़ें' : 'Add new profile'}
+      </button>
+    </div>
+  );
+}
+
 // ---- Component ----
 
 function ChatPageContent() {
@@ -95,6 +192,8 @@ function ChatPageContent() {
   const [chatPhase, setChatPhase] = useState<ChatPhase>('exchange_1');
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [sessionDbId, setSessionDbId] = useState<string | null>(null);
+  const [savedProfiles, setSavedProfiles] = useState<LocalKundliProfile[]>([]);
+  const [preselectedRelationship, setPreselectedRelationship] = useState<Relationship>('self');
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -103,7 +202,6 @@ function ChatPageContent() {
 
   const problemInfo = PROBLEM_TYPES[problemType];
 
-  // Scroll to bottom on new messages
   const scrollToBottom = useCallback(() => {
     setTimeout(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -114,7 +212,7 @@ function ChatPageContent() {
     scrollToBottom();
   }, [messages, isTyping, scrollToBottom]);
 
-  // Initialize: load language, create session, send first AI message
+  // Initialize: load language, load profiles, create session, send first AI message
   useEffect(() => {
     if (hasInitialized.current) return;
     hasInitialized.current = true;
@@ -123,17 +221,24 @@ function ChatPageContent() {
       const stored = localStorage.getItem('upaya_language') as 'hi' | 'en' | null;
       if (stored) setLanguage(stored);
 
+      // Load saved profiles
+      setSavedProfiles(getLocalProfiles());
+
       const lang = stored || 'hi';
       const t_lang = getTranslations(lang);
       const qq = t_lang.aiMessages.qualifyingQuestions;
 
       let createdSessionId: string | null = null;
+      let createdSessionDbId: string | null = null;
       try {
         const { session } = await createChatSession(problemType, lang);
         const rawSession = session as unknown as Record<string, string>;
         createdSessionId = rawSession.session_id ?? session.sessionId;
+        createdSessionDbId = rawSession.id ?? session.id;
         setSessionId(createdSessionId);
-        setSessionDbId(rawSession.id ?? session.id);
+        setSessionDbId(createdSessionDbId);
+        // Track session for later claiming when user authenticates
+        if (createdSessionId) saveAnonSessionId(createdSessionId);
       } catch (err) {
         console.warn('[Chat] Failed to create session, continuing offline:', err);
       }
@@ -156,9 +261,6 @@ function ChatPageContent() {
         return;
       }
 
-      // Exchange 1 — fully LLM-powered for all flows:
-      // • Chip flow:          send the problem label (not shown in UI); AI opens the conversation
-      // • initialMessage flow: send the user's own text (shown in UI); AI responds to it
       const exchange1Message = initialMessage || (lang === 'hi' ? problemInfo.hi : problemInfo.en);
 
       if (initialMessage) {
@@ -193,7 +295,7 @@ function ChatPageContent() {
         }
       }
 
-      // Fallback: i18n qualifying question (offline / API unavailable)
+      // Fallback: i18n qualifying question
       setTimeout(() => {
         setIsTyping(false);
         const qText = (qq[problemType as keyof typeof qq] as string | undefined) || qq.something_else;
@@ -213,11 +315,8 @@ function ChatPageContent() {
     init();
   }, [problemType, initialMessage]);
 
-  // Ref is updated after handleUserReply is defined (below) so callbacks
-  // with empty deps always call the latest closure (never a stale sessionId).
   const handleUserReplyRef = useRef<((text: string) => void) | null>(null);
 
-  // Handle sending a message (from text input)
   const handleSendMessage = useCallback(() => {
     const text = inputValue.trim();
     if (!text) return;
@@ -225,19 +324,26 @@ function ChatPageContent() {
     handleUserReplyRef.current?.(text);
   }, [inputValue]);
 
-  // Handle a quick-reply chip tap
-  const handleChipTap = useCallback((value: string) => {
-    handleUserReplyRef.current?.(value);
-  }, []);
+  const handleChipTap = useCallback(
+    (value: string) => {
+      // Infer relationship from "who" chip taps (health_issues flow)
+      if (problemType === 'health_issues') {
+        const t = getTranslations(language);
+        const wc = t.aiMessages.whoChips;
+        if (value === wc.self) setPreselectedRelationship('self');
+        else if (value === wc.family) setPreselectedRelationship('family');
+        else if (value === wc.pet) setPreselectedRelationship('pet');
+      }
+      handleUserReplyRef.current?.(value);
+    },
+    [problemType, language],
+  );
 
-  // Core reply handler
   const handleUserReply = async (text: string) => {
-    // Remove quick replies from previous AI messages
     setMessages((prev) =>
       prev.map((m) => (m.quickReplies ? { ...m, quickReplies: undefined } : m))
     );
 
-    // Add user message
     const userMsg: ChatMsg = {
       id: generateId(),
       role: 'user',
@@ -247,18 +353,15 @@ function ChatPageContent() {
     };
     setMessages((prev) => [...prev, userMsg]);
 
-    // Save qualifying answer for diagnosis context
     if (chatPhase === 'exchange_1') {
       qualifyingAnswerRef.current = text;
     }
 
     setIsTyping(true);
 
-    // CTA only appears on exchange 3 (second user reply → curiosity bridge)
     const showCta = chatPhase === 'exchange_2';
 
     if (chatPhase === 'exchange_1' || chatPhase === 'exchange_2') {
-      // Try LLM (exchange 2 = follow-up, exchange 3 = curiosity bridge)
       if (sessionId) {
         try {
           const response = await sendChatMessage(sessionId, text);
@@ -278,7 +381,6 @@ function ChatPageContent() {
         }
       }
 
-      // Offline fallback
       const replyLang = detectLanguage(text);
       const t = getTranslations(replyLang);
       setTimeout(() => {
@@ -286,8 +388,13 @@ function ChatPageContent() {
         const fallbackText = showCta
           ? (() => {
               const cb = t.curiosityBridge;
-              const tmpl = (cb[problemType as keyof typeof cb] as string | undefined) || t.errors.offlineFallback;
-              return interpolate(tmpl, { duration: qualifyingAnswerRef.current, answer: qualifyingAnswerRef.current });
+              const tmpl =
+                (cb[problemType as keyof typeof cb] as string | undefined) ||
+                t.errors.offlineFallback;
+              return interpolate(tmpl, {
+                duration: qualifyingAnswerRef.current,
+                answer: qualifyingAnswerRef.current,
+              });
             })()
           : t.aiMessages.exchange2Fallback;
         setMessages((prev) => [...prev, {
@@ -301,7 +408,6 @@ function ChatPageContent() {
         if (chatPhase === 'exchange_1') setChatPhase('exchange_2');
       }, 1000);
     } else if (chatPhase === 'birth_details') {
-      // Form already shown — any further typing gets a gentle nudge
       const replyLang = detectLanguage(text);
       const t = getTranslations(replyLang);
       setTimeout(() => {
@@ -318,8 +424,6 @@ function ChatPageContent() {
     }
   };
 
-  // Keep ref current so handleChipTap / handleSendMessage always have
-  // the latest closure (with up-to-date sessionId and chatPhase).
   handleUserReplyRef.current = handleUserReply;
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -329,10 +433,121 @@ function ChatPageContent() {
     }
   };
 
-  // Birth Details CTA clicked → show form
-  const handleBirthDetailsCta = () => {
+  // Navigate to kundli animation with birth details
+  const navigateToAnimation = useCallback(
+    (details: BirthDetails, kundliId?: string) => {
+      const params = new URLSearchParams({
+        dob: details.dateOfBirth,
+        tob: details.timeOfBirth || '',
+        tobApprox: details.timeApproximate ? '1' : '0',
+        place: details.placeOfBirthName,
+        lat: String(details.placeOfBirthLat),
+        lng: String(details.placeOfBirthLng),
+        problem: problemType,
+        lang: language,
+        sessionId: sessionDbId || '',
+        personName: details.personName,
+        relationship: details.relationship,
+        ...(kundliId ? { kundliId } : {}),
+      });
+      router.push(`/chat/kundli-animation?${params.toString()}`);
+    },
+    [problemType, language, sessionDbId, router],
+  );
+
+  // Birth Details CTA clicked → check for saved profiles first
+  const handleBirthDetailsCta = useCallback(() => {
     setChatPhase('birth_details');
-    // Add form card as special message
+
+    const profiles = getLocalProfiles();
+    setSavedProfiles(profiles);
+
+    if (profiles.length > 0) {
+      // Show saved profiles picker
+      const pickerMsg: ChatMsg = {
+        id: generateId(),
+        role: 'assistant',
+        content: '',
+        messageType: 'saved_profiles_picker',
+        createdAt: new Date(),
+      };
+      setMessages((prev) => [...prev, pickerMsg]);
+    } else {
+      // Show birth details form directly
+      const formMsg: ChatMsg = {
+        id: generateId(),
+        role: 'assistant',
+        content: '',
+        messageType: 'birth_details_form',
+        createdAt: new Date(),
+      };
+      setMessages((prev) => [...prev, formMsg]);
+    }
+  }, []);
+
+  // User selected a saved profile → skip form, generate immediately
+  const handleProfileSelected = useCallback(
+    async (profile: LocalKundliProfile) => {
+      // Remove the picker card from chat
+      setMessages((prev) => prev.filter((m) => m.messageType !== 'saved_profiles_picker'));
+      setChatPhase('generating');
+
+      const confirmMsg: ChatMsg = {
+        id: generateId(),
+        role: 'user',
+        content: `${profile.personName} · ${formatDob(profile.dateOfBirth)} · ${profile.placeOfBirthName.split(',')[0]}`,
+        messageType: 'text',
+        createdAt: new Date(),
+      };
+      setMessages((prev) => [...prev, confirmMsg]);
+
+      // Show generating message
+      const generatingMsg: ChatMsg = {
+        id: generateId(),
+        role: 'assistant',
+        content: language === 'hi'
+          ? `${profile.personName} की कुंडली बन रही है... ✨`
+          : `Generating kundli for ${profile.personName}... ✨`,
+        messageType: 'text',
+        createdAt: new Date(),
+      };
+      setMessages((prev) => [...prev, generatingMsg]);
+
+      const details: BirthDetails = {
+        personName: profile.personName,
+        relationship: profile.relationship,
+        dateOfBirth: profile.dateOfBirth,
+        timeOfBirth: profile.timeOfBirth,
+        timeApproximate: profile.timeApproximate,
+        placeOfBirthName: profile.placeOfBirthName,
+        placeOfBirthLat: profile.placeOfBirthLat,
+        placeOfBirthLng: profile.placeOfBirthLng,
+      };
+
+      // Generate kundli (non-fatal)
+      let kundliId: string | undefined;
+      try {
+        const { kundli } = await generateKundli({
+          dateOfBirth: details.dateOfBirth,
+          timeOfBirth: details.timeOfBirth,
+          timeApproximate: details.timeApproximate,
+          placeOfBirthName: details.placeOfBirthName,
+          placeOfBirthLat: details.placeOfBirthLat,
+          placeOfBirthLng: details.placeOfBirthLng,
+        });
+        kundliId = kundli.id;
+      } catch (err) {
+        console.warn('[Chat] generateKundli failed, navigating without kundliId:', err);
+      }
+
+      setTimeout(() => navigateToAnimation(details, kundliId), 500);
+    },
+    [language, navigateToAnimation],
+  );
+
+  // User tapped "Add new" in the profile picker → show form
+  const handleAddNewProfile = useCallback(() => {
+    setMessages((prev) => prev.filter((m) => m.messageType !== 'saved_profiles_picker'));
     const formMsg: ChatMsg = {
       id: generateId(),
       role: 'assistant',
@@ -341,52 +556,94 @@ function ChatPageContent() {
       createdAt: new Date(),
     };
     setMessages((prev) => [...prev, formMsg]);
-  };
+  }, []);
 
-  // Birth Details submitted → navigate to kundli animation
-  const handleBirthDetailsSubmit = (details: {
-    dateOfBirth: string;
-    timeOfBirth: string | null;
-    timeApproximate: boolean;
-    placeOfBirth: string;
-    placeOfBirthLat: number;
-    placeOfBirthLng: number;
-  }) => {
-    setChatPhase('generating');
+  // Birth details form submitted
+  const handleBirthDetailsSubmit = useCallback(
+    async (details: BirthDetails) => {
+      setChatPhase('generating');
 
-    // Show user confirmation message
-    const confirmMsg: ChatMsg = {
-      id: generateId(),
-      role: 'user',
-      content: `${details.dateOfBirth} · ${details.timeOfBirth || getTranslations(language).birthDetails.unknownTimeSub} · ${details.placeOfBirth}`,
-      messageType: 'text',
-      createdAt: new Date(),
-    };
-    setMessages((prev) => [...prev, confirmMsg]);
+      // Show user confirmation message
+      const t = getTranslations(language);
+      const unknownTimeSub = t.birthDetails.unknownTimeSub;
+      const confirmMsg: ChatMsg = {
+        id: generateId(),
+        role: 'user',
+        content: `${details.personName} · ${formatDob(details.dateOfBirth)} · ${
+          details.timeOfBirth || unknownTimeSub
+        } · ${details.placeOfBirthName.split(',')[0]}`,
+        messageType: 'text',
+        createdAt: new Date(),
+      };
+      setMessages((prev) => [...prev, confirmMsg]);
 
-    // Navigate to kundli animation with details
-    const params = new URLSearchParams({
-      dob: details.dateOfBirth,
-      tob: details.timeOfBirth || '',
-      tobApprox: details.timeApproximate ? '1' : '0',
-      place: details.placeOfBirth,
-      lat: String(details.placeOfBirthLat),
-      lng: String(details.placeOfBirthLng),
-      problem: problemType,
-      lang: language,
-      sessionId: sessionDbId || '',
-    });
+      // 1. Save profile to server (non-fatal)
+      let serverId: string | null = null;
+      try {
+        const { profile } = await createKundliProfile({
+          personName: details.personName,
+          relationship: details.relationship,
+          dateOfBirth: details.dateOfBirth,
+          timeOfBirth: details.timeOfBirth,
+          timeApproximate: details.timeApproximate,
+          placeOfBirthName: details.placeOfBirthName,
+          placeOfBirthLat: details.placeOfBirthLat,
+          placeOfBirthLng: details.placeOfBirthLng,
+        });
+        serverId = profile.id ?? null;
+        if (serverId) saveAnonProfileId(serverId);
+      } catch (err) {
+        console.warn('[Chat] createKundliProfile failed (non-fatal):', err);
+      }
 
-    setTimeout(() => {
-      router.push(`/chat/kundli-animation?${params.toString()}`);
-    }, 500);
-  };
+      // 2. Save profile locally
+      const localProfile: LocalKundliProfile = {
+        localId: generateId(),
+        serverId,
+        personName: details.personName,
+        relationship: details.relationship,
+        dateOfBirth: details.dateOfBirth,
+        timeOfBirth: details.timeOfBirth,
+        timeApproximate: details.timeApproximate,
+        placeOfBirthName: details.placeOfBirthName,
+        placeOfBirthLat: details.placeOfBirthLat,
+        placeOfBirthLng: details.placeOfBirthLng,
+        createdAt: new Date().toISOString(),
+      };
+      saveLocalProfile(localProfile);
+      setSavedProfiles(getLocalProfiles());
+
+      // 3. Generate kundli (non-fatal)
+      let kundliId: string | undefined;
+      try {
+        const { kundli } = await generateKundli({
+          dateOfBirth: details.dateOfBirth,
+          timeOfBirth: details.timeOfBirth,
+          timeApproximate: details.timeApproximate,
+          placeOfBirthName: details.placeOfBirthName,
+          placeOfBirthLat: details.placeOfBirthLat,
+          placeOfBirthLng: details.placeOfBirthLng,
+        });
+        kundliId = kundli.id;
+      } catch (err) {
+        console.warn('[Chat] generateKundli failed (non-fatal):', err);
+      }
+
+      // 4. Navigate to kundli animation
+      setTimeout(() => navigateToAnimation(details, kundliId), 500);
+    },
+    [language, navigateToAnimation],
+  );
 
   return (
     <div className={styles.chatLayout}>
       {/* Top Bar */}
       <div className={styles.chatTopBar}>
-        <button className={styles.backButton} onClick={() => router.back()} aria-label="Go back">
+        <button
+          className={styles.backButton}
+          onClick={() => router.back()}
+          aria-label="Go back"
+        >
           <svg
             width="24"
             height="24"
@@ -408,12 +665,7 @@ function ChatPageContent() {
         </span>
 
         <button className={styles.overflowButton} aria-label="More options">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-          >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
             <circle cx="12" cy="5" r="1.5" />
             <circle cx="12" cy="12" r="1.5" />
             <circle cx="12" cy="19" r="1.5" />
@@ -432,6 +684,25 @@ function ChatPageContent() {
               index === messages.length - 1 ||
               messages[index + 1]?.role !== msg.role;
 
+            // Saved profiles picker card
+            if (msg.messageType === 'saved_profiles_picker') {
+              return (
+                <div key={msg.id} className={`${styles.messageRow} ${styles.messageRowAi}`}>
+                  {showAvatar ? (
+                    <div className={styles.aiAvatar}>🙏</div>
+                  ) : (
+                    <div className={styles.avatarPlaceholder} />
+                  )}
+                  <SavedProfilesCard
+                    profiles={savedProfiles}
+                    language={language}
+                    onSelectProfile={handleProfileSelected}
+                    onAddNew={handleAddNewProfile}
+                  />
+                </div>
+              );
+            }
+
             // Birth details form card
             if (msg.messageType === 'birth_details_form') {
               return (
@@ -443,6 +714,7 @@ function ChatPageContent() {
                   )}
                   <BirthDetailsCard
                     language={language}
+                    preselectedRelationship={preselectedRelationship}
                     onSubmit={handleBirthDetailsSubmit}
                     disabled={chatPhase === 'generating'}
                   />
@@ -490,17 +762,22 @@ function ChatPageContent() {
                     )}
 
                     {/* Birth details CTA button */}
-                    {msg.showBirthDetailsCta && chatPhase !== 'birth_details' && chatPhase !== 'generating' && (
-                      <button className={styles.birthDetailsCta} onClick={handleBirthDetailsCta}>
-                        <span className={styles.birthDetailsCtaIcon}>📋</span>
-                        <span className={styles.birthDetailsCtaContent}>
-                          <span>{getTranslations(language).chat.birthDetailsCta}</span>
-                          <span className={styles.birthDetailsCtaSub}>
-                            {getTranslations(language).chat.birthDetailsSub}
+                    {msg.showBirthDetailsCta &&
+                      chatPhase !== 'birth_details' &&
+                      chatPhase !== 'generating' && (
+                        <button
+                          className={styles.birthDetailsCta}
+                          onClick={handleBirthDetailsCta}
+                        >
+                          <span className={styles.birthDetailsCtaIcon}>📋</span>
+                          <span className={styles.birthDetailsCtaContent}>
+                            <span>{getTranslations(language).chat.birthDetailsCta}</span>
+                            <span className={styles.birthDetailsCtaSub}>
+                              {getTranslations(language).chat.birthDetailsSub}
+                            </span>
                           </span>
-                        </span>
-                      </button>
-                    )}
+                        </button>
+                      )}
                   </div>
                 </div>
 

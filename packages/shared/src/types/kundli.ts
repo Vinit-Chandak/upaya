@@ -99,6 +99,46 @@ export interface GenerateKundliInput {
   placeOfBirthLng: number;
 }
 
+/** Who the kundli belongs to */
+export type Relationship = 'self' | 'family' | 'pet';
+
+/**
+ * A saved kundli profile — person identity + birth details.
+ * Server-side shape (from kundli_profiles table).
+ */
+export interface KundliProfile {
+  id: string;
+  userId: string | null;
+  personName: string;
+  relationship: Relationship;
+  dateOfBirth: string;        // YYYY-MM-DD
+  timeOfBirth: string | null; // HH:MM
+  timeApproximate: boolean;
+  placeOfBirthName: string;
+  placeOfBirthLat: number;
+  placeOfBirthLng: number;
+  createdAt: Date;
+}
+
+/**
+ * Client-side profile shape stored in AsyncStorage / localStorage.
+ * createdAt is an ISO string (JSON-safe). serverId is null until
+ * the profile has been uploaded to the server (on auth).
+ */
+export interface LocalKundliProfile {
+  localId: string;           // client-generated UUID, stable across sessions
+  serverId: string | null;   // kundli_profiles.id after upload
+  personName: string;
+  relationship: Relationship;
+  dateOfBirth: string;
+  timeOfBirth: string | null;
+  timeApproximate: boolean;
+  placeOfBirthName: string;
+  placeOfBirthLat: number;
+  placeOfBirthLng: number;
+  createdAt: string;         // ISO string
+}
+
 /** Planet display names (used in UI) */
 export const PLANET_NAMES: Record<Planet, { hi: string; en: string; symbol: string }> = {
   sun: { hi: 'सूर्य', en: 'Sun', symbol: '☀️' },

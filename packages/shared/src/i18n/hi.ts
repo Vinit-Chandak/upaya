@@ -205,6 +205,21 @@ export const hi = {
   birthDetails: {
     title: 'जन्म विवरण',
     subtitle: 'सटीक कुंडली के लिए ये विवरण ज़रूरी हैं:',
+    // Step indicator
+    step: 'चरण {{current}} / {{total}}',
+    // Step 1: Who
+    whoTitle: 'यह कुंडली किसके लिए है?',
+    personName: 'व्यक्ति का नाम',
+    personNamePlaceholder: 'जैसे: राहुल, प्रिया...',
+    petNamePlaceholder: 'अपने पालतू का नाम',
+    relationship: {
+      self: 'खुद के लिए',
+      family: 'परिवार के लिए',
+      pet: 'पालतू के लिए',
+    },
+    petNote: 'Vedic ज्योतिष में पालतू की सेहत मालिक की कुंडली से देखी जाती है। इसलिए नीचे आपका (मालिक का) जन्म विवरण भरें।',
+    // Step 2: When
+    whenTitle: 'जन्म कब हुआ?',
     dateOfBirth: 'जन्म तिथि',
     dateFormat: 'DD / MM / YYYY',
     timeOfBirth: 'जन्म का समय',
@@ -220,10 +235,27 @@ export const hi = {
     },
     approximateNote:
       'अनुमानित समय से भी कुंडली बनती है, लेकिन सही समय से ज़्यादा सटीक होती है।',
+    // Step 3: Where
+    whereTitle: 'जन्म कहाँ हुआ?',
     placeOfBirth: 'जन्म स्थान',
     placeSearch: 'शहर या गाँव का नाम लिखें...',
-    generateButton: '✨ मेरी कुंडली बनाएं',
+    placeSearching: 'खोज रहे हैं...',
+    placeNoResults: 'कोई परिणाम नहीं मिला',
+    generateButton: '✨ कुंडली बनाएं',
     generateButtonSub: 'कुंडली 2 मिनट में तैयार',
+    // Saved profiles
+    savedProfiles: {
+      title: 'सेव किए गए प्रोफाइल',
+      subtitle: 'पहले से सेव की गई जानकारी चुनें या नई डालें',
+      selectLabel: 'इनके लिए कुंडली बनाएं',
+      addNew: '+ नया व्यक्ति जोड़ें',
+      relationshipSelf: 'खुद',
+      relationshipFamily: 'परिवार',
+      relationshipPet: 'पालतू',
+      savedSuccess: '{{name}} की जानकारी सेव हो गई',
+      savedSuccessSub: 'अगली बार आपको दोबारा भरना नहीं होगा',
+      signInToSave: 'Sign in करें और जानकारी हमेशा के लिए सेव करें',
+    },
   },
 
   // --- Kundli Animation ---

@@ -125,12 +125,16 @@ authRouter.patch('/me', requireAuth, async (req: AuthenticatedRequest, res, next
 
 /**
  * POST /api/auth/migrate-session
- * Migrate anonymous data (chat sessions, kundlis) to the authenticated user.
- * Called after a user who was anonymous signs in for the first time (e.g., at payment).
+ * Claim anonymous data (chat sessions, kundlis, kundli profiles) for the
+ * authenticated user. Called once after sign-in when the user was previously
+ * browsing anonymously (e.g., at payment or first save).
+ *
+ * Idempotent: the WHERE user_id IS NULL guard prevents double-claiming.
  */
 const migrateSessionSchema = z.object({
   sessionIds: z.array(z.string()).optional(),
   kundliIds: z.array(z.string().uuid()).optional(),
+  profileIds: z.array(z.string().uuid()).optional(),
 });
 
 authRouter.post('/migrate-session', requireAuth, async (req: AuthenticatedRequest, res, next) => {
@@ -147,8 +151,9 @@ authRouter.post('/migrate-session', requireAuth, async (req: AuthenticatedReques
 
     let migratedSessions = 0;
     let migratedKundlis = 0;
+    let migratedProfiles = 0;
 
-    // Migrate anonymous chat sessions to this user
+    // Claim anonymous chat sessions
     if (body.sessionIds && body.sessionIds.length > 0) {
       const result = await query(
         `UPDATE chat_sessions SET user_id = $1
@@ -158,7 +163,7 @@ authRouter.post('/migrate-session', requireAuth, async (req: AuthenticatedReques
       migratedSessions = result.length;
     }
 
-    // Migrate anonymous kundlis to this user
+    // Claim anonymous kundlis (legacy — keeps backward compat)
     if (body.kundliIds && body.kundliIds.length > 0) {
       const result = await query(
         `UPDATE kundlis SET user_id = $1
@@ -168,10 +173,21 @@ authRouter.post('/migrate-session', requireAuth, async (req: AuthenticatedReques
       migratedKundlis = result.length;
     }
 
+    // Claim anonymous kundli profiles (primary profile mechanism)
+    if (body.profileIds && body.profileIds.length > 0) {
+      const result = await query(
+        `UPDATE kundli_profiles SET user_id = $1
+         WHERE id = ANY($2) AND user_id IS NULL`,
+        [user.id, body.profileIds],
+      );
+      migratedProfiles = result.length;
+    }
+
     res.json({
       migrated: {
         sessions: migratedSessions,
         kundlis: migratedKundlis,
+        profiles: migratedProfiles,
       },
     });
   } catch (error) {
