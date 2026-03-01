@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
-  Dimensions,
   Platform,
   Animated,
   Easing,
@@ -13,9 +12,9 @@ import {
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { colors, PLANET_NAMES, type PlanetPosition } from '@upaya/shared';
 import { fp, wp, hp } from '../theme';
+import { Icon } from '../components/icons';
 import { getKundli, generateDiagnosis } from '../services/api';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // ---- Types ----
 
@@ -37,9 +36,9 @@ interface DoshaCheckItem {
 // ---- Planet definitions ----
 
 const PLANETS: PlanetData[] = [
-  { symbol: '☀️', name: 'Sun', house: 1, revealed: false },
-  { symbol: '🌙', name: 'Moon', house: 4, revealed: false },
-  { symbol: '♂️', name: 'Mars', house: 7, revealed: false },
+  { symbol: '☉', name: 'Sun', house: 1, revealed: false },
+  { symbol: '☽', name: 'Moon', house: 4, revealed: false },
+  { symbol: '♂', name: 'Mars', house: 7, revealed: false },
   { symbol: '☿', name: 'Mercury', house: 3, revealed: false },
   { symbol: '♃', name: 'Jupiter', house: 2, revealed: false },
   { symbol: '♀', name: 'Venus', house: 6, revealed: false },
@@ -149,7 +148,7 @@ export default function KundliAnimationScreen() {
     (async () => {
       try {
         const { kundli } = await getKundli(kundliId);
-        const planetaryData = kundli.planetary_data ?? kundli.planetaryData;
+        const planetaryData = (kundli as unknown as Record<string, unknown>).planetary_data as typeof kundli.planetaryData ?? kundli.planetaryData;
         if (planetaryData?.planetaryPositions) {
           realPlanetsRef.current = planetaryData.planetaryPositions;
           // Update the planet list with real house data
@@ -403,17 +402,17 @@ export default function KundliAnimationScreen() {
         {/* Birth Summary Chips */}
         <View style={s.birthSummary}>
           <View style={s.birthChip}>
-            <Text style={s.birthChipIcon}>📅</Text>
+            <Icon name="calendar" size={14} color={colors.accent.gold} />
             <Text style={s.birthChipText}>{dob}</Text>
           </View>
           {tob ? (
             <View style={s.birthChip}>
-              <Text style={s.birthChipIcon}>🕐</Text>
+              <Icon name="clock" size={14} color={colors.accent.gold} />
               <Text style={s.birthChipText}>{tob}</Text>
             </View>
           ) : null}
           <View style={s.birthChip}>
-            <Text style={s.birthChipIcon}>📍</Text>
+            <Icon name="location-pin" size={14} color={colors.accent.gold} />
             <Text style={s.birthChipText}>{place}</Text>
           </View>
         </View>
@@ -436,9 +435,10 @@ export default function KundliAnimationScreen() {
 
           {/* Center symbol (does not rotate) */}
           <View style={s.wheelCenter}>
-            <Text style={s.wheelCenterSymbol}>
-              {phase === 4 ? '✨' : '🙏'}
-            </Text>
+            {phase === 4
+              ? <Icon name="sparkles" size={22} color={colors.accent.gold} />
+              : <Icon name="namaste-hands" size={22} color={colors.accent.gold} />
+            }
           </View>
 
           {/* Planet nodes positioned around the wheel */}
@@ -522,7 +522,9 @@ export default function KundliAnimationScreen() {
         {/* Phase 4: Complete */}
         {phase === 4 && (
           <View style={s.completeSection}>
-            <Text style={s.completeIcon}>✨</Text>
+            <View style={{ marginBottom: hp(8) }}>
+              <Icon name="sparkles" size={40} color={colors.accent.gold} />
+            </View>
             <Text style={s.completeTitle}>Analysis Complete</Text>
             <Text style={s.completeSub}>
               {!diagnosisId && !diagnosisError
@@ -574,7 +576,7 @@ const WHEEL_SIZE = wp(220);
 const s = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1A0A2E',
+    backgroundColor: colors.darkTheme.pageBg,
   },
   scrollContent: {
     alignItems: 'center',

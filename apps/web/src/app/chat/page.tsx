@@ -4,6 +4,7 @@ import { Suspense, useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { PROBLEM_TYPES, getTranslations, interpolate, detectLanguage, type TranslationKeys, type ProblemType, type ChatMessageType } from '@upaya/shared';
 import BirthDetailsCard from './BirthDetailsCard';
+import { Icon } from '@/components/icons';
 import styles from './page.module.css';
 
 // ---- Types ----
@@ -341,7 +342,7 @@ function ChatPageContent() {
         <span className={styles.topBarTitle}>{getTranslations(language).chat.aiTitle}</span>
 
         <span className={styles.problemChipBadge}>
-          {problemInfo.emoji} {language === 'hi' ? problemInfo.hi : problemInfo.en}
+          <Icon name={problemInfo.iconName} size={14} color="currentColor" /> {language === 'hi' ? problemInfo.hi : problemInfo.en}
         </span>
 
         <button className={styles.overflowButton} aria-label="More options">
@@ -374,7 +375,7 @@ function ChatPageContent() {
               return (
                 <div key={msg.id} className={`${styles.messageRow} ${styles.messageRowAi}`}>
                   {showAvatar ? (
-                    <div className={styles.aiAvatar}>🙏</div>
+                    <div className={styles.aiAvatar}><Icon name="namaste-hands" size={20} color="var(--color-accent-gold)" /></div>
                   ) : (
                     <div className={styles.avatarPlaceholder} />
                   )}
@@ -397,7 +398,7 @@ function ChatPageContent() {
                   {msg.role === 'assistant' && (
                     <>
                       {showAvatar ? (
-                        <div className={styles.aiAvatar}>🙏</div>
+                        <div className={styles.aiAvatar}><Icon name="namaste-hands" size={20} color="var(--color-accent-gold)" /></div>
                       ) : (
                         <div className={styles.avatarPlaceholder} />
                       )}
@@ -429,7 +430,7 @@ function ChatPageContent() {
                     {/* Birth details CTA button */}
                     {msg.showBirthDetailsCta && chatPhase !== 'birth_details' && chatPhase !== 'generating' && (
                       <button className={styles.birthDetailsCta} onClick={handleBirthDetailsCta}>
-                        <span className={styles.birthDetailsCtaIcon}>📋</span>
+                        <span className={styles.birthDetailsCtaIcon}><Icon name="clipboard" size={16} color="var(--color-accent-gold)" /></span>
                         <span className={styles.birthDetailsCtaContent}>
                           <span>{getTranslations(language).chat.birthDetailsCta}</span>
                           <span className={styles.birthDetailsCtaSub}>
@@ -463,7 +464,7 @@ function ChatPageContent() {
           {/* Typing indicator */}
           {isTyping && (
             <div className={styles.typingIndicator}>
-              <div className={styles.aiAvatar}>🙏</div>
+              <div className={styles.aiAvatar}><Icon name="namaste-hands" size={20} color="var(--color-accent-gold)" /></div>
               <div className={styles.typingBubble}>
                 <span className={styles.typingDot} />
                 <span className={styles.typingDot} />

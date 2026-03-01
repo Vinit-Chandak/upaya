@@ -102,8 +102,8 @@ export const en: TranslationKeys = {
 
   // --- Home / Chat Entry ---
   home: {
-    greeting: 'Welcome back, {{name}} 🙏',
-    welcomeBack: 'Welcome back 🙏',
+    greeting: 'Welcome back, {{name}}',
+    welcomeBack: 'Welcome back',
     mainPrompt: "Tell me what's worrying you today",
     mainPromptSub: 'Choose or describe your concern below',
     inputPlaceholder: 'Type your concern here...',
@@ -191,7 +191,7 @@ export const en: TranslationKeys = {
   // --- Curiosity Bridge Templates ---
   curiosityBridge: {
     marriage_delay:
-      "Proposals falling through for {{duration}} — this is a specific pattern seen in many cases.\n\n💡 This often happens when a planetary combination is directly affecting the 7th house (marriage house). It's not permanent — the right remedies can significantly reduce its effects.\n\nI can confirm from your exact kundli which planet is causing this and what remedy would be most effective.",
+      "Proposals falling through for {{duration}} — this is a specific pattern seen in many cases.\n\nThis often happens when a planetary combination is directly affecting the 7th house (marriage house). It's not permanent — the right remedies can significantly reduce its effects.\n\nI can confirm from your exact kundli which planet is causing this and what remedy would be most effective.",
     career_stuck:
       "Career stuck for {{duration}} — despite effort — this often happens when a planet is putting pressure on the 10th house (career house) or its lord. This is a temporary phase and a breakthrough is possible with specific remedies.",
     money_problems:
@@ -225,7 +225,7 @@ export const en: TranslationKeys = {
       'Kundli can be generated with approximate time too, but exact time gives more accurate results.',
     placeOfBirth: 'Place of Birth',
     placeSearch: 'Search city/town...',
-    generateButton: '✨ Generate My Kundli',
+    generateButton: 'Generate My Kundli',
     generateButtonSub: 'Kundli ready in 2 minutes',
   },
 
@@ -772,7 +772,7 @@ export const en: TranslationKeys = {
     noSubscription: 'You don\'t have an active subscription',
     upgradePrompt: 'Make your remedies more effective with a 9-week protocol',
     weekProgress: 'Week {{current}} of {{total}}',
-    milestoneReached: 'Milestone reached! 🎉',
+    milestoneReached: 'Milestone reached!',
   },
 
   // --- Phase 4: Family Kundli Vault ---

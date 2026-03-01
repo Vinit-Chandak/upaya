@@ -56,14 +56,14 @@ export interface SendMessageInput {
 /** Problem type display info */
 export const PROBLEM_TYPES: Record<
   ProblemType,
-  { hi: string; en: string; emoji: string }
+  { hi: string; en: string; iconName: string }
 > = {
-  marriage_delay: { hi: 'शादी में देरी', en: 'Marriage Delay', emoji: '💍' },
-  career_stuck: { hi: 'करियर में रुकावट', en: 'Career Stuck', emoji: '💼' },
-  money_problems: { hi: 'पैसे की समस्या', en: 'Money Problems', emoji: '💰' },
-  health_issues: { hi: 'स्वास्थ्य समस्या', en: 'Health Issues', emoji: '🏥' },
-  legal_matters: { hi: 'कानूनी विवाद', en: 'Legal Matters', emoji: '⚖️' },
-  family_conflict: { hi: 'पारिवारिक कलह', en: 'Family Conflict', emoji: '👨‍👩‍👧‍👦' },
-  get_kundli: { hi: 'कुंडली बनवाएं', en: 'Get My Kundli', emoji: '📖' },
-  something_else: { hi: 'कुछ और पूछना है', en: 'Something Else', emoji: '🔮' },
+  marriage_delay: { hi: 'शादी में देरी', en: 'Marriage Delay', iconName: 'marriage' },
+  career_stuck: { hi: 'करियर में रुकावट', en: 'Career Stuck', iconName: 'briefcase' },
+  money_problems: { hi: 'पैसे की समस्या', en: 'Money Problems', iconName: 'coinStack' },
+  health_issues: { hi: 'स्वास्थ्य समस्या', en: 'Health Issues', iconName: 'heartPulse' },
+  legal_matters: { hi: 'कानूनी विवाद', en: 'Legal Matters', iconName: 'scales' },
+  family_conflict: { hi: 'पारिवारिक कलह', en: 'Family Conflict', iconName: 'family' },
+  get_kundli: { hi: 'कुंडली बनवाएं', en: 'Get My Kundli', iconName: 'kundliChart' },
+  something_else: { hi: 'कुछ और पूछना है', en: 'Something Else', iconName: 'bookOpen' },
 };

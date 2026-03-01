@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import TopBar from '@/components/TopBar';
+import { Icon } from '@/components/icons';
 import styles from './page.module.css';
 
 type CmsTab = 'dashboard' | 'bookings' | 'catalog';
@@ -157,7 +158,7 @@ export default function TempleCmsPage() {
           <div className={styles.container}>
             {/* Hero Section */}
             <div className={styles.regHero}>
-              <span className={styles.regHeroEmoji}>{'\uD83D\uDED5'}</span>
+              <Icon name="temple-silhouette" size={48} color="var(--color-accent-gold)" />
               <h1 className={styles.regHeroTitle}>
                 {language === 'hi' ? 'Register Your Temple on Upaya' : 'Register Your Temple on Upaya'}
               </h1>
@@ -175,16 +176,16 @@ export default function TempleCmsPage() {
               </h2>
               <div className={styles.regStepsList}>
                 {[
-                  { num: 1, hi: '\u092E\u0902\u0926\u093F\u0930 \u0915\u0940 \u091C\u093E\u0928\u0915\u093E\u0930\u0940', en: 'Temple Details', emoji: '\uD83D\uDED5' },
-                  { num: 2, hi: '\u092A\u0942\u091C\u093E Catalog', en: 'Puja Catalog', emoji: '\uD83D\uDCCB' },
-                  { num: 3, hi: 'Pricing \u0938\u0947\u091F \u0915\u0930\u0947\u0902', en: 'Set Pricing', emoji: '\uD83D\uDCB0' },
-                  { num: 4, hi: 'Photos Upload \u0915\u0930\u0947\u0902', en: 'Upload Photos', emoji: '\uD83D\uDCF7' },
-                  { num: 5, hi: 'Review & Go Live', en: 'Go Live', emoji: '\uD83D\uDE80' },
+                  { num: 1, hi: '\u092E\u0902\u0926\u093F\u0930 \u0915\u0940 \u091C\u093E\u0928\u0915\u093E\u0930\u0940', en: 'Temple Details', iconName: 'temple-silhouette' },
+                  { num: 2, hi: '\u092A\u0942\u091C\u093E Catalog', en: 'Puja Catalog', iconName: 'clipboard' },
+                  { num: 3, hi: 'Pricing \u0938\u0947\u091F \u0915\u0930\u0947\u0902', en: 'Set Pricing', iconName: 'coin-stack' },
+                  { num: 4, hi: 'Photos Upload \u0915\u0930\u0947\u0902', en: 'Upload Photos', iconName: 'video' },
+                  { num: 5, hi: 'Review & Go Live', en: 'Go Live', iconName: 'sparkles' },
                 ].map((step) => (
                   <div key={step.num} className={styles.regStepItem}>
                     <div className={styles.regStepNumber}>{step.num}</div>
                     <div className={styles.regStepInfo}>
-                      <span className={styles.regStepEmoji}>{step.emoji}</span>
+                      <Icon name={step.iconName} size={20} color="var(--color-accent-gold)" />
                       <span className={styles.regStepLabel}>
                         {language === 'hi' ? step.hi : step.en}
                       </span>
@@ -257,13 +258,13 @@ export default function TempleCmsPage() {
               </h3>
               <div className={styles.regBenefitsList}>
                 {[
-                  { emoji: '\uD83D\uDCB0', hi: '70% revenue \u0906\u092A\u0915\u093E, 30% platform fee', en: '70% revenue yours, 30% platform fee' },
-                  { emoji: '\uD83D\uDCF1', hi: '\u0932\u093E\u0916\u094B\u0902 users \u0924\u0915 \u092A\u0939\u0941\u0901\u091A', en: 'Reach millions of devotees' },
-                  { emoji: '\uD83D\uDD14', hi: 'Real-time booking notifications', en: 'Real-time booking notifications' },
-                  { emoji: '\uD83D\uDCCA', hi: 'Analytics \u0914\u0930 revenue tracking', en: 'Analytics and revenue tracking' },
+                  { iconName: 'coin-stack', hi: '70% revenue \u0906\u092A\u0915\u093E, 30% platform fee', en: '70% revenue yours, 30% platform fee' },
+                  { iconName: 'users', hi: '\u0932\u093E\u0916\u094B\u0902 users \u0924\u0915 \u092A\u0939\u0941\u0901\u091A', en: 'Reach millions of devotees' },
+                  { iconName: 'bell', hi: 'Real-time booking notifications', en: 'Real-time booking notifications' },
+                  { iconName: 'bar-chart', hi: 'Analytics \u0914\u0930 revenue tracking', en: 'Analytics and revenue tracking' },
                 ].map((benefit, i) => (
                   <div key={i} className={styles.regBenefitItem}>
-                    <span className={styles.regBenefitEmoji}>{benefit.emoji}</span>
+                    <Icon name={benefit.iconName} size={20} color="var(--color-accent-gold)" />
                     <span className={styles.regBenefitText}>
                       {language === 'hi' ? benefit.hi : benefit.en}
                     </span>
@@ -286,7 +287,7 @@ export default function TempleCmsPage() {
       <header className={styles.cmsHeader}>
         <div className={styles.cmsHeaderInner}>
           <div className={styles.cmsLogo}>
-            <span className={styles.cmsLogoIcon}>{'\uD83D\uDED5'}</span>
+            <Icon name="temple-silhouette" size={24} color="var(--color-accent-gold)" />
             <div className={styles.cmsLogoText}>
               <span className={styles.cmsLogoTitle}>
                 {language === 'hi' ? '\u092E\u0902\u0917\u0932\u0928\u093E\u0925 \u092E\u0902\u0926\u093F\u0930' : 'Mangalnath Temple'}
@@ -327,21 +328,21 @@ export default function TempleCmsPage() {
               {/* Revenue Summary Cards */}
               <div className={styles.statsGrid}>
                 <div className={`${styles.statCard} ${styles.statCardHighlight}`}>
-                  <span className={styles.statIcon}>{'\uD83D\uDCB0'}</span>
+                  <Icon name="coin-stack" size={24} color="var(--color-accent-gold)" />
                   <span className={styles.statValue}>₹{monthlyEarnings.toLocaleString('en-IN')}</span>
                   <span className={styles.statLabel}>
                     {language === 'hi' ? 'Monthly Earnings' : 'Monthly Earnings'}
                   </span>
                 </div>
                 <div className={styles.statCard}>
-                  <span className={styles.statIcon}>{'\uD83D\uDCCB'}</span>
+                  <Icon name="clipboard" size={24} color="var(--color-accent-gold)" />
                   <span className={styles.statValue}>{bookingsCompleted}</span>
                   <span className={styles.statLabel}>
                     {language === 'hi' ? 'Bookings Completed' : 'Bookings Completed'}
                   </span>
                 </div>
                 <div className={styles.statCard}>
-                  <span className={styles.statIcon}>{'\u2B50'}</span>
+                  <Icon name="star-rating" size={24} color="var(--color-accent-gold)" />
                   <span className={styles.statValue}>{avgRating}</span>
                   <span className={styles.statLabel}>
                     {language === 'hi' ? 'Average Rating' : 'Average Rating'}
@@ -363,7 +364,7 @@ export default function TempleCmsPage() {
                   {pujas.map((puja) => (
                     <div key={puja.id} className={styles.pujaManageCard}>
                       <div className={styles.pujaManageLeft}>
-                        <span className={styles.pujaManageEmoji}>{'\uD83E\uDE94'}</span>
+                        <Icon name="diya" size={20} color="var(--color-accent-gold)" />
                         <div className={styles.pujaManageInfo}>
                           <span className={styles.pujaManageName}>
                             {language === 'hi' ? puja.name : puja.nameEn}
@@ -448,7 +449,7 @@ export default function TempleCmsPage() {
               {/* Refer Another Temple Card */}
               <div className={styles.referCard}>
                 <div className={styles.referCardInner}>
-                  <span className={styles.referEmoji}>{'\uD83D\uDED5'}</span>
+                  <Icon name="temple-silhouette" size={24} color="var(--color-accent-gold)" />
                   <div className={styles.referInfo}>
                     <h3 className={styles.referTitle}>
                       {language === 'hi' ? '\u090F\u0915 \u0914\u0930 \u092E\u0902\u0926\u093F\u0930 Refer \u0915\u0930\u0947\u0902' : 'Refer Another Temple'}
@@ -598,7 +599,7 @@ export default function TempleCmsPage() {
                 {pujas.map((puja) => (
                   <div key={puja.id} className={styles.catalogCard}>
                     <div className={styles.catalogCardLeft}>
-                      <span className={styles.catalogEmoji}>{'\uD83E\uDE94'}</span>
+                      <Icon name="diya" size={20} color="var(--color-accent-gold)" />
                       <div className={styles.catalogInfo}>
                         <span className={styles.catalogName}>
                           {language === 'hi' ? puja.name : puja.nameEn}

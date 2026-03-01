@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  background: var(--color-neutral-off-white);
+  background: var(--color-page-bg);
 }
 
 .mainContent {
@@ -20,8 +20,8 @@
   align-items: center;
   justify-content: space-between;
   padding: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem) var(--space-page-x);
-  background: var(--color-neutral-white);
-  border-bottom: 1px solid var(--color-neutral-grey-100);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border-light);
   flex-shrink: 0;
 }
 
@@ -39,7 +39,7 @@
 .sessionTimer {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .sessionCost {
@@ -56,7 +56,7 @@
 
 .sessionBalance {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .endBtn {
@@ -101,8 +101,8 @@
 
 .systemMsg {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-400);
-  background: var(--color-neutral-grey-50);
+  color: var(--color-text-muted);
+  background: var(--color-input-bg);
   padding: 0.25rem 0.75rem;
   border-radius: var(--radius-chip);
   font-style: italic;
@@ -118,7 +118,7 @@
 }
 
 .msgBubblePandit {
-  background: var(--color-neutral-cream);
+  background: var(--color-surface);
   border-bottom-left-radius: var(--radius-sm);
 }
 
@@ -129,7 +129,7 @@
 
 .msgText {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   line-height: 1.6;
 }
 
@@ -145,8 +145,8 @@
   align-items: center;
   gap: var(--space-inline-gap);
   padding: var(--space-inline-gap) var(--space-page-x);
-  background: var(--color-neutral-white);
-  border-top: 1px solid var(--color-neutral-grey-100);
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border-light);
   flex-shrink: 0;
 }
 
@@ -154,8 +154,8 @@
   flex: 1;
   padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) clamp(0.75rem, 0.5rem + 1.25vw, 1rem);
   font-size: var(--text-sm);
-  background: var(--color-neutral-grey-50);
-  border: 1.5px solid var(--color-neutral-grey-200);
+  background: var(--color-input-bg);
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-full);
   outline: none;
   transition: border-color var(--transition-fast);
@@ -189,14 +189,14 @@
 }
 
 .sendBtn:disabled {
-  background: var(--color-neutral-grey-300);
+  background: var(--color-border);
   cursor: default;
   transform: none;
 }
 
 /* --- Summary Card --- */
 .summaryCard {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-xl);
   padding: var(--space-card-padding);
   box-shadow: var(--shadow-md);
@@ -215,7 +215,7 @@
 .summaryTitle {
   font-size: var(--text-lg);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .summarySection {
@@ -227,7 +227,7 @@
 .summarySubTitle {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
 }
 
 .summaryList {
@@ -240,7 +240,7 @@
 
 .summaryListItem {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   line-height: 1.5;
 }
 
@@ -249,12 +249,12 @@
   align-items: center;
   gap: 0.375rem;
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
 }
 
 .summaryText {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   line-height: 1.5;
 }
 
@@ -264,13 +264,13 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   padding-top: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
-  border-top: 1px solid var(--color-neutral-grey-100);
+  border-top: 1px solid var(--color-border-light);
 }
 
 .summaryCost strong {
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 /* --- Rating --- */
@@ -280,12 +280,12 @@
   align-items: center;
   gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
   padding-top: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
-  border-top: 1px solid var(--color-neutral-grey-100);
+  border-top: 1px solid var(--color-border-light);
 }
 
 .ratingPrompt {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
 }
 
 .ratingStars {
@@ -342,7 +342,7 @@
 }
 
 .modal {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-xl);
   padding: var(--space-card-padding);
   width: 100%;
@@ -357,12 +357,12 @@
 .modalTitle {
   font-size: var(--text-lg);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .modalText {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
 }
 
 .modalActions {
@@ -375,8 +375,8 @@
   padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-600);
-  background: var(--color-neutral-grey-100);
+  color: var(--color-text-secondary);
+  background: var(--color-border-light);
   border: none;
   border-radius: var(--radius-button);
   cursor: pointer;
@@ -384,7 +384,7 @@
 }
 
 .modalCancel:hover {
-  background: var(--color-neutral-grey-200);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .modalConfirm {

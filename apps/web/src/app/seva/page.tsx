@@ -3,12 +3,13 @@
 import { useState, useEffect } from 'react';
 import TopBar from '@/components/TopBar';
 import BottomTabBar from '@/components/BottomTabBar';
+import { Icon } from '@/components/icons';
 import styles from './page.module.css';
 
 const SEVA_TYPES = [
   {
     key: 'gau_seva',
-    emoji: '\uD83D\uDC04',
+    iconName: 'namaste-hands',
     hi: 'गौ सेवा',
     en: 'Gau Seva',
     priceRange: '\u20B9151 - \u20B9501',
@@ -17,7 +18,7 @@ const SEVA_TYPES = [
   },
   {
     key: 'brahman_bhoj',
-    emoji: '\uD83D\uDE4F',
+    iconName: 'namaste-hands',
     hi: 'ब्राह्मण भोज',
     en: 'Brahman Bhoj',
     priceRange: '\u20B9251 - \u20B91,100',
@@ -26,7 +27,7 @@ const SEVA_TYPES = [
   },
   {
     key: 'vastra_daan',
-    emoji: '\uD83D\uDC55',
+    iconName: 'gift',
     hi: 'वस्त्र दान',
     en: 'Vastra Daan',
     priceRange: '\u20B9201 - \u20B9501',
@@ -35,7 +36,7 @@ const SEVA_TYPES = [
   },
   {
     key: 'anna_daan',
-    emoji: '\uD83C\uDF5A',
+    iconName: 'gift',
     hi: 'अन्न दान',
     en: 'Anna Daan',
     priceRange: '\u20B9151 - \u20B9351',
@@ -134,7 +135,7 @@ export default function SevaPage() {
                   className={`${styles.sevaCard} ${selectedSeva === seva.key ? styles.sevaCardSelected : ''}`}
                   onClick={() => handleSevaSelect(seva.key)}
                 >
-                  <span className={styles.sevaEmoji}>{seva.emoji}</span>
+                  <Icon name={seva.iconName} size={28} color="var(--color-accent-gold)" />
                   <span className={styles.sevaName}>
                     {language === 'hi' ? seva.hi : seva.en}
                   </span>
@@ -143,7 +144,7 @@ export default function SevaPage() {
                   </span>
                   <span className={styles.sevaPrice}>{seva.priceRange}</span>
                   <span className={styles.sevaProofBadge}>
-                    {language === 'hi' ? '\uD83D\uDCF7 फोटो प्रमाण शामिल' : '\uD83D\uDCF7 Photo proof included'}
+                    <Icon name="video" size={12} color="currentColor" /> {language === 'hi' ? 'फोटो प्रमाण शामिल' : 'Photo proof included'}
                   </span>
                 </button>
               ))}
@@ -163,7 +164,7 @@ export default function SevaPage() {
                     className={`${styles.templeCard} ${selectedTemple === temple.id ? styles.templeCardSelected : ''}`}
                     onClick={() => setSelectedTemple(temple.id)}
                   >
-                    <span className={styles.templeIcon}>\uD83D\uDED5</span>
+                    <Icon name="temple-silhouette" size={24} color="var(--color-accent-gold)" />
                     <div className={styles.templeInfo}>
                       <span className={styles.templeName}>
                         {language === 'hi' ? temple.name : temple.nameEn}
@@ -209,16 +210,16 @@ export default function SevaPage() {
                   </div>
                   <div className={styles.bookingDetails}>
                     <span className={styles.bookingTemple}>
-                      \uD83D\uDED5 {language === 'hi' ? booking.temple : booking.templeEn}
+                      <Icon name="temple-silhouette" size={14} color="currentColor" /> {language === 'hi' ? booking.temple : booking.templeEn}
                     </span>
                     <span className={styles.bookingDate}>
-                      \uD83D\uDCC5 {booking.date}
+                      <Icon name="calendar" size={14} color="currentColor" /> {booking.date}
                     </span>
                     <span className={styles.bookingAmount}>\u20B9{booking.amount}</span>
                   </div>
                   {booking.hasPhoto && (
                     <span className={styles.photoProof}>
-                      {language === 'hi' ? '\uD83D\uDCF7 फोटो प्रमाण उपलब्ध' : '\uD83D\uDCF7 Photo proof available'}
+                      <Icon name="video" size={12} color="currentColor" /> {language === 'hi' ? 'फोटो प्रमाण उपलब्ध' : 'Photo proof available'}
                     </span>
                   )}
                 </div>

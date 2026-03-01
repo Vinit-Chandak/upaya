@@ -101,8 +101,8 @@ export interface GenerateKundliInput {
 
 /** Planet display names (used in UI) */
 export const PLANET_NAMES: Record<Planet, { hi: string; en: string; symbol: string }> = {
-  sun: { hi: 'सूर्य', en: 'Sun', symbol: '☀️' },
-  moon: { hi: 'चन्द्रमा', en: 'Moon', symbol: '🌙' },
+  sun: { hi: 'सूर्य', en: 'Sun', symbol: '☉' },
+  moon: { hi: 'चन्द्रमा', en: 'Moon', symbol: '☽' },
   mars: { hi: 'मंगल', en: 'Mars', symbol: '♂️' },
   mercury: { hi: 'बुध', en: 'Mercury', symbol: '☿' },
   jupiter: { hi: 'गुरु', en: 'Jupiter', symbol: '♃' },

@@ -1,43 +1,69 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { getTranslations } from '@upaya/shared';
+import CelestialBackground from '@/components/CelestialBackground/CelestialBackground';
+import NamasteHands from '@/components/icons/NamasteHands';
+import VenusGlyph from '@/components/icons/VenusGlyph';
+import MercuryGlyph from '@/components/icons/MercuryGlyph';
+import KundliChart from '@/components/icons/KundliChart';
+import ScrollRemedy from '@/components/icons/ScrollRemedy';
+import TempleSilhouette from '@/components/icons/TempleSilhouette';
+import PlayVideo from '@/components/icons/PlayVideo';
+import PrasadBox from '@/components/icons/PrasadBox';
+import ShieldLock from '@/components/icons/ShieldLock';
+import StarRating from '@/components/icons/StarRating';
+import ArrowRight from '@/components/icons/ArrowRight';
 import styles from './page.module.css';
 
-const TRUST_BADGES = [
-  { icon: '📊', label: '50,000+', sublabel: 'Kundlis analyzed' },
-  { icon: '🛕', label: '100+', sublabel: 'Temples verified' },
-  { icon: '📹', label: 'Video proof', sublabel: 'of every puja' },
-  { icon: '📦', label: 'Prasad', sublabel: 'delivered home' },
-  { icon: '🔒', label: '100%', sublabel: 'Private & Secure' },
-  { icon: '🙏', label: 'Pandit', sublabel: 'verified' },
+interface TrustBadge {
+  icon: ReactNode;
+  label: string;
+  sublabel: string;
+}
+
+const TRUST_BADGES: TrustBadge[] = [
+  { icon: <KundliChart size={22} color="#D4A017" />, label: '50,000+', sublabel: 'Kundlis analyzed' },
+  { icon: <TempleSilhouette size={22} color="#FF8C00" />, label: '100+', sublabel: 'Temples verified' },
+  { icon: <PlayVideo size={22} color="#FF8C00" />, label: 'Video proof', sublabel: 'of every puja' },
+  { icon: <PrasadBox size={22} color="#FF8C00" />, label: 'Prasad', sublabel: 'delivered home' },
+  { icon: <ShieldLock size={22} color="#10B981" />, label: '100%', sublabel: 'Private & Secure' },
+  { icon: <NamasteHands size={22} color="#FF8C00" />, label: 'Pandit', sublabel: 'verified' },
 ];
 
-const STEPS = [
+interface Step {
+  icon: ReactNode;
+  title: string;
+  titleEn: string;
+  desc: string;
+  descEn: string;
+}
+
+const STEPS: Step[] = [
   {
-    icon: '💬',
+    icon: <MercuryGlyph size={22} color="#D4A017" />,
     title: 'अपनी problem बताएं',
     titleEn: 'Tell your problem',
     desc: 'AI empathetically समझेगा',
     descEn: 'AI understands empathetically',
   },
   {
-    icon: '📊',
+    icon: <KundliChart size={22} color="#D4A017" />,
     title: 'AI आपकी कुंडली analyze करे',
     titleEn: 'AI analyzes your kundli',
     desc: 'Exact ग्रह और दोष ढूंढेगा',
     descEn: 'Finds exact planets and doshas',
   },
   {
-    icon: '📜',
+    icon: <ScrollRemedy size={22} color="#FF8C00" />,
     title: 'Personalized remedy plan',
     titleEn: 'Personalized remedy plan',
     desc: 'Specific मंत्र, temples, timing — सब कुछ tailored',
     descEn: 'Specific mantras, temples, timing — all tailored',
   },
   {
-    icon: '🛕',
+    icon: <TempleSilhouette size={22} color="#FF8C00" />,
     title: 'Temple पूजा + Video proof',
     titleEn: 'Temple puja + Video proof',
     desc: 'Real पूजा at real temple, video delivered, प्रसाद shipped',
@@ -133,7 +159,7 @@ export default function OnboardingPage() {
           <div className={styles.screen}>
             <div className={styles.screenContent}>
               <div className={styles.illustrationCircle}>
-                <span className={styles.illustrationEmoji}>🙏</span>
+                <NamasteHands size={48} color="#FF8C00" />
               </div>
               <h2 className={styles.screenTitle}>
                 {language === 'hi'
@@ -142,12 +168,13 @@ export default function OnboardingPage() {
               </h2>
               <div className={styles.testimonialCard}>
                 <p className={styles.testimonialName}>
-                  💍 {language === 'hi' ? 'प्रिया, 28, लखनऊ' : 'Priya, 28, Lucknow'}
+                  <span className={styles.testimonialIcon}><VenusGlyph size={16} color="#D4A017" /></span>
+                  {' '}{language === 'hi' ? 'प्रिया, 28, लखनऊ' : 'Priya, 28, Lucknow'}
                 </p>
                 <p className={styles.testimonialText}>
                   {language === 'hi'
-                    ? '4 साल से शादी के रिश्ते आ के टूट रहे थे। सबने कहा मंगल दोष है, लेकिन कोई solution नहीं बताया।\n\nUpaya ने कुंडली analyze की → exact problem मिली → मंगलनाथ Temple में specific पूजा suggest की।\n\n5 महीने में रिश्ता पक्का हुआ। 🙏'
-                    : "Marriage talks kept falling apart for 4 years. Everyone said it's Mangal Dosha but nobody gave a real solution.\n\nUpaya analyzed my chart, found the exact cause, and recommended a specific puja at Mangalnath Temple.\n\nGot married within 5 months. 🙏"}
+                    ? '4 साल से शादी के रिश्ते आ के टूट रहे थे। सबने कहा मंगल दोष है, लेकिन कोई solution नहीं बताया।\n\nUpaya ने कुंडली analyze की → exact problem मिली → मंगलनाथ Temple में specific पूजा suggest की।\n\n5 महीने में रिश्ता पक्का हुआ।'
+                    : "Marriage talks kept falling apart for 4 years. Everyone said it's Mangal Dosha but nobody gave a real solution.\n\nUpaya analyzed my chart, found the exact cause, and recommended a specific puja at Mangalnath Temple.\n\nGot married within 5 months."}
                 </p>
               </div>
             </div>
@@ -166,7 +193,7 @@ export default function OnboardingPage() {
                       className={`${styles.stepRow} ${stepsVisible[i] ? styles.stepVisible : ''}`}
                     >
                       <div className={styles.stepIconCircle}>
-                        <span className={styles.stepIcon}>{step.icon}</span>
+                        {step.icon}
                       </div>
                       <div className={styles.stepContent}>
                         <p className={styles.stepTitle}>
@@ -191,7 +218,8 @@ export default function OnboardingPage() {
 
           {/* Screen 3: Trust & CTA */}
           <div className={styles.screen}>
-            <div className={styles.screenContent}>
+            <div className={styles.screenContent} style={{ position: 'relative' }}>
+              <CelestialBackground variant="subtle" />
               <h2 className={styles.screenTitle}>
                 {getTranslations(language).onboarding.screen3.title}
               </h2>
@@ -205,7 +233,13 @@ export default function OnboardingPage() {
                 ))}
               </div>
               <div className={styles.miniTestimonial}>
-                <p className={styles.stars}>&#11088;&#11088;&#11088;&#11088;&#11088;</p>
+                <p className={styles.stars}>
+                  <StarRating size={14} color="#D4A017" filled />
+                  <StarRating size={14} color="#D4A017" filled />
+                  <StarRating size={14} color="#D4A017" filled />
+                  <StarRating size={14} color="#D4A017" filled />
+                  <StarRating size={14} color="#D4A017" filled />
+                </p>
                 <p className={styles.miniText}>
                   {language === 'hi'
                     ? '"पहली बार लगा कि किसी ने सच में समझा और सही रास्ता बताया"'
@@ -238,8 +272,13 @@ export default function OnboardingPage() {
           onClick={goNext}
         >
           {currentScreen < 2
-            ? (language === 'hi' ? 'आगे बढ़ें →' : 'Next →')
-            : (language === 'hi' ? '🙏 शुरू करें' : '🙏 Get Started')}
+            ? (language === 'hi' ? 'आगे बढ़ें' : 'Next')
+            : (
+              <span className={styles.ctaButtonContent}>
+                <ArrowRight size={18} color="currentColor" />
+                {language === 'hi' ? ' शुरू करें' : ' Get Started'}
+              </span>
+            )}
         </button>
 
         {currentScreen === 2 && (

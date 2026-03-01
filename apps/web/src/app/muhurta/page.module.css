@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  background: var(--color-neutral-white);
+  background: var(--color-page-bg);
 }
 
 .mainContent {
@@ -33,14 +33,14 @@
 .headerTitle {
   font-size: var(--text-2xl);
   font-weight: 700;
-  color: var(--color-secondary-maroon);
+  color: var(--color-accent-gold);
   font-family: var(--font-devanagari);
   line-height: 1.35;
 }
 
 .headerSub {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   margin-top: var(--space-inline-gap);
 }
 
@@ -50,7 +50,7 @@
 .sectionTitle {
   font-size: var(--text-lg);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   margin-bottom: var(--space-component-gap);
 }
 
@@ -66,9 +66,9 @@
   padding: clamp(0.75rem, 0.625rem + 0.625vw, 1rem);
   font-size: var(--text-sm);
   font-family: var(--font-sans);
-  color: var(--color-neutral-grey-800);
-  background: var(--color-neutral-grey-50);
-  border: 1.5px solid var(--color-neutral-grey-200);
+  color: var(--color-text-primary);
+  background: var(--color-input-bg);
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-lg);
   outline: none;
   resize: vertical;
@@ -84,7 +84,7 @@
 }
 
 .queryInput::placeholder {
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
 }
 
 /* ============================================
@@ -105,8 +105,8 @@
   align-items: center;
   gap: 0.25rem;
   padding: 0.375rem 0.75rem;
-  background: var(--color-neutral-white);
-  border: 1.5px solid var(--color-neutral-grey-200);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-chip);
   cursor: pointer;
   font-size: var(--text-xs);
@@ -129,7 +129,7 @@
 
 .categoryChipActive {
   border-color: var(--color-primary-saffron);
-  background: linear-gradient(135deg, #FFF8F0, #FFF3E0);
+  background: var(--color-surface);
   box-shadow: 0 2px 8px rgba(255, 140, 0, 0.12);
 }
 
@@ -139,7 +139,7 @@
 
 .chipText {
   font-weight: 500;
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
 }
 
 .categoryChipActive .chipText {
@@ -204,8 +204,8 @@
 }
 
 .resultCard {
-  background: var(--color-neutral-white);
-  border: 1px solid var(--color-neutral-grey-200);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
   box-shadow: var(--shadow-card);
@@ -229,7 +229,7 @@
 .resultDate {
   font-size: var(--text-base);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 /* ============================================
@@ -274,21 +274,21 @@
 }
 
 .resultMetaLabel {
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
 .resultMetaValue {
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
   font-weight: 600;
   font-family: var(--font-devanagari);
 }
 
 .resultReasoning {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   line-height: 1.5;
-  border-top: 1px solid var(--color-neutral-grey-100);
+  border-top: 1px solid var(--color-border-light);
   padding-top: var(--space-inline-gap);
 }
 
@@ -310,8 +310,8 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-inline-gap);
-  background: var(--color-neutral-white);
-  border: 1px solid var(--color-neutral-grey-200);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
   box-shadow: var(--shadow-card);
@@ -347,7 +347,7 @@
 .previousQuery {
   font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -355,7 +355,7 @@
 
 .previousDate {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .previousViewBtn {
@@ -381,7 +381,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-inline-gap);
-  background: linear-gradient(135deg, #FFF8F0, #FFF3E0);
+  background: var(--color-surface);
   border: 1px solid var(--color-accent-gold-light);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
@@ -395,7 +395,7 @@
 
 .premiumText {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
   font-weight: 500;
 }
 

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import TopBar from '@/components/TopBar';
+import { Icon } from '@/components/icons';
 import styles from './page.module.css';
 
 /* ============================================
@@ -19,7 +20,7 @@ interface Product {
   rating: number;
   reviewCount: number;
   aiPick: boolean;
-  emoji: string;
+  iconName: string;
   specs: string;
   specsEn: string;
   aiReasoning: string;
@@ -52,7 +53,7 @@ const PRODUCTS: Record<string, Product> = {
     rating: 4.8,
     reviewCount: 234,
     aiPick: true,
-    emoji: '💎',
+    iconName: 'gemstone',
     specs: '5.25 Ratti | Sri Lankan Origin | Lab Certified | Silver Ring Setting',
     specsEn: '5.25 Ratti | Sri Lankan Origin | Lab Certified | Silver Ring Setting',
     aiReasoning: 'आपकी कुंडली में शनि 7वें भाव में है और साढ़ेसाती चल रही है। नीलम शनि की शक्ति को balanced करेगा और career + marriage दोनों में सुधार लाएगा।',
@@ -71,7 +72,7 @@ const PRODUCTS: Record<string, Product> = {
     rating: 4.9,
     reviewCount: 189,
     aiPick: true,
-    emoji: '💛',
+    iconName: 'gemstone',
     specs: '4.50 Ratti | Natural Ceylon | Lab Certified | Gold Ring Setting',
     specsEn: '4.50 Ratti | Natural Ceylon | Lab Certified | Gold Ring Setting',
     aiReasoning: 'आपकी कुंडली में बृहस्पति कमजोर है जो शादी में देरी का मुख्य कारण है। पुखराज बृहस्पति को मजबूत करेगा।',
@@ -90,7 +91,7 @@ const PRODUCTS: Record<string, Product> = {
     rating: 4.9,
     reviewCount: 567,
     aiPick: true,
-    emoji: '📿',
+    iconName: 'mala',
     specs: 'Nepal Origin | X-Ray Certified | Natural | Cotton Thread',
     specsEn: 'Nepal Origin | X-Ray Certified | Natural | Cotton Thread',
     aiReasoning: 'यह सबसे शक्तिशाली और universal रुद्राक्ष है। आपकी कुंडली के अनुसार, यह सभी ग्रहों को balance करता है और मानसिक शांति देता है।',
@@ -109,7 +110,7 @@ const PRODUCTS: Record<string, Product> = {
     rating: 4.8,
     reviewCount: 421,
     aiPick: true,
-    emoji: '🔱',
+    iconName: 'trident',
     specs: 'Copper | Energized | 6x6 inches | With Stand',
     specsEn: 'Copper | Energized | 6x6 inches | With Stand',
     aiReasoning: 'आपकी कुंडली में धन भाव कमजोर है। श्री यन्त्र लक्ष्मी की कृपा बढ़ाता है और आर्थिक स्थिति सुधारता है।',
@@ -128,7 +129,7 @@ const PRODUCTS: Record<string, Product> = {
     rating: 4.6,
     reviewCount: 134,
     aiPick: true,
-    emoji: '📦',
+    iconName: 'prasad-box',
     specs: 'Red Coral Ring + Hanuman Yantra + Sacred Thread + Instruction Book',
     specsEn: 'Red Coral Ring + Hanuman Yantra + Sacred Thread + Instruction Book',
     aiReasoning: 'आपकी कुंडली में मंगल दोष पाया गया है। यह complete kit सभी recommended remedies को एक साथ provide करता है।',
@@ -139,11 +140,11 @@ const PRODUCTS: Record<string, Product> = {
 };
 
 const TRUST_SIGNALS = [
-  { hi: 'प्राण प्रतिष्ठा certified', en: 'Pran Pratistha Certified', icon: '✅' },
-  { hi: 'Video certification उपलब्ध', en: 'Video Certification Available', icon: '✅' },
-  { hi: 'Lab certified genuine', en: 'Lab Certified Genuine', icon: '✅' },
-  { hi: '7-day return policy', en: '7-Day Return Policy', icon: '✅' },
-  { hi: 'Free shipping', en: 'Free Shipping', icon: '✅' },
+  { hi: 'प्राण प्रतिष्ठा certified', en: 'Pran Pratistha Certified', iconName: 'shield' },
+  { hi: 'Video certification उपलब्ध', en: 'Video Certification Available', iconName: 'shield' },
+  { hi: 'Lab certified genuine', en: 'Lab Certified Genuine', iconName: 'shield' },
+  { hi: '7-day return policy', en: '7-Day Return Policy', iconName: 'shield' },
+  { hi: 'Free shipping', en: 'Free Shipping', iconName: 'truck' },
 ];
 
 const REVIEWS: Review[] = [
@@ -187,7 +188,7 @@ const DEFAULT_PRODUCT: Product = {
   rating: 4.5,
   reviewCount: 100,
   aiPick: false,
-  emoji: '🛍️',
+  iconName: 'cart',
   specs: 'Premium Quality | Certified | Free Shipping',
   specsEn: 'Premium Quality | Certified | Free Shipping',
   aiReasoning: 'आपकी कुंडली के अनुसार यह product आपके लिए beneficial है।',
@@ -233,7 +234,7 @@ export default function ProductDetailPage() {
           {/* Image Carousel Placeholder */}
           <div className={styles.imageCarousel}>
             <div className={styles.imageMain}>
-              <span className={styles.imageEmoji}>{product.emoji}</span>
+              <Icon name={product.iconName} size={48} color="var(--color-accent-gold)" />
             </div>
             <div className={styles.imageDots}>
               {[0, 1, 2, 3].map((i) => (
@@ -264,7 +265,7 @@ export default function ProductDetailPage() {
             </h1>
             <p className={styles.productSpecs}>{language === 'hi' ? product.specs : product.specsEn}</p>
             <div className={styles.ratingRow}>
-              <span className={styles.ratingStars}>{'⭐'} {product.rating}</span>
+              <span className={styles.ratingStars}><Icon name="star-rating" size={14} color="var(--color-accent-gold)" /> {product.rating}</span>
               <span className={styles.ratingCount}>
                 ({product.reviewCount} {language === 'hi' ? 'reviews' : 'reviews'})
               </span>
@@ -281,7 +282,7 @@ export default function ProductDetailPage() {
           {/* AI Reasoning Box */}
           <div className={styles.aiReasoningBox}>
             <div className={styles.aiReasoningHeader}>
-              <span className={styles.aiReasoningIcon}>✨</span>
+              <Icon name="sparkles" size={20} color="var(--color-accent-gold)" />
               <h3 className={styles.aiReasoningTitle}>
                 {language === 'hi' ? 'आपकी कुंडली से क्यों?' : 'Why this product (from your chart)'}
               </h3>
@@ -295,7 +296,7 @@ export default function ProductDetailPage() {
           <div className={styles.trustSignals}>
             {TRUST_SIGNALS.map((signal, i) => (
               <div key={i} className={styles.trustItem}>
-                <span className={styles.trustIcon}>{signal.icon}</span>
+                <Icon name={signal.iconName} size={16} color="#10B981" />
                 <span className={styles.trustText}>
                   {language === 'hi' ? signal.hi : signal.en}
                 </span>
@@ -306,7 +307,8 @@ export default function ProductDetailPage() {
           {/* Usage Instructions */}
           <div className={styles.usageSection}>
             <h3 className={styles.usageSectionTitle}>
-              {language === 'hi' ? '📖 पहनने / उपयोग की विधि' : '📖 Wearing / Usage Instructions'}
+              <Icon name="book-open" size={20} color="var(--color-accent-gold)" />{' '}
+              {language === 'hi' ? 'पहनने / उपयोग की विधि' : 'Wearing / Usage Instructions'}
             </h3>
             <p className={styles.usageText}>
               {language === 'hi' ? product.usage : product.usageEn}
@@ -316,7 +318,8 @@ export default function ProductDetailPage() {
           {/* Pran Pratistha Video Placeholder */}
           <div className={styles.videoSection}>
             <h3 className={styles.videoSectionTitle}>
-              {language === 'hi' ? '🎥 प्राण प्रतिष्ठा Video' : '🎥 Pran Pratistha Video'}
+              <Icon name="video" size={20} color="var(--color-accent-gold)" />{' '}
+              {language === 'hi' ? 'प्राण प्रतिष्ठा Video' : 'Pran Pratistha Video'}
             </h3>
             <div className={styles.videoPlaceholder}>
               <div className={styles.videoPlayBtn}>
@@ -333,7 +336,8 @@ export default function ProductDetailPage() {
           {/* Customer Reviews */}
           <div className={styles.reviewsSection}>
             <h3 className={styles.reviewsSectionTitle}>
-              {language === 'hi' ? '💬 Customer Reviews' : '💬 Customer Reviews'}
+              <Icon name="chat-bubble" size={20} color="var(--color-accent-gold)" />{' '}
+              {language === 'hi' ? 'Customer Reviews' : 'Customer Reviews'}
             </h3>
             <div className={styles.reviewsList}>
               {REVIEWS.map((review) => (
@@ -347,7 +351,9 @@ export default function ProductDetailPage() {
                       <span className={styles.reviewDate}>{review.date}</span>
                     </div>
                     <span className={styles.reviewRating}>
-                      {'⭐'.repeat(review.rating)}
+                      {Array.from({ length: review.rating }).map((_, i) => (
+                        <Icon key={i} name="star-rating" size={12} color="var(--color-accent-gold)" />
+                      ))}
                     </span>
                   </div>
                   <p className={styles.reviewText}>

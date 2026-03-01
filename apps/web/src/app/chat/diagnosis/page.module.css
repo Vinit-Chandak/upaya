@@ -8,7 +8,7 @@
   display: flex;
   flex-direction: column;
   height: 100dvh;
-  background: var(--color-neutral-white);
+  background: var(--color-page-bg);
 }
 
 /* --- Top Bar --- */
@@ -18,8 +18,8 @@
   gap: var(--space-inline-gap);
   height: var(--top-bar-height);
   padding: 0 var(--space-page-x);
-  background: var(--color-neutral-white);
-  border-bottom: 1px solid var(--color-neutral-grey-100);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border-light);
   flex-shrink: 0;
   z-index: var(--z-sticky);
 }
@@ -31,21 +31,21 @@
   width: clamp(2rem, 1.75rem + 1.25vw, 2.5rem);
   height: clamp(2rem, 1.75rem + 1.25vw, 2.5rem);
   border-radius: var(--radius-md);
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
   cursor: pointer;
   transition: background-color var(--transition-fast);
   flex-shrink: 0;
 }
 
 .backButton:hover {
-  background: var(--color-neutral-grey-100);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .topBarTitle {
   flex: 1;
   font-size: var(--text-base);
   font-weight: 600;
-  color: var(--color-secondary-maroon);
+  color: var(--color-accent-gold);
 }
 
 .shareButton {
@@ -55,14 +55,14 @@
   width: clamp(2rem, 1.75rem + 1.25vw, 2.5rem);
   height: clamp(2rem, 1.75rem + 1.25vw, 2.5rem);
   border-radius: var(--radius-md);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   cursor: pointer;
   transition: background-color var(--transition-fast);
   flex-shrink: 0;
 }
 
 .shareButton:hover {
-  background: var(--color-neutral-grey-100);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 /* --- Scroll area --- */
@@ -87,7 +87,7 @@
    PART 1: Diagnosis Card
    ============================================ */
 .diagnosisCard {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border: 1px solid var(--color-accent-gold);
   border-radius: var(--radius-xl);
   padding: var(--space-card-padding);
@@ -116,7 +116,7 @@
 .cardTitle {
   font-size: var(--text-lg);
   font-weight: 700;
-  color: var(--color-secondary-maroon);
+  color: var(--color-accent-gold);
   letter-spacing: 0.02em;
 }
 
@@ -136,7 +136,7 @@
 .sectionLabel {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   display: flex;
   align-items: center;
   gap: 0.375rem;
@@ -148,7 +148,7 @@
 
 .rootCauseText {
   font-size: var(--text-base);
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   line-height: 1.6;
 }
 
@@ -156,7 +156,7 @@
 .dashaLabel {
   font-size: var(--text-xs);
   font-weight: 500;
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -164,12 +164,12 @@
 .dashaText {
   font-size: var(--text-base);
   font-weight: 600;
-  color: var(--color-secondary-maroon);
+  color: var(--color-accent-gold);
 }
 
 .dashaEnd {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 /* --- Impact list --- */
@@ -184,7 +184,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .impactDot {
@@ -211,14 +211,14 @@
 
 .assessmentLabel {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   min-width: clamp(8rem, 7rem + 5vw, 12rem);
 }
 
 .assessmentValue {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .assessmentPositive {
@@ -227,7 +227,7 @@
 
 /* --- Positive message --- */
 .positiveMessage {
-  background: var(--color-neutral-cream);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
   border-left: 3px solid var(--color-accent-gold);
@@ -235,7 +235,7 @@
 
 .positiveMessage p {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
   line-height: 1.65;
   font-style: italic;
 }
@@ -268,7 +268,7 @@
 
 .freeRemediesSubtitle {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   line-height: 1.6;
 }
 
@@ -280,8 +280,8 @@
 
 /* --- Remedy Card --- */
 .remedyCard {
-  background: var(--color-neutral-white);
-  border: 1px solid var(--color-neutral-grey-200);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-left: 3px solid var(--color-success);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
@@ -304,7 +304,7 @@
 .remedyNumber {
   font-size: var(--text-sm);
   font-weight: 700;
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .remedyIcon {
@@ -314,12 +314,12 @@
 .remedyName {
   font-size: var(--text-base);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 /* --- Mantra block --- */
 .mantraBlock {
-  background: var(--color-neutral-cream);
+  background: var(--color-surface);
   border-radius: var(--radius-md);
   padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem);
   display: flex;
@@ -330,7 +330,7 @@
 .mantraRoman {
   font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--color-secondary-maroon);
+  color: var(--color-accent-gold);
   line-height: 1.5;
 }
 
@@ -338,13 +338,13 @@
   font-size: var(--text-base);
   font-family: var(--font-devanagari);
   font-weight: 600;
-  color: var(--color-secondary-maroon);
+  color: var(--color-accent-gold);
   line-height: 1.6;
 }
 
 .remedyDescription {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
   line-height: 1.6;
 }
 
@@ -360,7 +360,7 @@
   align-items: center;
   gap: 0.25rem;
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .remedyMetaIcon {
@@ -430,7 +430,7 @@
 
 .freeRemediesFooter p {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
   line-height: 1.6;
 }
 
@@ -438,7 +438,7 @@
    PART 3: Complete Plan Upsell
    ============================================ */
 .upsellSection {
-  background: var(--color-neutral-grey-50);
+  background: var(--color-input-bg);
   border-radius: var(--radius-xl);
   padding: var(--space-card-padding);
   display: flex;
@@ -460,13 +460,13 @@
 .upsellTitle {
   font-size: var(--text-lg);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   letter-spacing: 0.02em;
 }
 
 .upsellSubtitle {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   line-height: 1.6;
 }
 
@@ -498,12 +498,12 @@
 .lockedName {
   font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
 }
 
 .lockedDesc {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   line-height: 1.5;
 }
 
@@ -514,9 +514,9 @@
   gap: 0.5rem;
   font-size: var(--text-xs);
   font-weight: 500;
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   padding-top: 0.5rem;
-  border-top: 1px solid var(--color-neutral-grey-200);
+  border-top: 1px solid var(--color-border);
 }
 
 /* --- Unlock button --- */
@@ -577,7 +577,7 @@
   justify-content: center;
   gap: 0.375rem;
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 /* ============================================
@@ -597,7 +597,7 @@
   width: var(--avatar-size);
   height: var(--avatar-size);
   border-radius: 50%;
-  background: var(--color-neutral-cream);
+  background: var(--color-surface);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -607,7 +607,7 @@
 }
 
 .aiFollowUpContent {
-  background: var(--color-chat-ai-bubble);
+  background: var(--color-surface);
   border-radius: var(--radius-chat-bubble);
   border-bottom-left-radius: var(--radius-sm);
   padding: var(--space-card-padding);
@@ -619,7 +619,7 @@
 
 .aiFollowUpContent p {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   line-height: 1.6;
   white-space: pre-wrap;
 }
@@ -639,9 +639,9 @@
   padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem) clamp(0.75rem, 0.625rem + 0.625vw, 1rem);
   font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--color-neutral-grey-700);
-  background: var(--color-neutral-white);
-  border: 1.5px solid var(--color-neutral-grey-200);
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-button);
   cursor: pointer;
   text-align: left;
@@ -674,7 +674,7 @@
    Share Card
    ============================================ */
 .shareCard {
-  background: var(--color-neutral-cream);
+  background: var(--color-surface);
   border: 1px solid var(--color-accent-gold-light);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
@@ -686,14 +686,14 @@
 
 .shareCardText {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   line-height: 1.6;
   font-weight: 500;
 }
 
 .shareCardMantra {
   font-size: var(--text-sm);
-  color: var(--color-secondary-maroon);
+  color: var(--color-accent-gold);
   line-height: 1.6;
 }
 
@@ -733,8 +733,8 @@
   bottom: clamp(1.5rem, 1rem + 2.5vw, 3rem);
   left: 50%;
   transform: translateX(-50%);
-  background: var(--color-neutral-grey-800);
-  color: var(--color-neutral-white);
+  background: var(--color-text-primary);
+  color: var(--color-page-bg);
   padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) clamp(1rem, 0.75rem + 1.25vw, 1.5rem);
   border-radius: var(--radius-chip);
   font-size: var(--text-sm);

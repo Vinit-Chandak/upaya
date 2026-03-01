@@ -8,7 +8,7 @@
   display: flex;
   flex-direction: column;
   height: 100dvh;
-  background: var(--color-neutral-white);
+  background: var(--color-page-bg);
 }
 
 /* --- Top Bar --- */
@@ -18,8 +18,8 @@
   gap: var(--space-inline-gap);
   height: var(--top-bar-height);
   padding: 0 var(--space-page-x);
-  background: var(--color-neutral-white);
-  border-bottom: 1px solid var(--color-neutral-grey-100);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border-light);
   flex-shrink: 0;
   z-index: var(--z-sticky);
 }
@@ -31,21 +31,21 @@
   width: clamp(2rem, 1.75rem + 1.25vw, 2.5rem);
   height: clamp(2rem, 1.75rem + 1.25vw, 2.5rem);
   border-radius: var(--radius-md);
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
   cursor: pointer;
   transition: background-color var(--transition-fast);
   flex-shrink: 0;
 }
 
 .backButton:hover {
-  background: var(--color-neutral-grey-100);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .topBarTitle {
   flex: 1;
   font-size: var(--text-base);
   font-weight: 600;
-  color: var(--color-secondary-maroon);
+  color: var(--color-accent-gold);
 }
 
 .topBarActions {
@@ -61,18 +61,18 @@
   width: clamp(2rem, 1.75rem + 1.25vw, 2.5rem);
   height: clamp(2rem, 1.75rem + 1.25vw, 2.5rem);
   border-radius: var(--radius-md);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   cursor: pointer;
   transition: background-color var(--transition-fast);
 }
 
 .iconButton:hover {
-  background: var(--color-neutral-grey-100);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 /* --- Report Header --- */
 .reportHeader {
-  background: var(--color-neutral-cream);
+  background: var(--color-surface);
   padding: var(--space-card-padding) var(--space-page-x);
   flex-shrink: 0;
 }
@@ -94,28 +94,28 @@
 .reportTitle {
   font-size: var(--text-lg);
   font-weight: 700;
-  color: var(--color-secondary-maroon);
+  color: var(--color-accent-gold);
   letter-spacing: 0.03em;
 }
 
 .reportMeta {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
 }
 
 .reportId {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
   font-family: var(--font-mono);
 }
 
 /* --- Tabs --- */
 .tabsWrapper {
   flex-shrink: 0;
-  border-bottom: 1px solid var(--color-neutral-grey-100);
+  border-bottom: 1px solid var(--color-border-light);
   position: sticky;
   top: 0;
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   z-index: var(--z-sticky);
 }
 
@@ -139,7 +139,7 @@
   padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem) clamp(0.75rem, 0.5rem + 1.25vw, 1.25rem);
   font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
@@ -149,7 +149,7 @@
 }
 
 .tab:hover {
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
 }
 
 .tabActive {
@@ -191,7 +191,7 @@
 .sectionTitle {
   font-size: var(--text-base);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   letter-spacing: 0.04em;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid var(--color-accent-gold-light);
@@ -213,7 +213,7 @@
   position: relative;
   border: 2px solid var(--color-accent-gold);
   border-radius: var(--radius-md);
-  background: var(--color-neutral-cream);
+  background: var(--color-surface);
 }
 
 .kundliCenter {
@@ -245,7 +245,7 @@
 
 .houseNum {
   font-size: clamp(0.5rem, 0.4rem + 0.5vw, 0.625rem);
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
   font-weight: 500;
 }
 
@@ -267,7 +267,7 @@
 
 .chartCaption {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
 }
 
 /* ============================================
@@ -282,13 +282,13 @@
 }
 
 .doshaCardPrimary {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border: 1px solid rgba(229, 62, 62, 0.3);
   border-left: 3px solid #E53E3E;
 }
 
 .doshaCardSecondary {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border: 1px solid rgba(85, 60, 154, 0.3);
   border-left: 3px solid #553C9A;
 }
@@ -318,21 +318,21 @@
   flex: 1;
   font-size: var(--text-base);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .doshaSeverity {
   font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   padding: 0.125rem 0.5rem;
-  background: var(--color-neutral-grey-100);
+  background: var(--color-border-light);
   border-radius: var(--radius-chip);
 }
 
 .doshaDescription {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
   line-height: 1.6;
 }
 
@@ -345,7 +345,7 @@
 .doshaImpactLabel {
   font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
 }
 
 .doshaImpactList {
@@ -357,13 +357,13 @@
 
 .doshaImpactList li {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
   line-height: 1.5;
   list-style: disc;
 }
 
 .vedicRef {
-  background: var(--color-neutral-cream);
+  background: var(--color-surface);
   border-radius: var(--radius-md);
   padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
 }
@@ -371,20 +371,20 @@
 .vedicRef p:first-child {
   font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   margin-bottom: 0.25rem;
 }
 
 .vedicRefText {
   font-size: var(--text-xs);
-  color: var(--color-secondary-maroon);
+  color: var(--color-accent-gold);
   font-style: italic;
   line-height: 1.5;
 }
 
 /* --- Dasha card --- */
 .dashaCard {
-  background: var(--color-neutral-cream);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
   display: flex;
@@ -395,23 +395,23 @@
 .dashaTitle {
   font-size: var(--text-base);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .dashaMain {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-secondary-maroon);
+  color: var(--color-accent-gold);
 }
 
 .dashaSub {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
 }
 
 .dashaAnalysis {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
   line-height: 1.6;
   margin-top: 0.25rem;
 }
@@ -431,7 +431,7 @@
   gap: 0.5rem;
   font-size: var(--text-sm);
   font-weight: 700;
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
   letter-spacing: 0.02em;
 }
 
@@ -451,20 +451,20 @@
 }
 
 .remedyItemFree {
-  background: var(--color-neutral-white);
-  border: 1px solid var(--color-neutral-grey-200);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-left: 3px solid var(--color-success);
 }
 
 .remedyItemPuja {
-  background: var(--color-neutral-white);
-  border: 1px solid var(--color-neutral-grey-200);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-left: 3px solid var(--color-warning);
 }
 
 .remedyItemProduct {
-  background: var(--color-neutral-white);
-  border: 1px solid var(--color-neutral-grey-200);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-left: 3px solid var(--color-info);
 }
 
@@ -477,17 +477,17 @@
 .remedyItemNum {
   font-size: var(--text-sm);
   font-weight: 700;
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .remedyItemName {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .remedyMantra {
-  background: var(--color-neutral-cream);
+  background: var(--color-surface);
   border-radius: var(--radius-md);
   padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
 }
@@ -495,27 +495,27 @@
 .remedyMantra p:first-child {
   font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--color-secondary-maroon);
+  color: var(--color-accent-gold);
 }
 
 .devanagari {
   font-size: var(--text-base);
   font-family: var(--font-devanagari);
   font-weight: 600;
-  color: var(--color-secondary-maroon);
+  color: var(--color-accent-gold);
   margin-top: 0.25rem;
 }
 
 .remedyItemDetail {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   line-height: 1.5;
 }
 
 .remedyItemDuration {
   font-size: var(--text-xs);
   font-weight: 500;
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .remedyItemActions {
@@ -560,7 +560,7 @@
 .productPrice {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .bookPujaButton {
@@ -602,7 +602,7 @@
    Temples Tab
    ============================================ */
 .templeCard {
-  border: 1px solid var(--color-neutral-grey-200);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   overflow: hidden;
 }
@@ -626,16 +626,16 @@
 .templeName {
   font-size: var(--text-lg);
   font-weight: 700;
-  color: var(--color-secondary-maroon);
+  color: var(--color-accent-gold);
 }
 
 .templeLocation {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
 }
 
 .templeReason {
-  background: var(--color-neutral-cream);
+  background: var(--color-surface);
   border-radius: var(--radius-md);
   padding: var(--space-card-padding);
 }
@@ -643,13 +643,13 @@
 .templeReasonLabel {
   font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   margin-bottom: 0.25rem;
 }
 
 .templeReasonText {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
   line-height: 1.6;
   font-style: italic;
 }
@@ -663,7 +663,7 @@
 .templeInclusionLabel {
   font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
 }
 
 .templeInclusionItem {
@@ -671,7 +671,7 @@
   align-items: center;
   gap: 0.375rem;
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
 }
 
 .templeDelivery {
@@ -679,7 +679,7 @@
   flex-direction: column;
   gap: 0.25rem;
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .bookPujaButtonLarge {
@@ -761,7 +761,7 @@
 .timelinePhaseTitle {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .timelineTaskList {
@@ -775,18 +775,18 @@
   align-items: flex-start;
   gap: 0.375rem;
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   line-height: 1.5;
 }
 
 .timelineTaskBullet {
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
   flex-shrink: 0;
 }
 
 .timelinePostText {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   font-style: italic;
   line-height: 1.6;
 }
@@ -795,10 +795,10 @@
 .disclaimer {
   display: flex;
   gap: var(--space-inline-gap);
-  background: var(--color-neutral-grey-50);
+  background: var(--color-input-bg);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
-  border: 1px solid var(--color-neutral-grey-200);
+  border: 1px solid var(--color-border);
 }
 
 .disclaimerIcon {
@@ -808,7 +808,7 @@
 
 .disclaimer p {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   line-height: 1.6;
   font-style: italic;
 }
@@ -821,7 +821,7 @@
   flex-direction: column;
   gap: var(--space-component-gap);
   padding-top: var(--space-component-gap);
-  border-top: 1px solid var(--color-neutral-grey-200);
+  border-top: 1px solid var(--color-border);
 }
 
 .startProtocolButton {
@@ -880,9 +880,9 @@
   padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem);
   font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--color-neutral-grey-700);
-  background: var(--color-neutral-white);
-  border: 1.5px solid var(--color-neutral-grey-200);
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-button);
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -898,9 +898,9 @@
   padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem);
   font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--color-neutral-grey-700);
-  background: var(--color-neutral-cream);
-  border: 1.5px solid var(--color-neutral-grey-200);
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-button);
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -912,7 +912,7 @@
 
 /* --- Share Card --- */
 .shareCard {
-  background: var(--color-neutral-cream);
+  background: var(--color-surface);
   border: 1px solid var(--color-accent-gold-light);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
@@ -925,7 +925,7 @@
 
 .shareCardText {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
   line-height: 1.6;
 }
 

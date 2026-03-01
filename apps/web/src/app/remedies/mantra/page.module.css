@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  background: var(--color-neutral-off-white);
+  background: var(--color-page-bg);
 }
 
 .mainContent {
@@ -36,18 +36,18 @@
 .mantraName {
   font-size: var(--text-xl);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .mantraTarget {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 /* --- Mantra Text Card --- */
 .mantraTextCard {
   width: 100%;
-  background: var(--color-neutral-cream);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
   text-align: center;
@@ -60,14 +60,14 @@
 .mantraTextHi {
   font-size: var(--text-lg);
   font-weight: 600;
-  color: var(--color-secondary-maroon);
+  color: var(--color-accent-gold);
   font-family: var(--font-devanagari);
   line-height: 1.5;
 }
 
 .mantraTextEn {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   font-style: italic;
 }
 
@@ -95,7 +95,7 @@
 
 .tapHint {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
   margin-top: clamp(0.25rem, 0.15rem + 0.5vw, 0.5rem);
   text-align: center;
 }
@@ -111,7 +111,7 @@
 .progressBarOuter {
   flex: 1;
   height: clamp(0.375rem, 0.3rem + 0.375vw, 0.5rem);
-  background: var(--color-neutral-grey-200);
+  background: var(--color-border);
   border-radius: var(--radius-full);
   overflow: hidden;
 }
@@ -144,8 +144,8 @@
   align-items: center;
   gap: 0.25rem;
   padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
-  background: var(--color-neutral-white);
-  border: 2px solid var(--color-neutral-grey-200);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
   border-radius: var(--radius-lg);
   font-size: var(--text-lg);
   cursor: pointer;
@@ -155,7 +155,7 @@
 .modeBtn span {
   font-size: var(--text-xs);
   font-weight: 500;
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .modeBtnActive {
@@ -205,8 +205,8 @@
   padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem) clamp(1rem, 0.75rem + 1.25vw, 1.5rem);
   font-size: var(--text-base);
   font-weight: 600;
-  color: var(--color-neutral-grey-600);
-  background: var(--color-neutral-grey-100);
+  color: var(--color-text-secondary);
+  background: var(--color-border-light);
   border: none;
   border-radius: var(--radius-button);
   cursor: pointer;
@@ -214,7 +214,7 @@
 }
 
 .resetBtn:hover {
-  background: var(--color-neutral-grey-200);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 /* --- Completion Card --- */
@@ -243,7 +243,7 @@
 .completeTitle {
   font-size: var(--text-base);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .completeKarma {

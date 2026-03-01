@@ -3,16 +3,17 @@
 import { useState, useEffect } from 'react';
 import TopBar from '@/components/TopBar';
 import BottomTabBar from '@/components/BottomTabBar';
+import { Icon } from '@/components/icons';
 import styles from './page.module.css';
 
 const CATEGORIES = [
-  { key: 'marriage', emoji: '\uD83D\uDC8D', hi: 'विवाह', en: 'Marriage' },
-  { key: 'business', emoji: '\uD83D\uDCBC', hi: 'व्यापार', en: 'Business' },
-  { key: 'property', emoji: '\uD83C\uDFE0', hi: 'संपत्ति', en: 'Property' },
-  { key: 'travel', emoji: '\u2708\uFE0F', hi: 'यात्रा', en: 'Travel' },
-  { key: 'education', emoji: '\uD83D\uDCDA', hi: 'शिक्षा', en: 'Education' },
-  { key: 'ceremony', emoji: '\uD83E\uDE94', hi: 'अनुष्ठान', en: 'Ceremony' },
-  { key: 'other', emoji: '\uD83D\uDCC5', hi: 'अन्य', en: 'Other' },
+  { key: 'marriage', iconName: 'marriage', hi: 'विवाह', en: 'Marriage' },
+  { key: 'business', iconName: 'briefcase', hi: 'व्यापार', en: 'Business' },
+  { key: 'property', iconName: 'house', hi: 'संपत्ति', en: 'Property' },
+  { key: 'travel', iconName: 'airplane', hi: 'यात्रा', en: 'Travel' },
+  { key: 'education', iconName: 'book-open', hi: 'शिक्षा', en: 'Education' },
+  { key: 'ceremony', iconName: 'diya', hi: 'अनुष्ठान', en: 'Ceremony' },
+  { key: 'other', iconName: 'calendar', hi: 'अन्य', en: 'Other' },
 ];
 
 interface MuhurtaResult {
@@ -187,7 +188,7 @@ export default function MuhurtaPage() {
                   className={`${styles.categoryChip} ${selectedCategory === cat.key ? styles.categoryChipActive : ''}`}
                   onClick={() => setSelectedCategory(selectedCategory === cat.key ? null : cat.key)}
                 >
-                  <span className={styles.chipEmoji}>{cat.emoji}</span>
+                  <Icon name={cat.iconName} size={16} color="var(--color-accent-gold)" />
                   <span className={styles.chipText}>
                     {language === 'hi' ? cat.hi : cat.en}
                   </span>
@@ -255,7 +256,7 @@ export default function MuhurtaPage() {
                 <div key={q.id} className={styles.previousCard}>
                   <div className={styles.previousCardLeft}>
                     <span className={styles.previousEmoji}>
-                      {CATEGORIES.find((c) => c.key === q.category)?.emoji || '\uD83D\uDCC5'}
+                      <Icon name={CATEGORIES.find((c) => c.key === q.category)?.iconName || 'calendar'} size={20} color="var(--color-accent-gold)" />
                     </span>
                     <div className={styles.previousInfo}>
                       <span className={styles.previousQuery}>
@@ -274,7 +275,7 @@ export default function MuhurtaPage() {
 
           {/* Premium Note */}
           <div className={styles.premiumNote}>
-            <span className={styles.premiumIcon}>\u2728</span>
+            <Icon name="sparkles" size={20} color="var(--color-accent-gold)" />
             <p className={styles.premiumText}>
               {language === 'hi'
                 ? 'असीमित मुहूर्त Premium सब्सक्रिप्शन में शामिल है'

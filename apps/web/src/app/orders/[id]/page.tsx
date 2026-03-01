@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import TopBar from '@/components/TopBar';
 import BottomTabBar from '@/components/BottomTabBar';
+import { Icon } from '@/components/icons';
 import styles from './page.module.css';
 import type { BookingStatus } from '@upaya/shared';
 
@@ -17,14 +18,14 @@ const BOOKING_STATUS_ORDER: BookingStatus[] = [
   'protocol_complete',
 ];
 
-const STATUS_LABELS: Record<BookingStatus, { hi: string; en: string; icon: string }> = {
-  booked: { hi: 'Booked', en: 'Booked', icon: '📝' },
-  confirmed_by_temple: { hi: 'Temple ने Confirm किया', en: 'Confirmed by Temple', icon: '✅' },
-  puja_performed: { hi: 'पूजा सम्पन्न', en: 'Puja Performed', icon: '🪔' },
-  video_delivered: { hi: 'Video Delivered', en: 'Video Delivered', icon: '🎥' },
-  prasad_shipped: { hi: 'प्रसाद Shipped', en: 'Prasad Shipped', icon: '📦' },
-  prasad_delivered: { hi: 'प्रसाद Delivered', en: 'Prasad Delivered', icon: '🏠' },
-  protocol_complete: { hi: 'Protocol Complete', en: 'Protocol Complete', icon: '🙏' },
+const STATUS_LABELS: Record<BookingStatus, { hi: string; en: string; iconName: string }> = {
+  booked: { hi: 'Booked', en: 'Booked', iconName: 'clipboard' },
+  confirmed_by_temple: { hi: 'Temple ने Confirm किया', en: 'Confirmed by Temple', iconName: 'shield' },
+  puja_performed: { hi: 'पूजा सम्पन्न', en: 'Puja Performed', iconName: 'diya' },
+  video_delivered: { hi: 'Video Delivered', en: 'Video Delivered', iconName: 'video' },
+  prasad_shipped: { hi: 'प्रसाद Shipped', en: 'Prasad Shipped', iconName: 'prasad-box' },
+  prasad_delivered: { hi: 'प्रसाद Delivered', en: 'Prasad Delivered', iconName: 'house' },
+  protocol_complete: { hi: 'Protocol Complete', en: 'Protocol Complete', iconName: 'namaste-hands' },
 };
 
 interface MockOrder {
@@ -139,7 +140,7 @@ export default function OrderDetailPage() {
                     </div>
                     <div className={styles.timelineContent}>
                       <div className={styles.timelineRow}>
-                        <span className={styles.timelineIcon}>{STATUS_LABELS[status].icon}</span>
+                        <Icon name={STATUS_LABELS[status].iconName} size={16} color="var(--color-accent-gold)" />
                         <span className={`${styles.timelineLabel} ${isDone ? styles.timelineLabelDone : ''}`}>
                           {language === 'hi' ? STATUS_LABELS[status].hi : STATUS_LABELS[status].en}
                         </span>
@@ -187,7 +188,7 @@ export default function OrderDetailPage() {
               </h2>
               <div className={styles.certificateCard}>
                 <div className={styles.certificateHeader}>
-                  <span className={styles.certificateIcon}>📜</span>
+                  <Icon name="scroll-remedy" size={24} color="var(--color-accent-gold)" />
                   <div className={styles.certificateInfo}>
                     <span className={styles.certificateTitle}>
                       {language === 'hi' ? 'पूजा Completion Certificate' : 'Certificate of Puja Completion'}
@@ -234,7 +235,7 @@ export default function OrderDetailPage() {
                   </div>
                 )}
                 <button className={styles.trackButton}>
-                  📦 {language === 'hi' ? 'Shipment Track करें' : 'Track Shipment'}
+                  <Icon name="prasad-box" size={16} color="currentColor" /> {language === 'hi' ? 'Shipment Track करें' : 'Track Shipment'}
                 </button>
               </div>
             </div>
@@ -246,7 +247,7 @@ export default function OrderDetailPage() {
               {language === 'hi' ? 'Help चाहिए?' : 'Need help?'}
             </span>
             <button className={styles.supportButton}>
-              💬 {language === 'hi' ? 'WhatsApp Support' : 'WhatsApp Support'}
+              <Icon name="chat-bubble" size={16} color="currentColor" /> {language === 'hi' ? 'WhatsApp Support' : 'WhatsApp Support'}
             </button>
           </div>
         </div>

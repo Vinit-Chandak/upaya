@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import TopBar from '@/components/TopBar';
 import BottomTabBar from '@/components/BottomTabBar';
+import { Icon } from '@/components/icons';
 import styles from './page.module.css';
 
 /* ============================================
@@ -21,7 +22,7 @@ interface Product {
   rating: number;
   reviewCount: number;
   aiPick: boolean;
-  emoji: string;
+  iconName: string;
   tag?: string;
   tagEn?: string;
 }
@@ -30,7 +31,7 @@ interface Category {
   id: string;
   name: string;
   nameEn: string;
-  emoji: string;
+  iconName: string;
   count: number;
 }
 
@@ -45,12 +46,12 @@ const STORE_TABS = [
 ];
 
 const CATEGORIES: Category[] = [
-  { id: 'gemstones', name: 'रत्न', nameEn: 'Gemstones', emoji: '💎', count: 24 },
-  { id: 'rudraksha', name: 'रुद्राक्ष', nameEn: 'Rudraksha', emoji: '📿', count: 18 },
-  { id: 'yantras', name: 'यन्त्र', nameEn: 'Yantras', emoji: '🔱', count: 12 },
-  { id: 'remedy-kits', name: 'Remedy Kits', nameEn: 'Remedy Kits', emoji: '📦', count: 9 },
-  { id: 'puja-items', name: 'पूजा सामग्री', nameEn: 'Puja Items', emoji: '🪔', count: 31 },
-  { id: 'daan-seva', name: 'दान सेवा', nameEn: 'Daan Seva', emoji: '🎁', count: 7 },
+  { id: 'gemstones', name: 'रत्न', nameEn: 'Gemstones', iconName: 'gemstone', count: 24 },
+  { id: 'rudraksha', name: 'रुद्राक्ष', nameEn: 'Rudraksha', iconName: 'mala', count: 18 },
+  { id: 'yantras', name: 'यन्त्र', nameEn: 'Yantras', iconName: 'trident', count: 12 },
+  { id: 'remedy-kits', name: 'Remedy Kits', nameEn: 'Remedy Kits', iconName: 'prasad-box', count: 9 },
+  { id: 'puja-items', name: 'पूजा सामग्री', nameEn: 'Puja Items', iconName: 'diya', count: 31 },
+  { id: 'daan-seva', name: 'दान सेवा', nameEn: 'Daan Seva', iconName: 'gift', count: 7 },
 ];
 
 const PRODUCTS: Product[] = [
@@ -65,7 +66,7 @@ const PRODUCTS: Product[] = [
     rating: 4.8,
     reviewCount: 234,
     aiPick: true,
-    emoji: '💎',
+    iconName: 'gemstone',
     tag: 'शनि दोष',
     tagEn: 'Shani Dosha',
   },
@@ -80,7 +81,7 @@ const PRODUCTS: Product[] = [
     rating: 4.9,
     reviewCount: 189,
     aiPick: true,
-    emoji: '💛',
+    iconName: 'gemstone',
     tag: 'गुरु दोष',
     tagEn: 'Guru Dosha',
   },
@@ -95,7 +96,7 @@ const PRODUCTS: Product[] = [
     rating: 4.7,
     reviewCount: 312,
     aiPick: false,
-    emoji: '🔴',
+    iconName: 'gemstone',
     tag: 'मंगल दोष',
     tagEn: 'Mangal Dosha',
   },
@@ -110,7 +111,7 @@ const PRODUCTS: Product[] = [
     rating: 4.6,
     reviewCount: 98,
     aiPick: false,
-    emoji: '🟤',
+    iconName: 'gemstone',
   },
   {
     id: 'p5',
@@ -123,7 +124,7 @@ const PRODUCTS: Product[] = [
     rating: 4.9,
     reviewCount: 567,
     aiPick: true,
-    emoji: '📿',
+    iconName: 'mala',
     tag: 'सर्व दोष',
     tagEn: 'All Doshas',
   },
@@ -138,7 +139,7 @@ const PRODUCTS: Product[] = [
     rating: 4.8,
     reviewCount: 203,
     aiPick: false,
-    emoji: '📿',
+    iconName: 'mala',
     tag: 'शनि दोष',
     tagEn: 'Shani Dosha',
   },
@@ -153,7 +154,7 @@ const PRODUCTS: Product[] = [
     rating: 5.0,
     reviewCount: 45,
     aiPick: true,
-    emoji: '📿',
+    iconName: 'mala',
     tag: 'सूर्य दोष',
     tagEn: 'Surya Dosha',
   },
@@ -168,7 +169,7 @@ const PRODUCTS: Product[] = [
     rating: 4.7,
     reviewCount: 156,
     aiPick: false,
-    emoji: '📿',
+    iconName: 'mala',
   },
   {
     id: 'p9',
@@ -181,7 +182,7 @@ const PRODUCTS: Product[] = [
     rating: 4.8,
     reviewCount: 421,
     aiPick: true,
-    emoji: '🔱',
+    iconName: 'trident',
     tag: 'धन प्राप्ति',
     tagEn: 'Wealth',
   },
@@ -196,7 +197,7 @@ const PRODUCTS: Product[] = [
     rating: 4.7,
     reviewCount: 178,
     aiPick: false,
-    emoji: '🔱',
+    iconName: 'trident',
     tag: 'ग्रह शांति',
     tagEn: 'Planet Peace',
   },
@@ -211,7 +212,7 @@ const PRODUCTS: Product[] = [
     rating: 4.9,
     reviewCount: 289,
     aiPick: false,
-    emoji: '🔱',
+    iconName: 'trident',
   },
   {
     id: 'p12',
@@ -224,7 +225,7 @@ const PRODUCTS: Product[] = [
     rating: 4.6,
     reviewCount: 134,
     aiPick: true,
-    emoji: '📦',
+    iconName: 'prasad-box',
     tag: 'मंगल दोष',
     tagEn: 'Mangal Dosha',
   },
@@ -239,7 +240,7 @@ const PRODUCTS: Product[] = [
     rating: 4.7,
     reviewCount: 98,
     aiPick: false,
-    emoji: '📦',
+    iconName: 'prasad-box',
     tag: 'शनि दोष',
     tagEn: 'Shani Dosha',
   },
@@ -254,7 +255,7 @@ const PRODUCTS: Product[] = [
     rating: 4.5,
     reviewCount: 76,
     aiPick: false,
-    emoji: '📦',
+    iconName: 'prasad-box',
   },
 ];
 
@@ -327,7 +328,8 @@ export default function StorePage() {
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>
-                {language === 'hi' ? '🌟 आपकी कुंडली के अनुसार' : '🌟 Recommended for Your Chart'}
+                <Icon name="star-rating" size={20} color="var(--color-accent-gold)" />{' '}
+                {language === 'hi' ? 'आपकी कुंडली के अनुसार' : 'Recommended for Your Chart'}
               </h2>
             </div>
             <div className={styles.productScroll}>
@@ -341,11 +343,11 @@ export default function StorePage() {
                 >
                   {product.aiPick && (
                     <span className={styles.aiPickBadge}>
-                      {language === 'hi' ? '✨ AI Pick' : '✨ AI Pick'}
+                      <Icon name="sparkles" size={14} color="var(--color-accent-gold)" /> AI Pick
                     </span>
                   )}
                   <div className={styles.productImagePlaceholder}>
-                    <span className={styles.productEmoji}>{product.emoji}</span>
+                    <Icon name={product.iconName} size={32} color="var(--color-accent-gold)" />
                   </div>
                   <div className={styles.productInfo}>
                     <h3 className={styles.productName}>
@@ -357,7 +359,7 @@ export default function StorePage() {
                       </span>
                     )}
                     <div className={styles.productRating}>
-                      <span className={styles.ratingStars}>{'⭐'} {product.rating}</span>
+                      <span className={styles.ratingStars}><Icon name="star-rating" size={14} color="var(--color-accent-gold)" /> {product.rating}</span>
                       <span className={styles.reviewCount}>({product.reviewCount})</span>
                     </div>
                     <div className={styles.productPricing}>
@@ -374,12 +376,13 @@ export default function StorePage() {
           {/* Categories Grid */}
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>
-              {language === 'hi' ? '📂 Categories' : '📂 Categories'}
+              <Icon name="clipboard" size={20} color="var(--color-accent-gold)" />{' '}
+              {language === 'hi' ? 'Categories' : 'Categories'}
             </h2>
             <div className={styles.categoryGrid}>
               {CATEGORIES.map((cat) => (
                 <div key={cat.id} className={styles.categoryCard}>
-                  <span className={styles.categoryEmoji}>{cat.emoji}</span>
+                  <Icon name={cat.iconName} size={24} color="var(--color-accent-gold)" />
                   <span className={styles.categoryName}>
                     {language === 'hi' ? cat.name : cat.nameEn}
                   </span>
@@ -394,7 +397,8 @@ export default function StorePage() {
           {/* Popular This Week */}
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>
-              {language === 'hi' ? '🔥 इस हफ्ते Popular' : '🔥 Popular This Week'}
+              <Icon name="fire" size={20} color="var(--color-accent-gold)" />{' '}
+              {language === 'hi' ? 'इस हफ्ते Popular' : 'Popular This Week'}
             </h2>
             <div className={styles.popularList}>
               {popular.map((product) => (
@@ -406,14 +410,14 @@ export default function StorePage() {
                   tabIndex={0}
                 >
                   <div className={styles.popularImagePlaceholder}>
-                    <span className={styles.popularEmoji}>{product.emoji}</span>
+                    <Icon name={product.iconName} size={28} color="var(--color-accent-gold)" />
                   </div>
                   <div className={styles.popularInfo}>
                     <h3 className={styles.popularName}>
                       {language === 'hi' ? product.name : product.nameEn}
                     </h3>
                     <div className={styles.popularRating}>
-                      <span>{'⭐'} {product.rating}</span>
+                      <span><Icon name="star-rating" size={14} color="var(--color-accent-gold)" /> {product.rating}</span>
                       <span className={styles.popularReviewCount}>({product.reviewCount})</span>
                     </div>
                     <div className={styles.popularPricing}>

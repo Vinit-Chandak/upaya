@@ -3,12 +3,14 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { en } from '@upaya/shared';
+import CelestialBackground from '@/components/CelestialBackground/CelestialBackground';
+import ShriYantra from '@/components/icons/ShriYantra';
 import styles from './page.module.css';
 
 /**
  * Splash Screen (Phase 1.1)
  * Auto-transitions to language selection or home (returning users) after 1.5s.
- * Animated logo with gradient background.
+ * Animated logo with gradient background and celestial stars.
  */
 export default function SplashScreen() {
   const router = useRouter();
@@ -35,27 +37,15 @@ export default function SplashScreen() {
 
   return (
     <main className={`${styles.splashMain} ${fadeIn ? styles.splashFadeIn : ''}`}>
+      <CelestialBackground variant="splash" />
+
       <div className={styles.splashContent}>
         <div className={styles.splashLogo}>
-          <span className={styles.splashSymbol}>&#10048;</span>
+          <ShriYantra size={40} color="var(--color-accent-gold)" />
           <h1 className={styles.splashLogoText}>UPAYA</h1>
-          <span className={styles.splashSymbol}>&#10048;</span>
+          <ShriYantra size={40} color="var(--color-accent-gold)" />
         </div>
         <p className={styles.splashTagline}>{en.common.tagline}</p>
-      </div>
-
-      {/* Decorative particles */}
-      <div className={styles.splashParticles}>
-        {Array.from({ length: 6 }).map((_, i) => (
-          <span
-            key={i}
-            className={styles.splashParticle}
-            style={{
-              left: `${15 + i * 14}%`,
-              animationDelay: `${i * 0.2}s`,
-            }}
-          />
-        ))}
       </div>
     </main>
   );

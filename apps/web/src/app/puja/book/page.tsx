@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import TopBar from '@/components/TopBar';
+import { Icon } from '@/components/icons';
 import styles from './page.module.css';
 
 type BookingStep = 1 | 2 | 3;
@@ -270,7 +271,7 @@ function BookingFlowContent() {
               {/* AI recommended date */}
               <div className={styles.recommendedSection}>
                 <h3 className={styles.recommendedTitle}>
-                  <span className={styles.aiIcon}>✨</span>
+                  <Icon name="sparkles" size={18} color="var(--color-accent-gold)" />
                   {language === 'hi' ? 'AI Recommended Date:' : 'AI Recommended Date:'}
                 </h3>
                 <button
@@ -379,15 +380,15 @@ function BookingFlowContent() {
                   {language === 'hi' ? 'Deliverables' : 'Deliverables'}
                 </h4>
                 <div className={styles.deliverableItem}>
-                  <span>🎥</span>
+                  <Icon name="video" size={16} color="var(--color-accent-gold)" />
                   <span>{language === 'hi' ? 'पूजा video (3-5 दिन)' : 'Puja video (3-5 days)'}</span>
                 </div>
                 <div className={styles.deliverableItem}>
-                  <span>📦</span>
+                  <Icon name="prasad-box" size={16} color="var(--color-accent-gold)" />
                   <span>{language === 'hi' ? 'प्रसाद delivery (7-10 दिन)' : 'Prasad delivery (7-10 days)'}</span>
                 </div>
                 <div className={styles.deliverableItem}>
-                  <span>📜</span>
+                  <Icon name="scroll-remedy" size={16} color="var(--color-accent-gold)" />
                   <span>{language === 'hi' ? 'Digital certificate' : 'Digital certificate'}</span>
                 </div>
               </div>
@@ -430,12 +431,12 @@ function BookingFlowContent() {
 
               {/* Pay button */}
               <button className={styles.payButton} onClick={handlePayment}>
-                <span className={styles.payButtonIcon}>🔒</span>
+                <Icon name="lock" size={16} color="currentColor" />
                 {language === 'hi' ? 'सुरक्षित भुगतान करें — ₹2,100' : 'Pay Securely — ₹2,100'}
               </button>
 
               <p className={styles.securityNote}>
-                <span className={styles.securityIcon}>🛡️</span>
+                <Icon name="shield" size={14} color="currentColor" />
                 {language === 'hi' ? 'Razorpay द्वारा सुरक्षित' : 'Secured by Razorpay'}
               </p>
             </div>

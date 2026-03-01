@@ -74,6 +74,14 @@ export const colors = {
     cosmic: ['#0F0A2E', '#1A1145'] as const,
   },
 
+  // --- Celestial (stars, planets, constellations) ---
+  celestial: {
+    starColor: '#FFD700',
+    starColorDim: '#D4A017',
+    planetGlow: '#FFB347',
+    constellationLine: 'rgba(212,160,23,0.2)',
+  },
+
   // --- Dosha-specific (used in animations) ---
   dosha: {
     mangal: '#E53E3E',
@@ -82,6 +90,33 @@ export const colors = {
     ketu: '#744210',
     pitra: '#9B2C2C',
     kaalSarp: '#1A202C',
+  },
+
+  // --- Dark Theme ---
+  darkTheme: {
+    pageBg: '#0F0A2E',
+    pageBgAlt: '#1A1145',
+    surface: '#1E1550',
+    surfaceElevated: '#251A5E',
+    textPrimary: '#FFFFFF',
+    textSecondary: 'rgba(255,255,255,0.7)',
+    textMuted: 'rgba(255,255,255,0.5)',
+    border: 'rgba(255,255,255,0.1)',
+    borderLight: 'rgba(255,255,255,0.06)',
+    inputBg: 'rgba(255,255,255,0.08)',
+    inputBorder: 'rgba(255,255,255,0.15)',
+  },
+
+  // --- Problem Type Tiles ---
+  tiles: {
+    marriage_delay: { bg: '#FFE566', text: '#4A3800' },
+    career_stuck: { bg: '#A8E6CF', text: '#1A3A2A' },
+    money_problems: { bg: '#FFB3BA', text: '#4A1A1F' },
+    health_issues: { bg: '#B5B8FF', text: '#1A1A4A' },
+    legal_matters: { bg: '#87CEEB', text: '#0A2A3A' },
+    family_conflict: { bg: '#FFDAB9', text: '#4A2A0A' },
+    get_kundli: { bg: '#DDA0DD', text: '#3A1A3A' },
+    something_else: { bg: '#98D8C8', text: '#1A3A30' },
   },
 } as const;
 

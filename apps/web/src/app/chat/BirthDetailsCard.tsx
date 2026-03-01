@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { Icon } from '@/components/icons';
 import styles from './BirthDetailsCard.module.css';
 
 // Popular Indian cities shown when input is empty
@@ -216,7 +217,7 @@ export default function BirthDetailsCard({ language, onSubmit, disabled }: Birth
     <div className={styles.card}>
       {/* Title */}
       <div className={styles.cardTitle}>
-        <span className={styles.cardTitleIcon}>📋</span>
+        <span className={styles.cardTitleIcon}><Icon name="clipboard" size={16} color="var(--color-accent-gold)" /></span>
         <span>{language === 'hi' ? 'जन्म विवरण' : 'Birth Details'}</span>
       </div>
       <p className={styles.cardSubtitle}>
@@ -229,7 +230,7 @@ export default function BirthDetailsCard({ language, onSubmit, disabled }: Birth
         {/* Date of Birth */}
         <div className={styles.field}>
           <label className={styles.fieldLabel}>
-            <span className={styles.fieldLabelIcon}>📅</span>
+            <span className={styles.fieldLabelIcon}><Icon name="calendar" size={14} color="var(--color-accent-gold)" /></span>
             {language === 'hi' ? 'जन्म तिथि' : 'Date of Birth'}
           </label>
           <input
@@ -246,7 +247,7 @@ export default function BirthDetailsCard({ language, onSubmit, disabled }: Birth
         {/* Time of Birth */}
         <div className={styles.field}>
           <label className={styles.fieldLabel}>
-            <span className={styles.fieldLabelIcon}>🕐</span>
+            <span className={styles.fieldLabelIcon}><Icon name="clock" size={14} color="var(--color-accent-gold)" /></span>
             {language === 'hi' ? 'जन्म का समय' : 'Time of Birth'}
           </label>
 
@@ -337,7 +338,7 @@ export default function BirthDetailsCard({ language, onSubmit, disabled }: Birth
         {/* Place of Birth */}
         <div className={styles.field}>
           <label className={styles.fieldLabel}>
-            <span className={styles.fieldLabelIcon}>📍</span>
+            <span className={styles.fieldLabelIcon}><Icon name="location-pin" size={14} color="var(--color-accent-gold)" /></span>
             {language === 'hi' ? 'जन्म स्थान' : 'Place of Birth'}
           </label>
           <div className={styles.placeSearchWrapper}>
@@ -371,7 +372,7 @@ export default function BirthDetailsCard({ language, onSubmit, disabled }: Birth
                     onClick={() => handlePlaceSelect(city)}
                     type="button"
                   >
-                    <span className={styles.placeResultIcon}>📍</span>
+                    <span className={styles.placeResultIcon}><Icon name="location-pin" size={14} color="currentColor" /></span>
                     {city.name}
                   </button>
                 ))}
@@ -392,7 +393,7 @@ export default function BirthDetailsCard({ language, onSubmit, disabled }: Birth
         onClick={handleSubmit}
         disabled={!isValid || disabled}
       >
-        {language === 'hi' ? '✨ मेरी कुंडली बनाएं' : '✨ Generate My Kundli'}
+        <><Icon name="sparkles" size={16} color="currentColor" /> {language === 'hi' ? 'मेरी कुंडली बनाएं' : 'Generate My Kundli'}</>
         <span className={styles.generateButtonSub}>
           {language === 'hi' ? 'कुंडली 2 मिनट में तैयार' : 'Kundli ready in 2 minutes'}
         </span>

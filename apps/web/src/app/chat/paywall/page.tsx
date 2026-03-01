@@ -3,6 +3,7 @@
 import { Suspense, useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { PRICING } from '@upaya/shared';
+import { Icon } from '@/components/icons';
 import styles from './page.module.css';
 
 // ---- Types ----
@@ -178,7 +179,7 @@ function PaywallContent() {
 
           <div className={styles.sheetContent}>
             <h2 className={styles.sheetTitle}>
-              <span>✨</span>
+              <span><Icon name="sparkles" size={20} color="var(--color-accent-gold)" /></span>
               {language === 'hi'
                 ? 'Unlock Your Complete Remedy Plan'
                 : 'Unlock Your Complete Remedy Plan'}
@@ -190,7 +191,7 @@ function PaywallContent() {
               </p>
               {inclusions.map((item, i) => (
                 <div key={i} className={styles.inclusionItem}>
-                  <span className={styles.inclusionCheck}>✅</span>
+                  <span className={styles.inclusionCheck}><Icon name="sparkles" size={14} color="var(--color-success, #22c55e)" /></span>
                   <span>{item}</span>
                 </div>
               ))}
@@ -214,10 +215,10 @@ function PaywallContent() {
 
             <div className={styles.securityBadges}>
               <span className={styles.securityBadge}>
-                🔒 {language === 'hi' ? 'Secured by Razorpay' : 'Secured by Razorpay'}
+                <Icon name="lock" size={14} color="currentColor" /> {language === 'hi' ? 'Secured by Razorpay' : 'Secured by Razorpay'}
               </span>
               <span className={styles.securityBadge}>
-                📄 {language === 'hi' ? 'No spam. Cancel anytime.' : 'No spam. Cancel anytime.'}
+                <Icon name="shield-lock" size={14} color="currentColor" /> {language === 'hi' ? 'No spam. Cancel anytime.' : 'No spam. Cancel anytime.'}
               </span>
             </div>
           </div>
@@ -375,7 +376,7 @@ function PaywallContent() {
       {step === 'success' && (
         <div className={styles.fullScreenOverlay}>
           <div className={styles.successContent}>
-            <div className={styles.successIcon}>✅</div>
+            <div className={styles.successIcon}><Icon name="sparkles" size={32} color="var(--color-success, #22c55e)" /></div>
             <h2 className={styles.successTitle}>
               {language === 'hi' ? 'Payment Successful!' : 'Payment Successful!'}
             </h2>
@@ -399,7 +400,7 @@ function PaywallContent() {
       {step === 'failure' && (
         <div className={styles.fullScreenOverlay}>
           <div className={styles.failureContent}>
-            <div className={styles.failureIcon}>❌</div>
+            <div className={styles.failureIcon}><Icon name="refresh" size={32} color="var(--color-error, #ef4444)" /></div>
             <h2 className={styles.failureTitle}>
               {language === 'hi' ? 'Payment नहीं हुआ?' : 'Payment Failed'}
             </h2>

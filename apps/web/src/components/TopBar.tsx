@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import ShriYantra from '@/components/icons/ShriYantra';
 import styles from './TopBar.module.css';
 
 interface TopBarProps {
@@ -24,7 +25,7 @@ export default function TopBar({ showBack, title, onLanguageToggle, language = '
           </button>
         ) : (
           <div className={styles.logoMini}>
-            <span className={styles.logoSymbol}>&#10048;</span>
+            <ShriYantra size={14} color="var(--color-accent-gold)" />
             <span className={styles.logoText}>UPAYA</span>
           </div>
         )}

@@ -23,3 +23,6 @@ export {
   transitions,
 } from './spacing';
 export type { SpacingToken, BreakpointToken } from './spacing';
+
+export { celestialConfig } from './celestial';
+export type { CelestialVariant, CelestialVariantConfig, StarConfig, PlanetConfig } from './celestial';

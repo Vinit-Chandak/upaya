@@ -11,6 +11,7 @@ import {
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { colors } from '@upaya/shared';
 import { fp, wp, hp } from '../theme';
+import { Icon } from '../components/icons';
 import { getDiagnosis } from '../services/api';
 
 // ---- Types ----
@@ -56,10 +57,10 @@ const SEVERITY_LABELS: Record<string, { hi: string; en: string; color: string }>
 };
 
 const REMEDY_TYPE_ICONS: Record<string, string> = {
-  mantra: '📿',
-  fasting: '🕐',
-  daan: '🙏',
-  daily_practice: '🧘',
+  mantra: 'mala',
+  fasting: 'clock',
+  daan: 'namaste-hands',
+  daily_practice: 'meditation',
 };
 
 // ---- Component ----
@@ -157,7 +158,7 @@ export default function DiagnosisScreen() {
         {/* ---- Diagnosis Card ---- */}
         <View style={s.card}>
           <View style={s.cardHeader}>
-            <Text style={s.cardHeaderIcon}>📊</Text>
+            <Icon name="bar-chart" size={24} color={colors.accent.gold} />
             <Text style={s.cardHeaderTitle}>
               {lang === 'hi' ? 'दोष विश्लेषण' : 'Dosha Analysis'}
             </Text>
@@ -253,7 +254,7 @@ export default function DiagnosisScreen() {
         {/* ---- Free Remedies ---- */}
         {freeRemedies.length > 0 && (
           <View style={s.sectionHeader}>
-            <Text style={s.sectionIcon}>📿</Text>
+            <Icon name="mala" size={24} color={colors.accent.gold} />
             <Text style={s.sectionTitle}>
               {lang === 'hi' ? 'निःशुल्क उपाय' : 'Free Remedies'}
             </Text>
@@ -263,9 +264,7 @@ export default function DiagnosisScreen() {
         {freeRemedies.map((remedy: FreeRemedy, index: number) => (
           <View key={index} style={s.remedyCard}>
             <View style={s.remedyHeader}>
-              <Text style={s.remedyIcon}>
-                {REMEDY_TYPE_ICONS[remedy.type] || '📿'}
-              </Text>
+              <Icon name={REMEDY_TYPE_ICONS[remedy.type] || 'mala'} size={22} color={colors.accent.gold} />
               <View style={{ flex: 1 }}>
                 <Text style={s.remedyName}>{remedy.name}</Text>
                 <Text style={s.remedyType}>
@@ -307,7 +306,7 @@ export default function DiagnosisScreen() {
         {/* ---- Paywall / Locked Section ---- */}
         <View style={s.paywallCard}>
           <View style={s.paywallHeader}>
-            <Text style={s.paywallIcon}>🔒</Text>
+            <Icon name="lock" size={20} color={colors.darkTheme.textMuted} />
             <Text style={s.paywallTitle}>
               {lang === 'hi' ? 'सम्पूर्ण उपाय योजना' : 'Complete Remedy Plan'}
             </Text>
@@ -321,7 +320,7 @@ export default function DiagnosisScreen() {
 
           {fullRemedies.slice(0, 4).map((r: { name: string; description: string }, i: number) => (
             <View key={i} style={s.lockedItem}>
-              <Text style={s.lockedIcon}>🔒</Text>
+              <Icon name="lock" size={14} color={colors.darkTheme.textMuted} />
               <View style={{ flex: 1 }}>
                 <Text style={s.lockedName}>{r.name}</Text>
                 <Text style={s.lockedDesc}>{r.description}</Text>
@@ -332,19 +331,19 @@ export default function DiagnosisScreen() {
           {fullRemedies.length === 0 && (
             <>
               <View style={s.lockedItem}>
-                <Text style={s.lockedIcon}>🔒</Text>
+                <Icon name="lock" size={14} color={colors.darkTheme.textMuted} />
                 <Text style={s.lockedName}>
                   {lang === 'hi' ? '9-सप्ताह विस्तृत protocol' : '9-week detailed protocol'}
                 </Text>
               </View>
               <View style={s.lockedItem}>
-                <Text style={s.lockedIcon}>🔒</Text>
+                <Icon name="lock" size={14} color={colors.darkTheme.textMuted} />
                 <Text style={s.lockedName}>
                   {lang === 'hi' ? 'विशेष मंत्र और पूजा विधि' : 'Special mantras & puja vidhi'}
                 </Text>
               </View>
               <View style={s.lockedItem}>
-                <Text style={s.lockedIcon}>🔒</Text>
+                <Icon name="lock" size={14} color={colors.darkTheme.textMuted} />
                 <Text style={s.lockedName}>
                   {lang === 'hi' ? 'अनुकूल समय और तिथि' : 'Auspicious timing & dates'}
                 </Text>
@@ -375,22 +374,22 @@ export default function DiagnosisScreen() {
 const s = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF8F0',
+    backgroundColor: colors.darkTheme.pageBg,
   },
   loadingContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFF8F0',
+    backgroundColor: colors.darkTheme.pageBg,
     gap: hp(12),
   },
   loadingText: {
     fontSize: fp(14),
-    color: colors.neutral.grey500,
+    color: colors.darkTheme.textSecondary,
   },
   errorText: {
     fontSize: fp(16),
-    color: colors.neutral.grey600,
+    color: colors.darkTheme.textSecondary,
     textAlign: 'center',
     marginBottom: hp(16),
   },
@@ -414,21 +413,21 @@ const s = StyleSheet.create({
     paddingHorizontal: wp(12),
     paddingTop: Platform.OS === 'ios' ? hp(50) : hp(30),
     paddingBottom: hp(10),
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.darkTheme.pageBg,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.neutral.grey100,
+    borderBottomColor: colors.darkTheme.border,
   },
   backButton: {
     padding: wp(6),
   },
   backArrow: {
     fontSize: fp(20),
-    color: colors.neutral.grey700,
+    color: colors.darkTheme.textSecondary,
   },
   headerTitle: {
     fontSize: fp(18),
     fontWeight: '600',
-    color: colors.secondary.maroon,
+    color: colors.accent.gold,
   },
 
   scrollArea: { flex: 1 },
@@ -439,15 +438,15 @@ const s = StyleSheet.create({
 
   /* Diagnosis Card */
   card: {
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.darkTheme.surface,
     borderRadius: wp(16),
     padding: wp(16),
     marginBottom: hp(16),
     borderWidth: 1,
-    borderColor: colors.neutral.grey100,
+    borderColor: colors.darkTheme.border,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 2,
   },
@@ -461,7 +460,7 @@ const s = StyleSheet.create({
   cardHeaderTitle: {
     fontSize: fp(18),
     fontWeight: '700',
-    color: colors.secondary.maroon,
+    color: colors.accent.gold,
   },
   doshaRow: {
     flexDirection: 'row',
@@ -472,12 +471,12 @@ const s = StyleSheet.create({
   doshaLabel: {
     fontSize: fp(13),
     fontWeight: '500',
-    color: colors.neutral.grey500,
+    color: colors.darkTheme.textSecondary,
   },
   doshaValue: {
     fontSize: fp(14),
     fontWeight: '600',
-    color: colors.neutral.grey800,
+    color: colors.darkTheme.textPrimary,
     flex: 1,
   },
   severityBadge: {
@@ -496,19 +495,19 @@ const s = StyleSheet.create({
   impactedLabel: {
     fontSize: fp(13),
     fontWeight: '500',
-    color: colors.neutral.grey500,
+    color: colors.darkTheme.textSecondary,
     marginBottom: hp(4),
   },
   impactedPrimary: {
     fontSize: fp(14),
     fontWeight: '600',
-    color: colors.neutral.grey800,
+    color: colors.darkTheme.textPrimary,
     marginBottom: hp(2),
   },
   secondaryList: { marginTop: hp(2) },
   secondaryItem: {
     fontSize: fp(13),
-    color: colors.neutral.grey600,
+    color: colors.darkTheme.textSecondary,
     marginBottom: hp(1),
   },
   badgesRow: {
@@ -524,23 +523,23 @@ const s = StyleSheet.create({
     gap: wp(4),
     paddingHorizontal: wp(10),
     paddingVertical: hp(4),
-    backgroundColor: '#E8F5E9',
+    backgroundColor: 'rgba(34,197,94,0.1)',
     borderRadius: wp(16),
   },
   badgeIcon: {
     fontSize: fp(11),
-    color: '#2ECC71',
+    color: '#22C55E',
     fontWeight: '700',
   },
   badgeText: {
     fontSize: fp(11),
     fontWeight: '500',
-    color: '#2E7D32',
+    color: '#22C55E',
   },
   positiveBox: {
     marginTop: hp(8),
     padding: wp(12),
-    backgroundColor: '#FFF8E1',
+    backgroundColor: 'rgba(212,160,23,0.1)',
     borderRadius: wp(10),
     borderLeftWidth: 3,
     borderLeftColor: colors.accent.gold,
@@ -548,7 +547,7 @@ const s = StyleSheet.create({
   positiveText: {
     fontSize: fp(13),
     lineHeight: fp(13) * 1.5,
-    color: colors.neutral.grey700,
+    color: colors.darkTheme.textSecondary,
   },
 
   /* Section Header */
@@ -562,17 +561,17 @@ const s = StyleSheet.create({
   sectionTitle: {
     fontSize: fp(16),
     fontWeight: '700',
-    color: colors.secondary.maroon,
+    color: colors.accent.gold,
   },
 
   /* Remedy Card */
   remedyCard: {
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.darkTheme.surface,
     borderRadius: wp(12),
     padding: wp(14),
     marginBottom: hp(12),
     borderWidth: 1,
-    borderColor: colors.neutral.grey100,
+    borderColor: colors.darkTheme.border,
   },
   remedyHeader: {
     flexDirection: 'row',
@@ -584,7 +583,7 @@ const s = StyleSheet.create({
   remedyName: {
     fontSize: fp(15),
     fontWeight: '600',
-    color: colors.neutral.grey800,
+    color: colors.darkTheme.textPrimary,
   },
   remedyType: {
     fontSize: fp(10),
@@ -595,11 +594,11 @@ const s = StyleSheet.create({
   remedyDesc: {
     fontSize: fp(13),
     lineHeight: fp(13) * 1.5,
-    color: colors.neutral.grey600,
+    color: colors.darkTheme.textSecondary,
     marginBottom: hp(8),
   },
   mantraBox: {
-    backgroundColor: '#FFF8F0',
+    backgroundColor: colors.darkTheme.surfaceElevated,
     padding: wp(12),
     borderRadius: wp(8),
     marginBottom: hp(8),
@@ -609,13 +608,13 @@ const s = StyleSheet.create({
   mantraDevanagari: {
     fontSize: fp(16),
     lineHeight: fp(16) * 1.6,
-    color: colors.secondary.maroon,
+    color: colors.accent.gold,
     fontWeight: '500',
     marginBottom: hp(4),
   },
   mantraRoman: {
     fontSize: fp(12),
-    color: colors.neutral.grey500,
+    color: colors.darkTheme.textMuted,
     fontStyle: 'italic',
   },
   remedyMeta: {
@@ -628,22 +627,22 @@ const s = StyleSheet.create({
   },
   remedyMetaLabel: {
     fontSize: fp(12),
-    color: colors.neutral.grey400,
+    color: colors.darkTheme.textMuted,
   },
   remedyMetaValue: {
     fontSize: fp(12),
     fontWeight: '500',
-    color: colors.neutral.grey700,
+    color: colors.darkTheme.textSecondary,
   },
 
   /* Paywall */
   paywallCard: {
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.darkTheme.surface,
     borderRadius: wp(16),
     padding: wp(16),
     marginTop: hp(8),
     borderWidth: 1.5,
-    borderColor: colors.neutral.grey200,
+    borderColor: colors.darkTheme.border,
     borderStyle: 'dashed',
   },
   paywallHeader: {
@@ -656,11 +655,11 @@ const s = StyleSheet.create({
   paywallTitle: {
     fontSize: fp(16),
     fontWeight: '700',
-    color: colors.neutral.grey700,
+    color: colors.darkTheme.textSecondary,
   },
   paywallSub: {
     fontSize: fp(13),
-    color: colors.neutral.grey500,
+    color: colors.darkTheme.textMuted,
     marginBottom: hp(10),
   },
   lockedItem: {
@@ -674,11 +673,11 @@ const s = StyleSheet.create({
   lockedName: {
     fontSize: fp(13),
     fontWeight: '500',
-    color: colors.neutral.grey600,
+    color: colors.darkTheme.textSecondary,
   },
   lockedDesc: {
     fontSize: fp(11),
-    color: colors.neutral.grey400,
+    color: colors.darkTheme.textMuted,
     marginTop: hp(1),
   },
   unlockButton: {

@@ -1,0 +1,46 @@
+/* ============================================
+   ProblemTile — Colorful Problem Type Card
+   ============================================ */
+
+.tile {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  min-height: 7.5rem;
+  padding: var(--space-card-padding);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.tile:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.tile:active {
+  transform: scale(0.97);
+}
+
+/* Background decoration art — top-right, prominent */
+.decoration {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+/* Bottom-left label */
+.label {
+  position: relative;
+  font-size: var(--text-base);
+  font-weight: 700;
+  line-height: 1.3;
+}

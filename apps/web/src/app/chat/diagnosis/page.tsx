@@ -3,6 +3,7 @@
 import { Suspense, useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { SeverityLevel, ResponsivenessLevel, FreeRemedy, PaidRemedyPreview } from '@upaya/shared';
+import { Icon } from '@/components/icons';
 import styles from './page.module.css';
 
 // ---- Mock diagnosis data (simulates real API response) ----
@@ -279,10 +280,10 @@ function generateMockDiagnosis(problemType: string, language: 'hi' | 'en') {
 // ---- Helpers ----
 
 const REMEDY_TYPE_ICONS: Record<string, string> = {
-  mantra: '\uD83D\uDCFF', // 📿
-  fasting: '\uD83C\uDF7D\uFE0F', // 🍽️
-  daan: '\uD83C\uDF81', // 🎁
-  daily_practice: '\uD83E\uDDD8', // 🧘
+  mantra: 'mala',
+  fasting: 'diya',
+  daan: 'gift',
+  daily_practice: 'meditation',
 };
 
 const SEVERITY_LABELS: Record<SeverityLevel, Record<string, string>> = {
@@ -345,8 +346,8 @@ function DiagnosisContent() {
 
   const handleShare = useCallback(() => {
     const shareText = language === 'hi'
-      ? `📊 मेरी कुंडली में ${diagnosis.doshaDisplayName} मिला — ${diagnosis.rootPlanets.join(' + ')} ${diagnosis.affectedHouses.join(', ')}th house में।\n\nयह mantra suggest हुआ:\n"${diagnosis.freeRemedies[0]?.mantraText?.roman || ''}"\n\nअपनी कुंडली भी free में check करो: https://upaya.app`
-      : `📊 My kundli shows ${diagnosis.doshaDisplayName} — ${diagnosis.rootPlanets.join(' + ')} in ${diagnosis.affectedHouses.join(', ')}th house.\n\nSuggested mantra:\n"${diagnosis.freeRemedies[0]?.mantraText?.roman || ''}"\n\nCheck your kundli for free: https://upaya.app`;
+      ? `मेरी कुंडली में ${diagnosis.doshaDisplayName} मिला — ${diagnosis.rootPlanets.join(' + ')} ${diagnosis.affectedHouses.join(', ')}th house में।\n\nयह mantra suggest हुआ:\n"${diagnosis.freeRemedies[0]?.mantraText?.roman || ''}"\n\nअपनी कुंडली भी free में check करो: https://upaya.app`
+      : `My kundli shows ${diagnosis.doshaDisplayName} — ${diagnosis.rootPlanets.join(' + ')} in ${diagnosis.affectedHouses.join(', ')}th house.\n\nSuggested mantra:\n"${diagnosis.freeRemedies[0]?.mantraText?.roman || ''}"\n\nCheck your kundli for free: https://upaya.app`;
 
     if (navigator.share) {
       navigator.share({ text: shareText }).catch(() => {});
@@ -389,7 +390,7 @@ function DiagnosisContent() {
              ============================================ */}
           <div className={styles.diagnosisCard}>
             <div className={styles.cardHeader}>
-              <span className={styles.cardHeaderIcon}>📊</span>
+              <span className={styles.cardHeaderIcon}><Icon name="bar-chart" size={20} color="var(--color-accent-gold)" /></span>
               <h2 className={styles.cardTitle}>
                 {language === 'hi' ? 'आपकी कुंडली Diagnosis' : 'YOUR KUNDLI DIAGNOSIS'}
               </h2>
@@ -400,7 +401,7 @@ function DiagnosisContent() {
             {/* Root cause */}
             <div className={styles.sectionBlock}>
               <div className={styles.sectionLabel}>
-                <span className={styles.sectionIcon}>🔍</span>
+                <span className={styles.sectionIcon}><Icon name="search" size={16} color="var(--color-accent-gold)" /></span>
                 {language === 'hi' ? 'Root Cause Identified' : 'Root Cause Identified'}
               </div>
               <p className={styles.rootCauseText}>
@@ -434,7 +435,7 @@ function DiagnosisContent() {
             {/* Impacted areas */}
             <div className={styles.sectionBlock}>
               <div className={styles.sectionLabel}>
-                <span className={styles.sectionIcon}>🎯</span>
+                <span className={styles.sectionIcon}><Icon name="target" size={16} color="var(--color-accent-gold)" /></span>
                 {language === 'hi' ? 'Impacted Areas' : 'Impacted Areas'}
               </div>
               <ul className={styles.impactList}>
@@ -454,7 +455,7 @@ function DiagnosisContent() {
             {/* Dosha Assessment */}
             <div className={styles.sectionBlock}>
               <div className={styles.sectionLabel}>
-                <span className={styles.sectionIcon}>📋</span>
+                <span className={styles.sectionIcon}><Icon name="clipboard" size={16} color="var(--color-accent-gold)" /></span>
                 {language === 'hi' ? 'Dosha Assessment' : 'Dosha Assessment'}
               </div>
               <div className={styles.assessmentGrid}>
@@ -471,7 +472,7 @@ function DiagnosisContent() {
                     {language === 'hi' ? 'Commonly addressed?' : 'Commonly addressed?'}
                   </span>
                   <span className={`${styles.assessmentValue} ${styles.assessmentPositive}`}>
-                    ✅ {language === 'hi' ? 'YES' : 'YES'}
+                    <Icon name="sparkles" size={14} color="var(--color-success, #22c55e)" /> {language === 'hi' ? 'YES' : 'YES'}
                   </span>
                 </div>
                 <div className={styles.assessmentRow}>
@@ -479,7 +480,7 @@ function DiagnosisContent() {
                     {language === 'hi' ? 'Responsive to remedies?' : 'Responsive to remedies?'}
                   </span>
                   <span className={`${styles.assessmentValue} ${styles.assessmentPositive}`}>
-                    ✅ {RESPONSIVENESS_LABELS[diagnosis.responsivenessLevel][language]}
+                    <Icon name="sparkles" size={14} color="var(--color-success, #22c55e)" /> {RESPONSIVENESS_LABELS[diagnosis.responsivenessLevel][language]}
                   </span>
                 </div>
               </div>
@@ -496,7 +497,7 @@ function DiagnosisContent() {
              ============================================ */}
           <div className={styles.freeRemediesSection}>
             <div className={styles.freeRemediesHeader}>
-              <span className={styles.freeRemediesBadge}>🟢</span>
+              <span className={styles.freeRemediesBadge}><Icon name="sparkles" size={16} color="var(--color-success, #22c55e)" /></span>
               <h2 className={styles.freeRemediesTitle}>
                 {language === 'hi'
                   ? 'आज ही अपनी Remedies शुरू करें (FREE)'
@@ -517,7 +518,7 @@ function DiagnosisContent() {
                   <div key={remedy.id} className={styles.remedyCard}>
                     <div className={styles.remedyHeader}>
                       <span className={styles.remedyNumber}>{index + 1}.</span>
-                      <span className={styles.remedyIcon}>{REMEDY_TYPE_ICONS[remedy.type] || '📿'}</span>
+                      <span className={styles.remedyIcon}><Icon name={REMEDY_TYPE_ICONS[remedy.type] || 'mala'} size={16} color="var(--color-accent-gold)" /></span>
                       <h3 className={styles.remedyName}>{remedy.name}</h3>
                     </div>
 
@@ -533,11 +534,11 @@ function DiagnosisContent() {
 
                     <div className={styles.remedyMeta}>
                       <span className={styles.remedyMetaItem}>
-                        <span className={styles.remedyMetaIcon}>🔄</span>
+                        <span className={styles.remedyMetaIcon}><Icon name="refresh" size={14} color="currentColor" /></span>
                         {remedy.frequency}
                       </span>
                       <span className={styles.remedyMetaItem}>
-                        <span className={styles.remedyMetaIcon}>📅</span>
+                        <span className={styles.remedyMetaIcon}><Icon name="calendar" size={14} color="currentColor" /></span>
                         {remedy.duration}
                       </span>
                     </div>
@@ -545,7 +546,7 @@ function DiagnosisContent() {
                     <div className={styles.remedyActions}>
                       {remedy.mantraText && (
                         <button className={styles.listenButton}>
-                          <span>▶️</span>
+                          <span><Icon name="play-video" size={14} color="currentColor" /></span>
                           {language === 'hi' ? 'उच्चारण सुनें' : 'Listen to Pronunciation'}
                         </button>
                       )}
@@ -554,7 +555,7 @@ function DiagnosisContent() {
                         onClick={() => handleAddToTracker(remedy.id)}
                         disabled={isAdded}
                       >
-                        <span>{isAdded ? '✅' : '➕'}</span>
+                        <span>{isAdded ? <Icon name="sparkles" size={14} color="var(--color-success, #22c55e)" /> : '+'}</span>
                         {isAdded
                           ? (language === 'hi' ? 'Tracker में Added' : 'Added to Tracker')
                           : (language === 'hi' ? 'Tracker में Add करें' : 'Add to Remedy Tracker')}
@@ -568,8 +569,8 @@ function DiagnosisContent() {
             <div className={styles.freeRemediesFooter}>
               <p>
                 {language === 'hi'
-                  ? '✅ "यह आपका foundation है। इन्हें आज से शुरू करें — planetary pressure कम होना start होगा।"'
-                  : '✅ "This is your foundation. Start these today — planetary pressure will begin to reduce."'}
+                  ? '"यह आपका foundation है। इन्हें आज से शुरू करें — planetary pressure कम होना start होगा।"'
+                  : '"This is your foundation. Start these today — planetary pressure will begin to reduce."'}
               </p>
             </div>
           </div>
@@ -579,7 +580,7 @@ function DiagnosisContent() {
              ============================================ */}
           <div className={styles.upsellSection}>
             <div className={styles.upsellHeader}>
-              <span className={styles.upsellBadge}>✨</span>
+              <span className={styles.upsellBadge}><Icon name="sparkles" size={18} color="var(--color-accent-gold)" /></span>
               <h2 className={styles.upsellTitle}>
                 {language === 'hi' ? 'COMPLETE OPTIMIZED PLAN' : 'COMPLETE OPTIMIZED PLAN'}
               </h2>
@@ -594,7 +595,7 @@ function DiagnosisContent() {
             <div className={styles.lockedItemsList}>
               {diagnosis.paidRemedyPreviews.map((item) => (
                 <div key={item.id} className={styles.lockedItem}>
-                  <span className={styles.lockedIcon}>🔒</span>
+                  <span className={styles.lockedIcon}><Icon name="lock" size={16} color="currentColor" /></span>
                   <div className={styles.lockedContent}>
                     <span className={styles.lockedName}>{item.name}</span>
                     <span className={styles.lockedDesc}>{item.description}</span>
@@ -604,14 +605,14 @@ function DiagnosisContent() {
             </div>
 
             <div className={styles.socialProof}>
-              <span>👥</span>
+              <span><Icon name="users" size={16} color="currentColor" /></span>
               {language === 'hi'
                 ? `${socialProofCount.toLocaleString()} users with similar charts ने unlock किया`
                 : `${socialProofCount.toLocaleString()} users with similar charts unlocked their plan`}
             </div>
 
             <button className={styles.unlockButton} onClick={handleUnlockPlan}>
-              <span className={styles.unlockButtonIcon}>✨</span>
+              <span className={styles.unlockButtonIcon}><Icon name="sparkles" size={18} color="currentColor" /></span>
               <span className={styles.unlockButtonText}>
                 {language === 'hi' ? 'Complete Plan Unlock करें' : 'Unlock Complete Plan'}
               </span>
@@ -622,7 +623,7 @@ function DiagnosisContent() {
             </button>
 
             <div className={styles.privacyBadge}>
-              <span>🔒</span>
+              <span><Icon name="lock" size={14} color="currentColor" /></span>
               {language === 'hi' ? '100% Private · Encrypted Data' : '100% Private · Encrypted Data'}
             </div>
           </div>
@@ -632,7 +633,7 @@ function DiagnosisContent() {
              ============================================ */}
           <div className={styles.aiFollowUp}>
             <div className={styles.aiFollowUpBubble}>
-              <div className={styles.aiFollowUpAvatar}>🙏</div>
+              <div className={styles.aiFollowUpAvatar}><Icon name="namaste-hands" size={20} color="var(--color-accent-gold)" /></div>
               <div className={styles.aiFollowUpContent}>
                 <p>
                   {language === 'hi'
@@ -644,19 +645,19 @@ function DiagnosisContent() {
                   <button className={styles.ctaPathButton} onClick={() => {
                     diagnosis.freeRemedies.forEach(r => handleAddToTracker(r.id));
                   }}>
-                    <span>📿</span>
+                    <span><Icon name="mala" size={16} color="currentColor" /></span>
                     {language === 'hi'
                       ? 'Free remedies Tracker में add करें (आज से शुरू)'
                       : 'Add free remedies to my tracker (start today)'}
                   </button>
 
                   <button className={`${styles.ctaPathButton} ${styles.ctaPathPrimary}`} onClick={handleUnlockPlan}>
-                    <span>✨</span>
+                    <span><Icon name="sparkles" size={16} color="currentColor" /></span>
                     {language === 'hi' ? 'Complete plan unlock करें ₹199' : 'Unlock complete plan ₹199'}
                   </button>
 
                   <button className={styles.ctaPathButton} onClick={handleAskMore}>
-                    <span>💬</span>
+                    <span><Icon name="chat-bubble" size={16} color="currentColor" /></span>
                     {language === 'hi' ? 'कुछ और पूछना है' : 'I have more questions'}
                   </button>
                 </div>
@@ -669,9 +670,9 @@ function DiagnosisContent() {
              ============================================ */}
           <div className={styles.shareCard}>
             <p className={styles.shareCardText}>
-              {language === 'hi'
-                ? `📊 मेरी कुंडली में ${diagnosis.doshaDisplayName} मिला — ${diagnosis.rootPlanets.join(' + ')} ${diagnosis.affectedHouses.join(', ')}th house में।`
-                : `📊 My kundli shows ${diagnosis.doshaDisplayName} — ${diagnosis.rootPlanets.join(' + ')} in ${diagnosis.affectedHouses.join(', ')}th house.`}
+              <><Icon name="bar-chart" size={14} color="currentColor" /> {language === 'hi'
+                ? `मेरी कुंडली में ${diagnosis.doshaDisplayName} मिला — ${diagnosis.rootPlanets.join(' + ')} ${diagnosis.affectedHouses.join(', ')}th house में।`
+                : `My kundli shows ${diagnosis.doshaDisplayName} — ${diagnosis.rootPlanets.join(' + ')} in ${diagnosis.affectedHouses.join(', ')}th house.`}</>
             </p>
             {diagnosis.freeRemedies[0]?.mantraText && (
               <p className={styles.shareCardMantra}>

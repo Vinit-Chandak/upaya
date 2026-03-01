@@ -16,7 +16,8 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors, PROBLEM_TYPES, getTranslations, detectLanguage, type TranslationKeys, type ProblemType, type ChatMessageType } from '@upaya/shared';
 import { fp, wp, hp } from '../theme';
-import { createChatSession, sendChatMessage, generateKundli, ApiError } from '../services/api';
+import { Icon } from '../components/icons';
+import { createChatSession, sendChatMessage, generateKundli } from '../services/api';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -180,7 +181,7 @@ export default function ChatScreen() {
       let createdSessionId: string | null = null;
       try {
         const { session } = await createChatSession(problemType, lang);
-        createdSessionId = session.session_id ?? session.sessionId;
+        createdSessionId = (session as unknown as Record<string, unknown>).session_id as string ?? session.sessionId;
         setSessionId(createdSessionId);
         setSessionDbId(session.id); // UUID PK — used for diagnosis FK
       } catch (err) {
@@ -460,9 +461,10 @@ export default function ChatScreen() {
           <Text style={styles.backArrow}>{'←'}</Text>
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>{t.chat.aiTitle}</Text>
-        <View style={styles.problemBadge}>
-          <Text style={styles.problemBadgeText}>
-            {problemInfo.emoji} {language === 'hi' ? problemInfo.hi : problemInfo.en}
+        <View style={[styles.problemBadge, { flexDirection: 'row', alignItems: 'center' }]}>
+          <Icon name={problemInfo.iconName} size={14} color={colors.accent.gold} />
+          <Text style={[styles.problemBadgeText, { marginLeft: 4 }]}>
+            {language === 'hi' ? problemInfo.hi : problemInfo.en}
           </Text>
         </View>
         <TouchableOpacity style={styles.overflowButton}>
@@ -496,7 +498,7 @@ export default function ChatScreen() {
                 {msg.role === 'assistant' && (
                   showAvatar ? (
                     <View style={styles.aiAvatar}>
-                      <Text style={styles.aiAvatarText}>🙏</Text>
+                      <Icon name="namaste-hands" size={20} color={colors.accent.gold} />
                     </View>
                   ) : (
                     <View style={styles.avatarPlaceholder} />
@@ -534,7 +536,7 @@ export default function ChatScreen() {
                       onPress={handleBirthDetailsCta}
                       activeOpacity={0.8}
                     >
-                      <Text style={styles.birthDetailsCtaIcon}>📋</Text>
+                      <Icon name="clipboard" size={18} color={colors.neutral.white} />
                       <View>
                         <Text style={styles.birthDetailsCtaText}>
                           {t.chat.birthDetailsCta}
@@ -567,7 +569,7 @@ export default function ChatScreen() {
         {isTyping && (
           <View style={[styles.messageRow, styles.messageRowAi]}>
             <View style={styles.aiAvatar}>
-              <Text style={styles.aiAvatarText}>🙏</Text>
+              <Icon name="namaste-hands" size={20} color={colors.accent.gold} />
             </View>
             <View style={[styles.messageBubble, styles.aiBubble, styles.typingBubble]}>
               {[dotAnim1, dotAnim2, dotAnim3].map((anim, i) => (
@@ -589,17 +591,20 @@ export default function ChatScreen() {
             <View style={styles.avatarPlaceholder} />
             <View style={styles.birthFormCard}>
               <View style={styles.birthFormHeader}>
-                <Text style={styles.birthFormIcon}>📋</Text>
+                <Icon name="clipboard" size={18} color={colors.darkTheme.textSecondary} />
                 <Text style={styles.birthFormTitle}>{t.birthDetails.title}</Text>
               </View>
               <Text style={styles.birthFormSubtitle}>{t.birthDetails.subtitle}</Text>
 
               {/* DOB */}
-              <Text style={styles.fieldLabel}>📅 {t.birthDetails.dateOfBirth}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: hp(8), marginBottom: hp(4) }}>
+                <Icon name="calendar" size={14} color={colors.accent.gold} />
+                <Text style={[styles.fieldLabel, { marginTop: 0, marginBottom: 0, marginLeft: wp(4) }]}>{t.birthDetails.dateOfBirth}</Text>
+              </View>
               <TextInput
                 style={styles.fieldInput}
                 placeholder="DD/MM/YYYY"
-                placeholderTextColor={colors.neutral.grey400}
+                placeholderTextColor={colors.darkTheme.textMuted}
                 value={bdDob}
                 onChangeText={setBdDob}
                 keyboardType="numbers-and-punctuation"
@@ -608,12 +613,15 @@ export default function ChatScreen() {
               {/* Time */}
               {!bdUnknownTime && (
                 <>
-                  <Text style={styles.fieldLabel}>🕐 {t.birthDetails.timeOfBirth}</Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: hp(8), marginBottom: hp(4) }}>
+                    <Icon name="clock" size={14} color={colors.accent.gold} />
+                    <Text style={[styles.fieldLabel, { marginTop: 0, marginBottom: 0, marginLeft: wp(4) }]}>{t.birthDetails.timeOfBirth}</Text>
+                  </View>
                   <View style={styles.timeRow}>
                     <TextInput
                       style={[styles.fieldInput, styles.timeInput]}
                       placeholder="HH:MM"
-                      placeholderTextColor={colors.neutral.grey400}
+                      placeholderTextColor={colors.darkTheme.textMuted}
                       value={bdTime}
                       onChangeText={setBdTime}
                       keyboardType="numbers-and-punctuation"
@@ -665,11 +673,14 @@ export default function ChatScreen() {
               )}
 
               {/* Place */}
-              <Text style={styles.fieldLabel}>📍 {t.birthDetails.placeOfBirth}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: hp(8), marginBottom: hp(4) }}>
+                <Icon name="location-pin" size={14} color={colors.accent.gold} />
+                <Text style={[styles.fieldLabel, { marginTop: 0, marginBottom: 0, marginLeft: wp(4) }]}>{t.birthDetails.placeOfBirth}</Text>
+              </View>
               <TextInput
                 style={styles.fieldInput}
                 placeholder={t.birthDetails.placeSearch}
-                placeholderTextColor={colors.neutral.grey400}
+                placeholderTextColor={colors.darkTheme.textMuted}
                 value={bdPlace}
                 onChangeText={(t) => {
                   setBdPlace(t);
@@ -693,7 +704,10 @@ export default function ChatScreen() {
                         setShowPlaceDropdown(false);
                       }}
                     >
-                      <Text style={styles.placeOptionText}>📍 {city.name}</Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <Icon name="location-pin" size={12} color={colors.accent.gold} />
+                        <Text style={[styles.placeOptionText, { marginLeft: wp(4) }]}>{city.name}</Text>
+                      </View>
                     </TouchableOpacity>
                   ))}
                 </View>
@@ -720,7 +734,7 @@ export default function ChatScreen() {
           <TextInput
             style={styles.input}
             placeholder={t.chat.inputPlaceholder}
-            placeholderTextColor={colors.neutral.grey400}
+            placeholderTextColor={colors.darkTheme.textMuted}
             value={inputValue}
             onChangeText={setInputValue}
             onSubmitEditing={handleSendMessage}
@@ -737,7 +751,7 @@ export default function ChatScreen() {
             </TouchableOpacity>
           ) : (
             <TouchableOpacity style={styles.micButton}>
-              <Text style={styles.micIcon}>🎙</Text>
+              <Icon name="microphone" size={20} color={colors.darkTheme.textMuted} />
             </TouchableOpacity>
           )}
         </View>
@@ -749,7 +763,7 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.darkTheme.pageBg,
   },
 
   /* Top Bar */
@@ -760,40 +774,40 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(12),
     paddingTop: Platform.OS === 'ios' ? hp(50) : hp(30),
     paddingBottom: hp(8),
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.darkTheme.pageBg,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.neutral.grey100,
+    borderBottomColor: colors.darkTheme.border,
   },
   backButton: {
     padding: wp(6),
   },
   backArrow: {
     fontSize: fp(20),
-    color: colors.neutral.grey700,
+    color: colors.darkTheme.textSecondary,
   },
   topBarTitle: {
     flex: 1,
     fontSize: fp(16),
     fontWeight: '600',
-    color: colors.secondary.maroon,
+    color: colors.accent.gold,
   },
   problemBadge: {
     paddingHorizontal: wp(10),
     paddingVertical: hp(3),
-    backgroundColor: '#FFF8F0',
+    backgroundColor: colors.darkTheme.surface,
     borderRadius: wp(20),
   },
   problemBadgeText: {
     fontSize: fp(11),
     fontWeight: '500',
-    color: colors.secondary.maroon,
+    color: colors.accent.gold,
   },
   overflowButton: {
     padding: wp(6),
   },
   overflowDots: {
     fontSize: fp(18),
-    color: colors.neutral.grey500,
+    color: colors.darkTheme.textMuted,
   },
 
   /* Messages */
@@ -820,7 +834,7 @@ const styles = StyleSheet.create({
     width: wp(32),
     height: wp(32),
     borderRadius: wp(16),
-    backgroundColor: '#FFF8F0',
+    backgroundColor: colors.darkTheme.surface,
     borderWidth: 1.5,
     borderColor: colors.accent.goldLight,
     alignItems: 'center',
@@ -840,17 +854,17 @@ const styles = StyleSheet.create({
     maxWidth: SCREEN_WIDTH * 0.75,
   },
   aiBubble: {
-    backgroundColor: '#FFF8F0',
+    backgroundColor: colors.darkTheme.surface,
     borderBottomLeftRadius: wp(4),
   },
   userBubble: {
-    backgroundColor: '#FFF3E0',
+    backgroundColor: colors.darkTheme.surfaceElevated,
     borderBottomRightRadius: wp(4),
   },
   messageText: {
     fontSize: fp(14),
     lineHeight: fp(14) * 1.5,
-    color: colors.neutral.grey800,
+    color: colors.darkTheme.textPrimary,
   },
 
   /* Quick Replies */
@@ -866,12 +880,12 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: colors.primary.saffronLight,
     borderRadius: wp(20),
-    backgroundColor: colors.neutral.white,
+    backgroundColor: 'rgba(255,140,0,0.1)',
   },
   quickReplyText: {
     fontSize: fp(12),
     fontWeight: '500',
-    color: colors.primary.saffronDark,
+    color: colors.primary.saffronLight,
   },
 
   /* Birth Details CTA */
@@ -914,11 +928,11 @@ const styles = StyleSheet.create({
   },
   timestampText: {
     fontSize: fp(10),
-    color: colors.neutral.grey400,
+    color: colors.darkTheme.textMuted,
   },
   readReceipt: {
     fontSize: fp(9),
-    color: colors.neutral.grey400,
+    color: colors.darkTheme.textMuted,
   },
 
   /* Typing */
@@ -933,20 +947,20 @@ const styles = StyleSheet.create({
     width: wp(7),
     height: wp(7),
     borderRadius: wp(4),
-    backgroundColor: colors.neutral.grey400,
+    backgroundColor: colors.darkTheme.textMuted,
   },
 
   /* Birth Form */
   birthFormCard: {
     maxWidth: SCREEN_WIDTH * 0.78,
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.darkTheme.surface,
     borderWidth: 1.5,
     borderColor: colors.accent.goldLight,
     borderRadius: wp(12),
     padding: wp(14),
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
+    shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 2,
   },
@@ -962,30 +976,30 @@ const styles = StyleSheet.create({
   birthFormTitle: {
     fontSize: fp(16),
     fontWeight: '600',
-    color: colors.neutral.grey800,
+    color: colors.darkTheme.textPrimary,
   },
   birthFormSubtitle: {
     fontSize: fp(12),
-    color: colors.neutral.grey500,
+    color: colors.darkTheme.textSecondary,
     marginBottom: hp(12),
     lineHeight: fp(12) * 1.4,
   },
   fieldLabel: {
     fontSize: fp(13),
     fontWeight: '500',
-    color: colors.neutral.grey700,
+    color: colors.darkTheme.textSecondary,
     marginTop: hp(8),
     marginBottom: hp(4),
   },
   fieldInput: {
-    backgroundColor: colors.neutral.grey50,
+    backgroundColor: colors.darkTheme.inputBg,
     borderWidth: 1.5,
-    borderColor: colors.neutral.grey200,
+    borderColor: colors.darkTheme.inputBorder,
     borderRadius: wp(8),
     paddingHorizontal: wp(12),
     paddingVertical: hp(8),
     fontSize: fp(14),
-    color: colors.neutral.grey800,
+    color: colors.darkTheme.textPrimary,
   },
   timeRow: {
     flexDirection: 'row',
@@ -998,14 +1012,14 @@ const styles = StyleSheet.create({
   ampmRow: {
     flexDirection: 'row',
     borderWidth: 1.5,
-    borderColor: colors.neutral.grey200,
+    borderColor: colors.darkTheme.inputBorder,
     borderRadius: wp(8),
     overflow: 'hidden',
   },
   ampmButton: {
     paddingHorizontal: wp(10),
     paddingVertical: hp(8),
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.darkTheme.inputBg,
   },
   ampmActive: {
     backgroundColor: colors.primary.saffron,
@@ -1013,7 +1027,7 @@ const styles = StyleSheet.create({
   ampmText: {
     fontSize: fp(12),
     fontWeight: '500',
-    color: colors.neutral.grey500,
+    color: colors.darkTheme.textMuted,
   },
   ampmTextActive: {
     color: colors.neutral.white,
@@ -1028,7 +1042,7 @@ const styles = StyleSheet.create({
     width: wp(18),
     height: wp(18),
     borderWidth: 1.5,
-    borderColor: colors.neutral.grey300,
+    borderColor: colors.darkTheme.border,
     borderRadius: wp(4),
     alignItems: 'center',
     justifyContent: 'center',
@@ -1044,7 +1058,7 @@ const styles = StyleSheet.create({
   },
   checkboxLabel: {
     fontSize: fp(12),
-    color: colors.neutral.grey600,
+    color: colors.darkTheme.textSecondary,
     flex: 1,
   },
   approxOptions: {
@@ -1057,21 +1071,21 @@ const styles = StyleSheet.create({
     gap: wp(8),
     paddingHorizontal: wp(10),
     paddingVertical: hp(6),
-    backgroundColor: colors.neutral.grey50,
+    backgroundColor: colors.darkTheme.inputBg,
     borderWidth: 1.5,
-    borderColor: colors.neutral.grey200,
+    borderColor: colors.darkTheme.inputBorder,
     borderRadius: wp(8),
   },
   approxOptionActive: {
     borderColor: colors.primary.saffron,
-    backgroundColor: 'rgba(255,140,0,0.08)',
+    backgroundColor: 'rgba(255,140,0,0.1)',
   },
   radio: {
     width: wp(14),
     height: wp(14),
     borderRadius: wp(7),
     borderWidth: 1.5,
-    borderColor: colors.neutral.grey300,
+    borderColor: colors.darkTheme.border,
   },
   radioActive: {
     borderColor: colors.primary.saffron,
@@ -1079,17 +1093,17 @@ const styles = StyleSheet.create({
   },
   approxText: {
     fontSize: fp(12),
-    color: colors.neutral.grey700,
+    color: colors.darkTheme.textSecondary,
   },
   approxTextActive: {
-    color: colors.primary.saffronDark,
+    color: colors.primary.saffron,
     fontWeight: '500',
   },
   placeDropdown: {
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.darkTheme.surfaceElevated,
     borderWidth: 1.5,
     borderTopWidth: 0,
-    borderColor: colors.neutral.grey200,
+    borderColor: colors.darkTheme.inputBorder,
     borderBottomLeftRadius: wp(8),
     borderBottomRightRadius: wp(8),
     maxHeight: hp(150),
@@ -1098,11 +1112,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(10),
     paddingVertical: hp(8),
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.neutral.grey100,
+    borderBottomColor: colors.darkTheme.border,
   },
   placeOptionText: {
     fontSize: fp(12),
-    color: colors.neutral.grey700,
+    color: colors.darkTheme.textSecondary,
   },
   generateButton: {
     marginTop: hp(12),
@@ -1127,9 +1141,9 @@ const styles = StyleSheet.create({
 
   /* Input Bar */
   inputBarWrapper: {
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.darkTheme.pageBg,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.neutral.grey100,
+    borderTopColor: colors.darkTheme.border,
     paddingHorizontal: wp(12),
     paddingVertical: hp(8),
     paddingBottom: Platform.OS === 'ios' ? hp(24) : hp(8),
@@ -1138,9 +1152,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: wp(8),
-    backgroundColor: colors.neutral.grey50,
+    backgroundColor: colors.darkTheme.inputBg,
     borderWidth: 1.5,
-    borderColor: colors.neutral.grey200,
+    borderColor: colors.darkTheme.inputBorder,
     borderRadius: wp(24),
     paddingHorizontal: wp(14),
     paddingVertical: hp(4),
@@ -1148,7 +1162,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: fp(14),
-    color: colors.neutral.grey800,
+    color: colors.darkTheme.textPrimary,
     paddingVertical: hp(6),
   },
   sendButton: {

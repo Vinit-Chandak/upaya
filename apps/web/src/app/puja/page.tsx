@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Suspense } from 'react';
 import TopBar from '@/components/TopBar';
 import BottomTabBar from '@/components/BottomTabBar';
+import { Icon } from '@/components/icons';
 import styles from './page.module.css';
 
 interface PujaDetail {
@@ -65,7 +66,7 @@ const MOCK_PUJA: PujaDetail = {
   templeDescriptionHi: 'उज्जैन का मंगलनाथ मंदिर मंगल ग्रह का जन्म स्थान माना जाता है और मंगल दोष निवारण के लिए सबसे पवित्र मंदिर है। यहाँ के पंडित पीढ़ियों से ये पूजाएं करते आ रहे हैं।',
 };
 
-const INCLUSION_ICONS = ['🪔', '📿', '🎥', '📸', '📦', '📜'];
+const INCLUSION_ICON_NAMES = ['diya', 'mala', 'video', 'video', 'prasad-box', 'scroll-remedy'];
 
 function PujaPageContent() {
   const router = useRouter();
@@ -96,7 +97,7 @@ function PujaPageContent() {
           {/* Hero image placeholder */}
           <div className={styles.heroImage}>
             <div className={styles.heroOverlay}>
-              <span className={styles.heroIcon}>🪔</span>
+              <Icon name="diya" size={48} color="var(--color-accent-gold)" />
             </div>
           </div>
 
@@ -119,7 +120,7 @@ function PujaPageContent() {
           {/* Temple info card */}
           <div className={styles.templeCard}>
             <div className={styles.templeCardHeader}>
-              <span className={styles.templeIcon}>🛕</span>
+              <Icon name="temple-silhouette" size={24} color="var(--color-accent-gold)" />
               <div className={styles.templeInfo}>
                 <h3 className={styles.templeName}>
                   {language === 'hi' ? puja.templeNameHi : puja.templeName}
@@ -130,7 +131,7 @@ function PujaPageContent() {
               </div>
               <div className={styles.templeStats}>
                 <div className={styles.ratingBadge}>
-                  <span className={styles.ratingStar}>★</span>
+                  <Icon name="star-rating" size={14} color="var(--color-accent-gold)" />
                   <span>{puja.templeRating}</span>
                 </div>
               </div>
@@ -153,7 +154,7 @@ function PujaPageContent() {
             <div className={styles.inclusionsList}>
               {(language === 'hi' ? puja.inclusionsHi : puja.inclusions).map((item, index) => (
                 <div key={index} className={styles.inclusionItem}>
-                  <span className={styles.inclusionIcon}>{INCLUSION_ICONS[index] || '✓'}</span>
+                  <span className={styles.inclusionIcon}>{INCLUSION_ICON_NAMES[index] ? <Icon name={INCLUSION_ICON_NAMES[index]} size={16} color="var(--color-accent-gold)" /> : <Icon name="shield" size={16} color="var(--color-accent-gold)" />}</span>
                   <span className={styles.inclusionText}>{item}</span>
                 </div>
               ))}
@@ -176,13 +177,13 @@ function PujaPageContent() {
               {language === 'hi' ? 'Delivery:' : 'Delivery:'}
             </h3>
             <div className={styles.deliveryItem}>
-              <span className={styles.deliveryIcon}>🎥</span>
+              <Icon name="video" size={20} color="var(--color-accent-gold)" />
               <span className={styles.deliveryText}>
                 {language === 'hi' ? 'Video: पूजा के 3-5 दिन बाद' : 'Video: 3-5 days after puja'}
               </span>
             </div>
             <div className={styles.deliveryItem}>
-              <span className={styles.deliveryIcon}>📦</span>
+              <Icon name="prasad-box" size={20} color="var(--color-accent-gold)" />
               <span className={styles.deliveryText}>
                 {language === 'hi' ? 'प्रसाद: 7-10 दिन (free shipping)' : 'Prasad: 7-10 days (free shipping)'}
               </span>

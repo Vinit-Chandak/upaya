@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import ClientLayout from '@/components/ClientLayout';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -28,7 +29,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
-  themeColor: '#FF8C00',
+  themeColor: '#0F0A2E',
 };
 
 export default function RootLayout({
@@ -39,7 +40,9 @@ export default function RootLayout({
   return (
     <html lang="hi">
       <body>
-        <div className="app-layout">{children}</div>
+        <ClientLayout>
+          <div className="app-layout">{children}</div>
+        </ClientLayout>
       </body>
     </html>
   );

@@ -8,7 +8,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  background: var(--color-neutral-off-white);
+  background: var(--color-page-bg);
 }
 
 .mainContent {
@@ -34,7 +34,7 @@
   display: flex;
   align-items: center;
   gap: clamp(0.75rem, 0.5rem + 1.25vw, 1.25rem);
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-xl);
   padding: var(--space-card-padding);
   box-shadow: var(--shadow-card);
@@ -73,17 +73,17 @@
 .profileName {
   font-size: var(--text-lg);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .profilePhone {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .profileMember {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
   margin-top: 0.125rem;
 }
 
@@ -120,7 +120,7 @@
   display: flex;
   align-items: center;
   gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.625rem);
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
   padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem) var(--space-card-padding);
   box-shadow: var(--shadow-card);
@@ -133,14 +133,14 @@
 
 .badgeLabel {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
 .badgeValue {
   font-size: var(--text-base);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   margin-left: auto;
 }
 
@@ -148,7 +148,7 @@
    My Kundli Card
    ============================================ */
 .kundliCard {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-xl);
   padding: var(--space-card-padding);
   box-shadow: var(--shadow-card);
@@ -169,7 +169,7 @@
 .kundliCardTitle {
   font-size: var(--text-base);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .kundliCardBody {
@@ -191,7 +191,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-neutral-cream);
+  background: var(--color-surface);
   border-radius: var(--radius-sm);
 }
 
@@ -217,13 +217,13 @@
 
 .kundliDetailLabel {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
 .kundliDetailValue {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   font-weight: 600;
 }
 
@@ -244,7 +244,7 @@
    Family Kundli Vault
    ============================================ */
 .familyCard {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-xl);
   padding: var(--space-card-padding);
   box-shadow: var(--shadow-card);
@@ -264,7 +264,7 @@
 .familyCardTitle {
   font-size: var(--text-base);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .familyMembers {
@@ -285,7 +285,7 @@
   width: clamp(2.5rem, 2rem + 2.5vw, 3.25rem);
   height: clamp(2.5rem, 2rem + 2.5vw, 3.25rem);
   border-radius: 50%;
-  background: var(--color-neutral-cream);
+  background: var(--color-surface);
   border: 2px solid var(--color-accent-gold-light);
   display: flex;
   align-items: center;
@@ -295,7 +295,7 @@
 
 .familyMemberName {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
@@ -349,7 +349,7 @@
   gap: 0.375rem;
   font-size: var(--text-base);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .cardList {
@@ -362,7 +362,7 @@
    Report Items
    ============================================ */
 .reportItem {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
   display: flex;
@@ -400,7 +400,7 @@
 .reportItemTitle {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -408,7 +408,7 @@
 
 .reportItemDate {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .reportItemStatus {
@@ -434,7 +434,7 @@
    Order Items
    ============================================ */
 .orderItem {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
   display: flex;
@@ -473,7 +473,7 @@
 .orderItemTitle {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -481,7 +481,7 @@
 
 .orderItemDate {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .orderItemStatus {
@@ -499,7 +499,7 @@
    Referral Card
    ============================================ */
 .referralCard {
-  background: var(--color-neutral-cream);
+  background: var(--color-surface);
   border: 1px solid var(--color-accent-gold-light);
   border-radius: var(--radius-xl);
   padding: var(--space-card-padding);
@@ -528,12 +528,12 @@
 .referralTitle {
   font-size: var(--text-base);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .referralText {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   line-height: 1.5;
 }
 
@@ -545,14 +545,14 @@
 
 .referralCodeLabel {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .referralCodeValue {
   font-size: var(--text-sm);
   font-weight: 700;
-  color: var(--color-secondary-maroon);
-  background: var(--color-neutral-white);
+  color: var(--color-accent-gold);
+  background: var(--color-surface);
   padding: 0.125rem 0.5rem;
   border-radius: var(--radius-sm);
   font-family: var(--font-mono);
@@ -591,7 +591,7 @@
 .linksList {
   display: flex;
   flex-direction: column;
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
@@ -602,7 +602,7 @@
   align-items: center;
   gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
   padding: clamp(0.75rem, 0.625rem + 0.625vw, 1rem) var(--space-card-padding);
-  border-bottom: 1px solid var(--color-neutral-grey-100);
+  border-bottom: 1px solid var(--color-border-light);
   cursor: pointer;
   transition: background-color var(--transition-fast);
   text-align: left;
@@ -614,7 +614,7 @@
 }
 
 .linkItem:hover {
-  background: var(--color-neutral-grey-50);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .linkIcon {
@@ -626,12 +626,12 @@
   flex: 1;
   font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .linkArrow {
   font-size: var(--text-lg);
-  color: var(--color-neutral-grey-300);
+  color: var(--color-border);
   font-weight: 300;
 }
 
@@ -645,7 +645,7 @@
 
 .versionInfo p {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
 }
 
 /* ============================================

@@ -1,25 +1,30 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors } from '@upaya/shared';
 import { fp, wp, hp } from '../theme';
+import NamasteHands from '../components/icons/NamasteHands';
+import LotusSymbol from '../components/icons/LotusSymbol';
+import GlobeIcon from '../components/icons/GlobeIcon';
+import HourglassClock from '../components/icons/HourglassClock';
+import CelestialBackground from '../components/CelestialBackground/CelestialBackground';
 
 interface LanguageOption {
   code: 'hi' | 'en';
   name: string;
   sub: string;
-  flag: string;
+  icon: ReactNode;
 }
 
 const LANGUAGES: LanguageOption[] = [
-  { code: 'hi', name: 'हिन्दी', sub: 'Hindi', flag: '🇮🇳' },
-  { code: 'en', name: 'English', sub: 'अंग्रेज़ी', flag: '🇬🇧' },
+  { code: 'hi', name: 'हिन्दी', sub: 'Hindi', icon: <LotusSymbol size={28} color="#FF8C00" /> },
+  { code: 'en', name: 'English', sub: 'अंग्रेज़ी', icon: <GlobeIcon size={28} color="rgba(255,255,255,0.7)" /> },
 ];
 
 const COMING_SOON = [
-  { name: 'தமிழ்', sub: 'Coming Soon', flag: '🔜' },
-  { name: 'తెలుగు', sub: 'Coming Soon', flag: '🔜' },
+  { name: 'தமிழ்', sub: 'Coming Soon', icon: <HourglassClock size={28} color="rgba(255,255,255,0.5)" /> },
+  { name: 'తెలుగు', sub: 'Coming Soon', icon: <HourglassClock size={28} color="rgba(255,255,255,0.5)" /> },
 ];
 
 /**
@@ -44,7 +49,10 @@ export default function LanguageScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.namaste}>🙏</Text>
+      <CelestialBackground variant="subtle" />
+      <View style={styles.namasteIcon}>
+        <NamasteHands size={48} color="#FF8C00" />
+      </View>
       <Text style={styles.title}>अपनी भाषा चुनें</Text>
       <Text style={styles.subtitle}>Choose your preferred language</Text>
 
@@ -56,7 +64,7 @@ export default function LanguageScreen() {
             activeOpacity={0.8}
             onPress={() => selectLanguage(lang.code)}
           >
-            <Text style={styles.flag}>{lang.flag}</Text>
+            <View style={styles.flagIcon}>{lang.icon}</View>
             <View style={styles.cardInfo}>
               <Text style={styles.langName}>{lang.name}</Text>
               <Text style={styles.langSub}>{lang.sub}</Text>
@@ -69,7 +77,7 @@ export default function LanguageScreen() {
 
         {COMING_SOON.map((lang) => (
           <View key={lang.name} style={[styles.card, styles.cardDisabled]}>
-            <Text style={styles.flag}>{lang.flag}</Text>
+            <View style={styles.flagIcon}>{lang.icon}</View>
             <View style={styles.cardInfo}>
               <Text style={[styles.langName, styles.textDisabled]}>{lang.name}</Text>
               <Text style={[styles.langSub, styles.textDisabled]}>{lang.sub}</Text>
@@ -88,24 +96,24 @@ export default function LanguageScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.neutral.cream,
+    backgroundColor: colors.darkTheme.pageBg,
     paddingHorizontal: wp(24),
     paddingTop: hp(80),
     alignItems: 'center',
   },
-  namaste: {
-    fontSize: fp(48),
+  namasteIcon: {
+    marginBottom: hp(8),
   },
   title: {
     fontSize: fp(24),
     fontWeight: '600',
-    color: colors.neutral.grey900,
+    color: colors.darkTheme.textPrimary,
     marginTop: hp(16),
     textAlign: 'center',
   },
   subtitle: {
     fontSize: fp(16),
-    color: colors.neutral.grey500,
+    color: colors.darkTheme.textSecondary,
     marginTop: hp(4),
     textAlign: 'center',
   },
@@ -120,20 +128,21 @@ const styles = StyleSheet.create({
     gap: wp(16),
     paddingVertical: hp(16),
     paddingHorizontal: wp(20),
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.darkTheme.surface,
     borderRadius: wp(12),
     borderWidth: 2,
-    borderColor: colors.neutral.grey200,
+    borderColor: colors.darkTheme.border,
   },
   cardSelected: {
     borderColor: colors.primary.saffron,
-    backgroundColor: '#FFF8F0',
+    backgroundColor: colors.darkTheme.surfaceElevated,
   },
   cardDisabled: {
     opacity: 0.5,
   },
-  flag: {
-    fontSize: fp(28),
+  flagIcon: {
+    width: wp(28),
+    alignItems: 'center',
   },
   cardInfo: {
     flex: 1,
@@ -141,15 +150,15 @@ const styles = StyleSheet.create({
   langName: {
     fontSize: fp(18),
     fontWeight: '600',
-    color: colors.neutral.grey800,
+    color: colors.darkTheme.textPrimary,
   },
   langSub: {
     fontSize: fp(14),
-    color: colors.neutral.grey500,
+    color: colors.darkTheme.textSecondary,
     marginTop: 2,
   },
   textDisabled: {
-    color: colors.neutral.grey400,
+    color: colors.darkTheme.textMuted,
   },
   checkmark: {
     fontSize: fp(20),
@@ -158,7 +167,7 @@ const styles = StyleSheet.create({
   },
   hint: {
     fontSize: fp(12),
-    color: colors.neutral.grey400,
+    color: colors.darkTheme.textMuted,
     marginTop: hp(24),
     textAlign: 'center',
   },

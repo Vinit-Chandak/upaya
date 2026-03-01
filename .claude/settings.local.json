@@ -19,7 +19,21 @@
       "Bash(javac:*)",
       "Bash(xargs:*)",
       "Bash(npx kill-port:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(rm:*)",
+      "Bash(npx expo:*)",
+      "Bash(read file:*)",
+      "Bash(adb devices:*)",
+      "Bash(\"$LOCALAPPDATA/Android/Sdk/emulator/emulator.exe\":*)",
+      "Bash(\"$LOCALAPPDATA/Android/Sdk/platform-tools/adb.exe\" devices:*)",
+      "Bash(netstat:*)",
+      "Bash(taskkill:*)",
+      "Bash(# Kill any remaining node processes related to expo/metro tasklist)",
+      "Bash(while read pid)",
+      "Bash(do taskkill //F //PID $pid)",
+      "Bash(done echo \"All node processes killed\")",
+      "Bash(# Kill any node/metro processes tasklist)",
+      "Bash(npx tsc:*)"
     ]
   }
 }

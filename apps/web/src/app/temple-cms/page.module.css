@@ -6,15 +6,15 @@
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  background: var(--color-neutral-off-white);
+  background: var(--color-page-bg);
 }
 
 /* ============================================
    CMS Header
    ============================================ */
 .cmsHeader {
-  background: var(--color-neutral-white);
-  border-bottom: 1px solid var(--color-neutral-grey-200);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
@@ -48,13 +48,13 @@
 .cmsLogoTitle {
   font-size: var(--text-base);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   line-height: 1.2;
 }
 
 .cmsLogoSubtitle {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
@@ -78,8 +78,8 @@
    Tab Navigation
    ============================================ */
 .tabNav {
-  background: var(--color-neutral-white);
-  border-bottom: 1px solid var(--color-neutral-grey-200);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: clamp(3rem, 2.75rem + 1.25vw, 3.75rem);
   z-index: calc(var(--z-sticky) - 1);
@@ -104,7 +104,7 @@
   flex-shrink: 0;
   font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
@@ -115,7 +115,7 @@
 }
 
 .tabButton:hover {
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
 }
 
 .tabButtonActive {
@@ -159,14 +159,14 @@
 .regHeroTitle {
   font-size: var(--text-2xl);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   line-height: 1.3;
   margin-bottom: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
 }
 
 .regHeroSubtitle {
   font-size: var(--text-base);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   line-height: 1.5;
 }
 
@@ -174,7 +174,7 @@
    Registration View — Steps
    ============================================ */
 .regSteps {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-xl);
   padding: var(--space-card-padding);
   box-shadow: var(--shadow-card);
@@ -183,7 +183,7 @@
 .regStepsTitle {
   font-size: var(--text-lg);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   margin-bottom: var(--space-component-gap);
 }
 
@@ -198,13 +198,13 @@
   align-items: center;
   gap: clamp(0.75rem, 0.5rem + 1.25vw, 1rem);
   padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
-  background: var(--color-neutral-grey-50);
+  background: var(--color-input-bg);
   border-radius: var(--radius-lg);
   transition: background-color var(--transition-fast);
 }
 
 .regStepItem:hover {
-  background: var(--color-neutral-cream);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .regStepNumber {
@@ -234,14 +234,14 @@
 .regStepLabel {
   font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
 }
 
 /* ============================================
    Registration View — Form Preview
    ============================================ */
 .regFormPreview {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-xl);
   padding: var(--space-card-padding);
   box-shadow: var(--shadow-card);
@@ -250,7 +250,7 @@
 .regFormTitle {
   font-size: var(--text-base);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   margin-bottom: var(--space-component-gap);
 }
 
@@ -275,15 +275,15 @@
 .regLabel {
   font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
 }
 
 .regInput {
   width: 100%;
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-800);
-  background: var(--color-neutral-grey-50);
-  border: 1.5px solid var(--color-neutral-grey-200);
+  color: var(--color-text-primary);
+  background: var(--color-input-bg);
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) clamp(0.75rem, 0.5rem + 1.25vw, 1rem);
   outline: none;
@@ -295,7 +295,7 @@
 }
 
 .regInput::placeholder {
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
 }
 
 /* ============================================
@@ -339,7 +339,7 @@
   font-size: var(--text-sm);
   font-weight: 600;
   color: var(--color-primary-saffron);
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border: 2px solid var(--color-primary-saffron-light);
   border-radius: var(--radius-button);
   padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem);
@@ -356,7 +356,7 @@
    Registration View — Benefits
    ============================================ */
 .regBenefits {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-xl);
   padding: var(--space-card-padding);
   box-shadow: var(--shadow-card);
@@ -365,7 +365,7 @@
 .regBenefitsTitle {
   font-size: var(--text-lg);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   margin-bottom: var(--space-component-gap);
 }
 
@@ -388,7 +388,7 @@
 
 .regBenefitText {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
   line-height: 1.4;
 }
 
@@ -411,7 +411,7 @@
 }
 
 .statCard {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-xl);
   padding: var(--space-card-padding);
   display: flex;
@@ -439,13 +439,13 @@
 .statValue {
   font-size: var(--text-xl);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   line-height: 1.2;
 }
 
 .statLabel {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
@@ -468,7 +468,7 @@
 .dashSectionTitle {
   font-size: var(--text-base);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .addButton {
@@ -497,7 +497,7 @@
 }
 
 .pujaManageCard {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
   display: flex;
@@ -535,7 +535,7 @@
 .pujaManageName {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -543,7 +543,7 @@
 
 .pujaManageMeta {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .pujaManageRight {
@@ -570,9 +570,9 @@
 }
 
 .toggleInactive {
-  color: var(--color-neutral-grey-500);
-  background: var(--color-neutral-grey-100);
-  border-color: var(--color-neutral-grey-300);
+  color: var(--color-text-secondary);
+  background: var(--color-border-light);
+  border-color: var(--color-border);
 }
 
 .editBtn {
@@ -602,7 +602,7 @@
 }
 
 .recentBookingCard {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
   display: flex;
@@ -623,17 +623,17 @@
 .recentBookingName {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .recentBookingPuja {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .recentBookingDate {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
 }
 
 .recentBookingRight {
@@ -660,7 +660,7 @@
 }
 
 .payoutCard {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
   display: flex;
@@ -678,7 +678,7 @@
 
 .payoutDate {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
   font-weight: 500;
 }
 
@@ -692,7 +692,7 @@
 .payoutAmount {
   font-size: var(--text-sm);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .payoutStatus {
@@ -713,15 +713,15 @@
 }
 
 .payoutPending {
-  color: var(--color-neutral-grey-500);
-  background: var(--color-neutral-grey-100);
+  color: var(--color-text-secondary);
+  background: var(--color-border-light);
 }
 
 /* ============================================
    Dashboard — Refer Card
    ============================================ */
 .referCard {
-  background: linear-gradient(135deg, #FFF8F0, #FFF3E0);
+  background: var(--color-surface);
   border: 1.5px solid var(--color-primary-saffron-light);
   border-radius: var(--radius-xl);
   padding: var(--space-card-padding);
@@ -749,13 +749,13 @@
 .referTitle {
   font-size: var(--text-sm);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   margin-bottom: 0.125rem;
 }
 
 .referDesc {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
 }
 
 .referButton {
@@ -763,7 +763,7 @@
   font-size: var(--text-sm);
   font-weight: 600;
   color: var(--color-primary-saffron-dark);
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border: 1.5px solid var(--color-primary-saffron-light);
   border-radius: var(--radius-button);
   padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
@@ -783,9 +783,9 @@
   width: 100%;
   font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   background: transparent;
-  border: 1px dashed var(--color-neutral-grey-300);
+  border: 1px dashed var(--color-border);
   border-radius: var(--radius-button);
   padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
   cursor: pointer;
@@ -794,8 +794,8 @@
 }
 
 .switchViewButton:hover {
-  color: var(--color-neutral-grey-700);
-  border-color: var(--color-neutral-grey-500);
+  color: var(--color-text-primary);
+  border-color: var(--color-text-secondary);
 }
 
 /* ============================================
@@ -808,7 +808,7 @@
 }
 
 .bookingCard {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-card);
   overflow: hidden;
@@ -829,7 +829,7 @@
 }
 
 .bookingCardHeader:hover {
-  background: var(--color-neutral-grey-50);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .bookingCardLeft {
@@ -842,17 +842,17 @@
 .bookingName {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .bookingPuja {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .bookingDate {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
 }
 
 /* ============================================
@@ -905,7 +905,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-component-gap);
-  border-top: 1px solid var(--color-neutral-grey-100);
+  border-top: 1px solid var(--color-border-light);
 }
 
 .sankalpSection {
@@ -918,7 +918,7 @@
 .sankalpTitle {
   font-size: var(--text-sm);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .sankalpRow {
@@ -928,13 +928,13 @@
 }
 
 .sankalpLabel {
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   flex-shrink: 0;
   min-width: clamp(3rem, 2.5rem + 2.5vw, 4rem);
 }
 
 .sankalpValue {
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   font-weight: 500;
 }
 
@@ -977,9 +977,9 @@
 .trackingInput {
   width: 100%;
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-800);
-  background: var(--color-neutral-grey-50);
-  border: 1.5px solid var(--color-neutral-grey-200);
+  color: var(--color-text-primary);
+  background: var(--color-input-bg);
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) clamp(0.75rem, 0.5rem + 1.25vw, 1rem);
   outline: none;
@@ -991,7 +991,7 @@
 }
 
 .trackingInput::placeholder {
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
 }
 
 /* ============================================
@@ -1013,7 +1013,7 @@
 .catalogTitle {
   font-size: var(--text-lg);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .addPujaButton {
@@ -1039,7 +1039,7 @@
 }
 
 .catalogCard {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
   display: flex;
@@ -1077,12 +1077,12 @@
 .catalogName {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .catalogMeta {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .catalogActions {

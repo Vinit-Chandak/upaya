@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import TopBar from '@/components/TopBar';
+import { Icon } from '@/components/icons';
 import styles from './page.module.css';
 
 /* ============================================
@@ -16,7 +17,7 @@ interface CartItem {
   price: number;
   mrp: number;
   quantity: number;
-  emoji: string;
+  iconName: string;
 }
 
 /* ============================================
@@ -30,7 +31,7 @@ const INITIAL_CART: CartItem[] = [
     price: 4999,
     mrp: 7999,
     quantity: 1,
-    emoji: '💎',
+    iconName: 'gemstone',
   },
   {
     id: 'p5',
@@ -39,7 +40,7 @@ const INITIAL_CART: CartItem[] = [
     price: 999,
     mrp: 1999,
     quantity: 1,
-    emoji: '📿',
+    iconName: 'mala',
   },
   {
     id: 'p9',
@@ -48,7 +49,7 @@ const INITIAL_CART: CartItem[] = [
     price: 1999,
     mrp: 3499,
     quantity: 1,
-    emoji: '🔱',
+    iconName: 'trident',
   },
 ];
 
@@ -97,7 +98,7 @@ export default function CartPage() {
           {isEmpty ? (
             /* Empty Cart State */
             <div className={styles.emptyState}>
-              <span className={styles.emptyEmoji}>🛒</span>
+              <Icon name="cart" size={48} color="var(--color-accent-gold)" />
               <h2 className={styles.emptyTitle}>
                 {language === 'hi' ? 'आपका Cart खाली है' : 'Your Cart is Empty'}
               </h2>
@@ -131,7 +132,7 @@ export default function CartPage() {
                       role="button"
                       tabIndex={0}
                     >
-                      <span className={styles.cartItemEmoji}>{item.emoji}</span>
+                      <Icon name={item.iconName} size={28} color="var(--color-accent-gold)" />
                     </div>
 
                     <div className={styles.cartItemInfo}>

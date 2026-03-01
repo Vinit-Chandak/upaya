@@ -7,7 +7,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  background: var(--color-neutral-off-white);
+  background: var(--color-page-bg);
 }
 
 .mainContent {
@@ -37,14 +37,14 @@
 .sectionTitle {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding-left: 0.25rem;
 }
 
 .sectionCard {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-card);
@@ -52,7 +52,7 @@
 
 .divider {
   height: 1px;
-  background: var(--color-neutral-grey-100);
+  background: var(--color-border-light);
   margin: 0 var(--space-card-padding);
 }
 
@@ -69,7 +69,7 @@
 }
 
 .radioItem:hover {
-  background: var(--color-neutral-grey-50);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .radioInfo {
@@ -81,19 +81,19 @@
 .radioLabel {
   font-size: var(--text-base);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .radioSublabel {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .radioCircle {
   width: clamp(1.25rem, 1.125rem + 0.625vw, 1.5rem);
   height: clamp(1.25rem, 1.125rem + 0.625vw, 1.5rem);
   border-radius: 50%;
-  border: 2px solid var(--color-neutral-grey-300);
+  border: 2px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -137,12 +137,12 @@
 .toggleLabel {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .toggleSubtitle {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   line-height: 1.4;
 }
 
@@ -165,7 +165,7 @@
 }
 
 .toggleOff {
-  background: var(--color-neutral-grey-300);
+  background: var(--color-border);
 }
 
 .toggleThumb {
@@ -175,7 +175,7 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s ease;
 }
@@ -212,7 +212,7 @@
 .timeLabel {
   font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .timeValue {
@@ -239,18 +239,18 @@
 }
 
 .privacyItem:hover {
-  background: var(--color-neutral-grey-50);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .privacyLabel {
   font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .privacyArrow {
   font-size: var(--text-lg);
-  color: var(--color-neutral-grey-300);
+  color: var(--color-border);
   font-weight: 300;
 }
 
@@ -278,7 +278,7 @@
 }
 
 .supportItem:hover {
-  background: var(--color-neutral-grey-50);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .supportIcon {
@@ -290,12 +290,12 @@
   flex: 1;
   font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .supportArrow {
   font-size: var(--text-lg);
-  color: var(--color-neutral-grey-300);
+  color: var(--color-border);
   font-weight: 300;
 }
 
@@ -309,7 +309,7 @@
 
 .versionInfo p {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
 }
 
 /* ============================================
@@ -324,7 +324,7 @@
   font-size: var(--text-base);
   font-weight: 600;
   color: var(--color-error);
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border: 1.5px solid var(--color-error-light);
   border-radius: var(--radius-lg);
   cursor: pointer;

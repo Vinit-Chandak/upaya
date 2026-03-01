@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import TopBar from '@/components/TopBar';
 import BottomTabBar from '@/components/BottomTabBar';
+import { Icon } from '@/components/icons';
 import styles from './page.module.css';
 
 type ExploreTab = 'temples' | 'pujas' | 'store' | 'pandits';
@@ -16,7 +17,7 @@ interface TemplePujaCard {
   templeNameEn: string;
   city: string;
   price: number;
-  emoji: string;
+  iconName: string;
   rating: number;
 }
 
@@ -28,7 +29,7 @@ interface StoreProduct {
   descriptionEn: string;
   price: number;
   originalPrice: number;
-  emoji: string;
+  iconName: string;
   tag: string;
   tagEn: string;
 }
@@ -37,7 +38,7 @@ interface StoreCategory {
   id: string;
   name: string;
   nameEn: string;
-  emoji: string;
+  iconName: string;
 }
 
 interface PanditCard {
@@ -51,7 +52,7 @@ interface PanditCard {
   languages: string;
   languagesEn: string;
   price: number;
-  emoji: string;
+  iconName: string;
 }
 
 interface ArticleCard {
@@ -60,7 +61,7 @@ interface ArticleCard {
   titleEn: string;
   description: string;
   descriptionEn: string;
-  emoji: string;
+  iconName: string;
   tag: string;
   tagEn: string;
 }
@@ -69,7 +70,7 @@ interface CategoryCard {
   id: string;
   name: string;
   nameEn: string;
-  emoji: string;
+  iconName: string;
   count: number;
 }
 
@@ -82,7 +83,7 @@ const FEATURED_PUJAS: TemplePujaCard[] = [
     templeNameEn: 'Mangalnath Temple',
     city: 'Ujjain',
     price: 2100,
-    emoji: '\uD83E\uDE94',
+    iconName: 'diya',
     rating: 4.8,
   },
   {
@@ -93,7 +94,7 @@ const FEATURED_PUJAS: TemplePujaCard[] = [
     templeNameEn: 'Kal Bhairav Temple',
     city: 'Ujjain',
     price: 1800,
-    emoji: '\uD83D\uDED5',
+    iconName: 'temple-silhouette',
     rating: 4.7,
   },
   {
@@ -104,7 +105,7 @@ const FEATURED_PUJAS: TemplePujaCard[] = [
     templeNameEn: 'Shani Temple',
     city: 'Shingnapur',
     price: 1500,
-    emoji: '\uD83D\uDD2E',
+    iconName: 'sparkles',
     rating: 4.6,
   },
 ];
@@ -116,7 +117,7 @@ const FEATURED_ARTICLES: ArticleCard[] = [
     titleEn: 'What is Mangal Dosha? Learn about remedies',
     description: '\u092E\u0902\u0917\u0932 \u0926\u094B\u0937 \u0936\u093E\u0926\u0940 \u092E\u0947\u0902 \u0926\u0947\u0930\u0940 \u0915\u093E \u0938\u092C\u0938\u0947 \u0906\u092E \u0915\u093E\u0930\u0923 \u092E\u093E\u0928\u093E \u091C\u093E\u0924\u093E \u0939\u0948\u0964',
     descriptionEn: 'Mangal Dosha is considered the most common cause of marriage delay.',
-    emoji: '\uD83D\uDD34',
+    iconName: 'gemstone',
     tag: '\u0936\u093E\u0926\u0940',
     tagEn: 'Marriage',
   },
@@ -126,7 +127,7 @@ const FEATURED_ARTICLES: ArticleCard[] = [
     titleEn: 'How to deal with Shani Dosha?',
     description: '\u0936\u0928\u093F \u0915\u0940 \u0938\u093E\u0922\u093C\u0947\u0938\u093E\u0924\u0940, \u0927\u0948\u092F\u094D\u092F\u093E, \u092E\u0902\u0924\u094D\u0930 \u0914\u0930 \u0935\u094D\u0930\u0924 \u0915\u0947 \u092C\u093E\u0930\u0947 \u092E\u0947\u0902 \u091C\u093E\u0928\u0947\u0902\u0964',
     descriptionEn: 'Learn about Shani Sade Sati, patience, mantras and fasting remedies.',
-    emoji: '\uD83D\uDFE3',
+    iconName: 'gemstone',
     tag: '\u0915\u0930\u093F\u092F\u0930',
     tagEn: 'Career',
   },
@@ -136,7 +137,7 @@ const FEATURED_ARTICLES: ArticleCard[] = [
     titleEn: 'Benefits of Hanuman Chalisa',
     description: '\u0930\u094B\u091C\u093C \u0939\u0928\u0941\u092E\u093E\u0928 \u091A\u093E\u0932\u0940\u0938\u093E \u092A\u0922\u093C\u0928\u0947 \u0938\u0947 \u0915\u094C\u0928-\u0915\u094C\u0928 \u0938\u0947 \u0926\u094B\u0937 \u0926\u0942\u0930 \u0939\u094B\u0924\u0947 \u0939\u0948\u0902\u0964',
     descriptionEn: 'Which doshas are remedied by daily Hanuman Chalisa recitation.',
-    emoji: '\uD83D\uDCFF',
+    iconName: 'mala',
     tag: 'Daily Practice',
     tagEn: 'Daily Practice',
   },
@@ -146,19 +147,19 @@ const FEATURED_ARTICLES: ArticleCard[] = [
     titleEn: 'When should you do Navagraha Puja?',
     description: '\u0928\u0935\u0917\u094D\u0930\u0939 \u092A\u0942\u091C\u093E planetary balance \u0915\u0947 \u0932\u093F\u090F \u0938\u092C\u0938\u0947 powerful remedies \u092E\u0947\u0902 \u0938\u0947 \u090F\u0915 \u0939\u0948\u0964',
     descriptionEn: 'Navagraha Puja is one of the most powerful remedies for planetary balance.',
-    emoji: '\uD83D\uDED5',
+    iconName: 'temple-silhouette',
     tag: '\u092A\u0942\u091C\u093E',
     tagEn: 'Puja',
   },
 ];
 
 const CATEGORIES: CategoryCard[] = [
-  { id: 'c1', name: '\u0926\u094B\u0937 \u0914\u0930 Remedies', nameEn: 'Doshas & Remedies', emoji: '\uD83D\uDD2E', count: 12 },
-  { id: 'c2', name: '\u092E\u0902\u0924\u094D\u0930 \u0914\u0930 \u091C\u092A', nameEn: 'Mantras & Chanting', emoji: '\uD83D\uDCFF', count: 8 },
-  { id: 'c3', name: '\u092E\u0902\u0926\u093F\u0930 \u0914\u0930 \u0924\u0940\u0930\u094D\u0925', nameEn: 'Temples & Pilgrimage', emoji: '\uD83D\uDED5', count: 15 },
-  { id: 'c4', name: '\u0930\u0924\u094D\u0928 \u0914\u0930 \u092F\u0902\u0924\u094D\u0930', nameEn: 'Gemstones & Yantras', emoji: '\uD83D\uDC8E', count: 6 },
-  { id: 'c5', name: '\u0935\u094D\u0930\u0924 \u0914\u0930 \u0926\u093E\u0928', nameEn: 'Fasting & Charity', emoji: '\uD83C\uDF7D\uFE0F', count: 9 },
-  { id: 'c6', name: '\u0926\u0936\u093E \u0914\u0930 Transit', nameEn: 'Dasha & Transit', emoji: '\u2B50', count: 7 },
+  { id: 'c1', name: '\u0926\u094B\u0937 \u0914\u0930 Remedies', nameEn: 'Doshas & Remedies', iconName: 'sparkles', count: 12 },
+  { id: 'c2', name: '\u092E\u0902\u0924\u094D\u0930 \u0914\u0930 \u091C\u092A', nameEn: 'Mantras & Chanting', iconName: 'mala', count: 8 },
+  { id: 'c3', name: '\u092E\u0902\u0926\u093F\u0930 \u0914\u0930 \u0924\u0940\u0930\u094D\u0925', nameEn: 'Temples & Pilgrimage', iconName: 'temple-silhouette', count: 15 },
+  { id: 'c4', name: '\u0930\u0924\u094D\u0928 \u0914\u0930 \u092F\u0902\u0924\u094D\u0930', nameEn: 'Gemstones & Yantras', iconName: 'gemstone', count: 6 },
+  { id: 'c5', name: '\u0935\u094D\u0930\u0924 \u0914\u0930 \u0926\u093E\u0928', nameEn: 'Fasting & Charity', iconName: 'diya', count: 9 },
+  { id: 'c6', name: '\u0926\u0936\u093E \u0914\u0930 Transit', nameEn: 'Dasha & Transit', iconName: 'star-rating', count: 7 },
 ];
 
 const STORE_PRODUCTS: StoreProduct[] = [
@@ -170,7 +171,7 @@ const STORE_PRODUCTS: StoreProduct[] = [
     descriptionEn: 'Certified Neelam for Shani dosha remedy',
     price: 4500,
     originalPrice: 6000,
-    emoji: '\uD83D\uDC8E',
+    iconName: 'gemstone',
     tag: 'Recommended',
     tagEn: 'Recommended',
   },
@@ -182,7 +183,7 @@ const STORE_PRODUCTS: StoreProduct[] = [
     descriptionEn: 'Original Rudraksha for peace of all planets',
     price: 1200,
     originalPrice: 1800,
-    emoji: '\uD83D\uDCFF',
+    iconName: 'mala',
     tag: 'Bestseller',
     tagEn: 'Bestseller',
   },
@@ -194,7 +195,7 @@ const STORE_PRODUCTS: StoreProduct[] = [
     descriptionEn: 'Energized Shree Yantra for wealth and prosperity',
     price: 2500,
     originalPrice: 3500,
-    emoji: '\u2728',
+    iconName: 'sparkles',
     tag: 'Popular',
     tagEn: 'Popular',
   },
@@ -206,19 +207,19 @@ const STORE_PRODUCTS: StoreProduct[] = [
     descriptionEn: 'Complete kit for Mangal dosha remedy',
     price: 999,
     originalPrice: 1499,
-    emoji: '\uD83E\uDE94',
+    iconName: 'diya',
     tag: 'Kit',
     tagEn: 'Kit',
   },
 ];
 
 const STORE_CATEGORIES: StoreCategory[] = [
-  { id: 'sc1', name: '\u0930\u0924\u094D\u0928 (Gemstones)', nameEn: 'Gemstones', emoji: '\uD83D\uDC8E' },
-  { id: 'sc2', name: '\u0930\u0941\u0926\u094D\u0930\u093E\u0915\u094D\u0937', nameEn: 'Rudraksha', emoji: '\uD83D\uDCFF' },
-  { id: 'sc3', name: '\u092F\u0902\u0924\u094D\u0930', nameEn: 'Yantras', emoji: '\u2728' },
-  { id: 'sc4', name: 'Remedy Kits', nameEn: 'Remedy Kits', emoji: '\uD83E\uDE94' },
-  { id: 'sc5', name: '\u092A\u0942\u091C\u093E Items', nameEn: 'Puja Items', emoji: '\uD83D\uDED5' },
-  { id: 'sc6', name: '\u0926\u093E\u0928 \u0938\u0947\u0935\u093E', nameEn: 'Daan Seva', emoji: '\uD83E\uDD32' },
+  { id: 'sc1', name: '\u0930\u0924\u094D\u0928 (Gemstones)', nameEn: 'Gemstones', iconName: 'gemstone' },
+  { id: 'sc2', name: '\u0930\u0941\u0926\u094D\u0930\u093E\u0915\u094D\u0937', nameEn: 'Rudraksha', iconName: 'mala' },
+  { id: 'sc3', name: '\u092F\u0902\u0924\u094D\u0930', nameEn: 'Yantras', iconName: 'sparkles' },
+  { id: 'sc4', name: 'Remedy Kits', nameEn: 'Remedy Kits', iconName: 'diya' },
+  { id: 'sc5', name: '\u092A\u0942\u091C\u093E Items', nameEn: 'Puja Items', iconName: 'temple-silhouette' },
+  { id: 'sc6', name: '\u0926\u093E\u0928 \u0938\u0947\u0935\u093E', nameEn: 'Daan Seva', iconName: 'namaste-hands' },
 ];
 
 const POPULAR_PRODUCTS: StoreProduct[] = [
@@ -230,7 +231,7 @@ const POPULAR_PRODUCTS: StoreProduct[] = [
     descriptionEn: 'All essential items for peace of 9 planets',
     price: 3999,
     originalPrice: 5999,
-    emoji: '\uD83C\uDF1F',
+    iconName: 'star-rating',
     tag: 'Top Rated',
     tagEn: 'Top Rated',
   },
@@ -242,7 +243,7 @@ const POPULAR_PRODUCTS: StoreProduct[] = [
     descriptionEn: 'Certified Moonga to strengthen Mars in your chart',
     price: 3500,
     originalPrice: 4500,
-    emoji: '\uD83D\uDD34',
+    iconName: 'gemstone',
     tag: 'Trending',
     tagEn: 'Trending',
   },
@@ -260,7 +261,7 @@ const MOCK_PANDITS: PanditCard[] = [
     languages: '\u0939\u093F\u0902\u0926\u0940, \u0938\u0902\u0938\u094D\u0915\u0943\u0924, English',
     languagesEn: 'Hindi, Sanskrit, English',
     price: 1100,
-    emoji: '\uD83E\uDDD4',
+    iconName: 'user-profile',
   },
   {
     id: 'p2',
@@ -273,7 +274,7 @@ const MOCK_PANDITS: PanditCard[] = [
     languages: '\u0939\u093F\u0902\u0926\u0940, English',
     languagesEn: 'Hindi, English',
     price: 800,
-    emoji: '\uD83E\uDDD4',
+    iconName: 'user-profile',
   },
   {
     id: 'p3',
@@ -286,7 +287,7 @@ const MOCK_PANDITS: PanditCard[] = [
     languages: '\u0939\u093F\u0902\u0926\u0940, \u092E\u0930\u093E\u0920\u0940',
     languagesEn: 'Hindi, Marathi',
     price: 900,
-    emoji: '\uD83E\uDDD4',
+    iconName: 'user-profile',
   },
 ];
 
@@ -355,7 +356,8 @@ export default function ExplorePage() {
               {/* Book a Puja */}
               <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>
-                  {language === 'hi' ? '\uD83E\uDE94 \u092A\u0942\u091C\u093E Book \u0915\u0930\u0947\u0902' : '\uD83E\uDE94 Book a Puja'}
+                  <Icon name="diya" size={20} color="var(--color-accent-gold)" />{' '}
+                  {language === 'hi' ? '\u092A\u0942\u091C\u093E Book \u0915\u0930\u0947\u0902' : 'Book a Puja'}
                 </h2>
                 <div className={styles.pujaScroll}>
                   {FEATURED_PUJAS.map((puja) => (
@@ -367,7 +369,7 @@ export default function ExplorePage() {
                       tabIndex={0}
                     >
                       <div className={styles.pujaCardTop}>
-                        <span className={styles.pujaEmoji}>{puja.emoji}</span>
+                        <Icon name={puja.iconName} size={24} color="var(--color-accent-gold)" />
                         <span className={styles.pujaRating}>{puja.rating}</span>
                       </div>
                       <h3 className={styles.pujaCardName}>
@@ -387,13 +389,14 @@ export default function ExplorePage() {
               {/* Trending Articles */}
               <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>
-                  {language === 'hi' ? '🔥 चर्चित लेख' : '🔥 Trending Articles'}
+                  <Icon name="fire" size={20} color="var(--color-accent-gold)" />{' '}
+                  {language === 'hi' ? 'चर्चित लेख' : 'Trending Articles'}
                 </h2>
                 <div className={styles.articleScroll}>
                   {FEATURED_ARTICLES.map((article) => (
                     <div key={article.id} className={styles.articleCard}>
                       <div className={styles.articleCardTop}>
-                        <span className={styles.articleEmoji}>{article.emoji}</span>
+                        <Icon name={article.iconName} size={20} color="var(--color-accent-gold)" />
                         <span className={styles.articleTag}>
                           {language === 'hi' ? article.tag : article.tagEn}
                         </span>
@@ -412,12 +415,13 @@ export default function ExplorePage() {
               {/* Categories */}
               <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>
-                  {language === 'hi' ? '📚 श्रेणियाँ' : '📚 Categories'}
+                  <Icon name="book-open" size={20} color="var(--color-accent-gold)" />{' '}
+                  {language === 'hi' ? 'श्रेणियाँ' : 'Categories'}
                 </h2>
                 <div className={styles.categoryGrid}>
                   {CATEGORIES.map((cat) => (
                     <div key={cat.id} className={styles.categoryCard}>
-                      <span className={styles.categoryEmoji}>{cat.emoji}</span>
+                      <Icon name={cat.iconName} size={20} color="var(--color-accent-gold)" />
                       <span className={styles.categoryName}>
                         {language === 'hi' ? cat.name : cat.nameEn}
                       </span>
@@ -432,35 +436,36 @@ export default function ExplorePage() {
               {/* Quick Actions */}
               <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>
-                  {language === 'hi' ? '⚡ त्वरित कार्य' : '⚡ Quick Actions'}
+                  <Icon name="sparkles" size={20} color="var(--color-accent-gold)" />{' '}
+                  {language === 'hi' ? 'त्वरित कार्य' : 'Quick Actions'}
                 </h2>
                 <div className={styles.quickActions}>
                   <button className={styles.quickAction} onClick={() => router.push('/chat?problem=get_kundli')}>
-                    <span className={styles.quickActionIcon}>{'\uD83D\uDCD6'}</span>
+                    <span className={styles.quickActionIcon}><Icon name="book-open" size={20} color="var(--color-accent-gold)" /></span>
                     <span className={styles.quickActionText}>
                       {language === 'hi' ? 'Free \u0915\u0941\u0902\u0921\u0932\u0940 \u092C\u0928\u0935\u093E\u090F\u0902' : 'Free Kundli Analysis'}
                     </span>
                   </button>
                   <button className={styles.quickAction} onClick={() => router.push('/home')}>
-                    <span className={styles.quickActionIcon}>{'\uD83D\uDCAC'}</span>
+                    <span className={styles.quickActionIcon}><Icon name="chat-bubble" size={20} color="var(--color-accent-gold)" /></span>
                     <span className={styles.quickActionText}>
                       {language === 'hi' ? 'AI \u0938\u0947 \u092C\u093E\u0924 \u0915\u0930\u0947\u0902' : 'Talk to AI'}
                     </span>
                   </button>
                   <button className={styles.quickAction} onClick={() => router.push('/seva')}>
-                    <span className={styles.quickActionIcon}>{'\uD83E\uDD32'}</span>
+                    <span className={styles.quickActionIcon}><Icon name="namaste-hands" size={20} color="var(--color-accent-gold)" /></span>
                     <span className={styles.quickActionText}>
                       {language === 'hi' ? '\u0926\u093E\u0928 \u0938\u0947\u0935\u093E' : 'Daan Seva'}
                     </span>
                   </button>
                   <button className={styles.quickAction} onClick={() => router.push('/muhurta')}>
-                    <span className={styles.quickActionIcon}>{'\uD83D\uDCC5'}</span>
+                    <span className={styles.quickActionIcon}><Icon name="calendar" size={20} color="var(--color-accent-gold)" /></span>
                     <span className={styles.quickActionText}>
                       {language === 'hi' ? '\u0936\u0941\u092D \u092E\u0941\u0939\u0942\u0930\u094D\u0924' : 'Muhurta Planner'}
                     </span>
                   </button>
                   <button className={styles.quickAction} onClick={() => router.push('/subscriptions')}>
-                    <span className={styles.quickActionIcon}>{'\uD83C\uDF1F'}</span>
+                    <span className={styles.quickActionIcon}><Icon name="star-rating" size={20} color="var(--color-accent-gold)" /></span>
                     <span className={styles.quickActionText}>
                       {language === 'hi' ? '\u0938\u092C\u094D\u0938\u0915\u094D\u0930\u093F\u092A\u094D\u0936\u0928' : 'Subscriptions'}
                     </span>
@@ -475,7 +480,8 @@ export default function ExplorePage() {
             <>
               <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>
-                  {language === 'hi' ? '\uD83E\uDE94 Featured \u092A\u0942\u091C\u093E\u090F\u0902' : '\uD83E\uDE94 Featured Pujas'}
+                  <Icon name="diya" size={20} color="var(--color-accent-gold)" />{' '}
+                  {language === 'hi' ? 'Featured \u092A\u0942\u091C\u093E\u090F\u0902' : 'Featured Pujas'}
                 </h2>
                 <div className={styles.pujaGrid}>
                   {FEATURED_PUJAS.map((puja) => (
@@ -487,7 +493,7 @@ export default function ExplorePage() {
                       tabIndex={0}
                     >
                       <div className={styles.pujaCardTop}>
-                        <span className={styles.pujaEmoji}>{puja.emoji}</span>
+                        <Icon name={puja.iconName} size={24} color="var(--color-accent-gold)" />
                         <span className={styles.pujaRating}>{puja.rating}</span>
                       </div>
                       <h3 className={styles.pujaCardName}>
@@ -510,19 +516,20 @@ export default function ExplorePage() {
               {/* Puja Categories */}
               <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>
-                  {language === 'hi' ? '\uD83D\uDED5 \u092A\u0942\u091C\u093E Categories' : '\uD83D\uDED5 Puja Categories'}
+                  <Icon name="temple-silhouette" size={20} color="var(--color-accent-gold)" />{' '}
+                  {language === 'hi' ? '\u092A\u0942\u091C\u093E Categories' : 'Puja Categories'}
                 </h2>
                 <div className={styles.categoryGrid}>
                   {[
-                    { id: 'pc1', name: '\u0926\u094B\u0937 \u0928\u093F\u0935\u093E\u0930\u0923', nameEn: 'Dosha Nivaran', emoji: '\uD83D\uDD2E', count: 8 },
-                    { id: 'pc2', name: '\u0917\u094D\u0930\u0939 \u0936\u093E\u0902\u0924\u093F', nameEn: 'Graha Shanti', emoji: '\u2B50', count: 9 },
-                    { id: 'pc3', name: '\u0936\u093E\u0926\u0940 \u092A\u0942\u091C\u093E', nameEn: 'Marriage Puja', emoji: '\uD83D\uDC8D', count: 5 },
-                    { id: 'pc4', name: '\u0915\u0930\u093F\u092F\u0930 \u092A\u0942\u091C\u093E', nameEn: 'Career Puja', emoji: '\uD83D\uDCBC', count: 6 },
-                    { id: 'pc5', name: '\u0938\u094D\u0935\u093E\u0938\u094D\u0925\u094D\u092F \u092A\u0942\u091C\u093E', nameEn: 'Health Puja', emoji: '\uD83C\uDFE5', count: 4 },
-                    { id: 'pc6', name: '\u0927\u0928 \u092A\u094D\u0930\u093E\u092A\u094D\u0924\u093F', nameEn: 'Wealth Puja', emoji: '\uD83D\uDCB0', count: 7 },
+                    { id: 'pc1', name: '\u0926\u094B\u0937 \u0928\u093F\u0935\u093E\u0930\u0923', nameEn: 'Dosha Nivaran', iconName: 'sparkles', count: 8 },
+                    { id: 'pc2', name: '\u0917\u094D\u0930\u0939 \u0936\u093E\u0902\u0924\u093F', nameEn: 'Graha Shanti', iconName: 'star-rating', count: 9 },
+                    { id: 'pc3', name: '\u0936\u093E\u0926\u0940 \u092A\u0942\u091C\u093E', nameEn: 'Marriage Puja', iconName: 'marriage', count: 5 },
+                    { id: 'pc4', name: '\u0915\u0930\u093F\u092F\u0930 \u092A\u0942\u091C\u093E', nameEn: 'Career Puja', iconName: 'briefcase', count: 6 },
+                    { id: 'pc5', name: '\u0938\u094D\u0935\u093E\u0938\u094D\u0925\u094D\u092F \u092A\u0942\u091C\u093E', nameEn: 'Health Puja', iconName: 'heart-pulse', count: 4 },
+                    { id: 'pc6', name: '\u0927\u0928 \u092A\u094D\u0930\u093E\u092A\u094D\u0924\u093F', nameEn: 'Wealth Puja', iconName: 'coin-stack', count: 7 },
                   ].map((cat) => (
                     <div key={cat.id} className={styles.categoryCard}>
-                      <span className={styles.categoryEmoji}>{cat.emoji}</span>
+                      <Icon name={cat.iconName} size={20} color="var(--color-accent-gold)" />
                       <span className={styles.categoryName}>
                         {language === 'hi' ? cat.name : cat.nameEn}
                       </span>
@@ -541,14 +548,15 @@ export default function ExplorePage() {
               <section className={styles.section}>
                 <div className={styles.sectionHeader}>
                   <h2 className={styles.sectionTitle}>
-                    {language === 'hi' ? '\u2728 \u0906\u092A\u0915\u0940 \u0915\u0941\u0902\u0921\u0932\u0940 \u0915\u0947 \u0932\u093F\u090F Recommended' : '\u2728 Recommended for Your Chart'}
+                    <Icon name="sparkles" size={20} color="var(--color-accent-gold)" />{' '}
+                    {language === 'hi' ? '\u0906\u092A\u0915\u0940 \u0915\u0941\u0902\u0921\u0932\u0940 \u0915\u0947 \u0932\u093F\u090F Recommended' : 'Recommended for Your Chart'}
                   </h2>
                 </div>
                 <div className={styles.productScroll}>
                   {STORE_PRODUCTS.map((product) => (
                     <div key={product.id} className={styles.productCard}>
                       <div className={styles.productCardTop}>
-                        <span className={styles.productEmoji}>{product.emoji}</span>
+                        <Icon name={product.iconName} size={24} color="var(--color-accent-gold)" />
                         <span className={styles.productTag}>
                           {language === 'hi' ? product.tag : product.tagEn}
                         </span>
@@ -571,12 +579,13 @@ export default function ExplorePage() {
               {/* Category Chips */}
               <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>
-                  {language === 'hi' ? '🛒 श्रेणियाँ' : '🛒 Categories'}
+                  <Icon name="cart" size={20} color="var(--color-accent-gold)" />{' '}
+                  {language === 'hi' ? 'श्रेणियाँ' : 'Categories'}
                 </h2>
                 <div className={styles.storeCategoryChips}>
                   {STORE_CATEGORIES.map((cat) => (
                     <button key={cat.id} className={styles.storeCategoryChip} onClick={() => router.push('/store')}>
-                      <span className={styles.storeCategoryEmoji}>{cat.emoji}</span>
+                      <Icon name={cat.iconName} size={20} color="var(--color-accent-gold)" />
                       <span className={styles.storeCategoryLabel}>
                         {language === 'hi' ? cat.name : cat.nameEn}
                       </span>
@@ -588,13 +597,14 @@ export default function ExplorePage() {
               {/* Popular This Week */}
               <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>
-                  {language === 'hi' ? '\uD83D\uDD25 \u0907\u0938 \u0939\u092B\u094D\u0924\u0947 Popular' : '\uD83D\uDD25 Popular This Week'}
+                  <Icon name="fire" size={20} color="var(--color-accent-gold)" />{' '}
+                  {language === 'hi' ? '\u0907\u0938 \u0939\u092B\u094D\u0924\u0947 Popular' : 'Popular This Week'}
                 </h2>
                 <div className={styles.popularProducts}>
                   {POPULAR_PRODUCTS.map((product) => (
                     <div key={product.id} className={styles.popularCard}>
                       <div className={styles.popularCardLeft}>
-                        <span className={styles.popularEmoji}>{product.emoji}</span>
+                        <Icon name={product.iconName} size={28} color="var(--color-accent-gold)" />
                       </div>
                       <div className={styles.popularCardRight}>
                         <span className={styles.popularTag}>
@@ -628,13 +638,14 @@ export default function ExplorePage() {
             <>
               <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>
-                  {language === 'hi' ? '\uD83E\uDDD4 \u0935\u0947\u0930\u093F\u092B\u093E\u0907\u0921 \u092A\u0902\u0921\u093F\u0924' : '\uD83E\uDDD4 Verified Pandits'}
+                  <Icon name="user-profile" size={20} color="var(--color-accent-gold)" />{' '}
+                  {language === 'hi' ? '\u0935\u0947\u0930\u093F\u092B\u093E\u0907\u0921 \u092A\u0902\u0921\u093F\u0924' : 'Verified Pandits'}
                 </h2>
                 <div className={styles.panditList}>
                   {MOCK_PANDITS.map((pandit) => (
                     <div key={pandit.id} className={styles.panditCard}>
                       <div className={styles.panditCardHeader}>
-                        <span className={styles.panditAvatar}>{pandit.emoji}</span>
+                        <Icon name={pandit.iconName} size={28} color="var(--color-accent-gold)" />
                         <div className={styles.panditInfo}>
                           <h3 className={styles.panditName}>
                             {language === 'hi' ? pandit.name : pandit.nameEn}

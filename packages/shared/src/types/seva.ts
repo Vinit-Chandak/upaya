@@ -53,11 +53,11 @@ export const SEVA_TYPES: Array<{
   key: SevaType;
   label: string;
   labelHi: string;
-  emoji: string;
+  iconName: string;
   priceRange: string;
 }> = [
-  { key: 'gau_seva', label: 'Gau Seva', labelHi: 'गऊ सेवा', emoji: '🐄', priceRange: '₹151-501' },
-  { key: 'brahman_bhoj', label: 'Brahman Bhoj', labelHi: 'ब्राह्मण भोज', emoji: '🙏', priceRange: '₹251-1,100' },
-  { key: 'vastra_daan', label: 'Vastra Daan', labelHi: 'वस्त्र दान', emoji: '👕', priceRange: '₹201-501' },
-  { key: 'anna_daan', label: 'Anna Daan', labelHi: 'अन्न दान', emoji: '🍚', priceRange: '₹151-351' },
+  { key: 'gau_seva', label: 'Gau Seva', labelHi: 'गऊ सेवा', iconName: 'heart-pulse', priceRange: '₹151-501' },
+  { key: 'brahman_bhoj', label: 'Brahman Bhoj', labelHi: 'ब्राह्मण भोज', iconName: 'namaste-hands', priceRange: '₹251-1,100' },
+  { key: 'vastra_daan', label: 'Vastra Daan', labelHi: 'वस्त्र दान', iconName: 'gift', priceRange: '₹201-501' },
+  { key: 'anna_daan', label: 'Anna Daan', labelHi: 'अन्न दान', iconName: 'diya', priceRange: '₹151-351' },
 ];

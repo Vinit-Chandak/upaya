@@ -39,15 +39,15 @@ export const MUHURTA_CATEGORIES: Array<{
   key: MuhurtaCategory;
   label: string;
   labelHi: string;
-  emoji: string;
+  iconName: string;
 }> = [
-  { key: 'marriage', label: 'Marriage / Wedding', labelHi: 'शादी / विवाह', emoji: '💍' },
-  { key: 'business', label: 'Business / Deal', labelHi: 'बिजनेस / सौदा', emoji: '💼' },
-  { key: 'property', label: 'Property / Home', labelHi: 'प्रॉपर्टी / घर', emoji: '🏠' },
-  { key: 'travel', label: 'Travel / Journey', labelHi: 'यात्रा', emoji: '✈️' },
-  { key: 'education', label: 'Education / Exam', labelHi: 'शिक्षा / परीक्षा', emoji: '📚' },
-  { key: 'ceremony', label: 'Religious Ceremony', labelHi: 'धार्मिक अनुष्ठान', emoji: '🪔' },
-  { key: 'other', label: 'Other', labelHi: 'अन्य', emoji: '📅' },
+  { key: 'marriage', label: 'Marriage / Wedding', labelHi: 'शादी / विवाह', iconName: 'marriage' },
+  { key: 'business', label: 'Business / Deal', labelHi: 'बिजनेस / सौदा', iconName: 'briefcase' },
+  { key: 'property', label: 'Property / Home', labelHi: 'प्रॉपर्टी / घर', iconName: 'house' },
+  { key: 'travel', label: 'Travel / Journey', labelHi: 'यात्रा', iconName: 'airplane' },
+  { key: 'education', label: 'Education / Exam', labelHi: 'शिक्षा / परीक्षा', iconName: 'book-open' },
+  { key: 'ceremony', label: 'Religious Ceremony', labelHi: 'धार्मिक अनुष्ठान', iconName: 'diya' },
+  { key: 'other', label: 'Other', labelHi: 'अन्य', iconName: 'calendar' },
 ];
 
 export const MUHURTA_PRICING = {

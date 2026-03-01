@@ -33,12 +33,6 @@
   animation: splashPulse 2s ease-in-out infinite;
 }
 
-.splashSymbol {
-  font-size: var(--text-3xl);
-  color: var(--color-accent-gold);
-  animation: splashGlow 2s ease-in-out infinite alternate;
-}
-
 .splashLogoText {
   font-size: var(--text-4xl);
   font-weight: 700;
@@ -55,51 +49,13 @@
   animation: splashSlideUp 0.8s ease 0.3s both;
 }
 
-.splashTaglineEn {
-  font-size: var(--text-sm);
-  font-weight: 400;
-  color: var(--color-neutral-white);
-  opacity: 0.7;
-  animation: splashSlideUp 0.8s ease 0.5s both;
-}
-
-/* Floating particles */
-.splashParticles {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.splashParticle {
-  position: absolute;
-  bottom: -10%;
-  width: clamp(4px, 0.5vw, 8px);
-  height: clamp(4px, 0.5vw, 8px);
-  border-radius: 50%;
-  background: var(--color-accent-gold);
-  opacity: 0.4;
-  animation: splashFloat 3s ease-in-out infinite;
-}
-
 /* Animations */
 @keyframes splashPulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.03); }
 }
 
-@keyframes splashGlow {
-  0% { opacity: 0.6; transform: scale(0.95); }
-  100% { opacity: 1; transform: scale(1.05); }
-}
-
 @keyframes splashSlideUp {
   from { opacity: 0; transform: translateY(1rem); }
   to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes splashFloat {
-  0% { transform: translateY(0); opacity: 0; }
-  10% { opacity: 0.4; }
-  90% { opacity: 0.4; }
-  100% { transform: translateY(-100vh); opacity: 0; }
 }

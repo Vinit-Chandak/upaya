@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  background: var(--color-neutral-off-white);
+  background: var(--color-page-bg);
 }
 
 .mainContent {
@@ -86,7 +86,7 @@
 
 .progressBarInner {
   height: 100%;
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-full);
   transition: width 0.5s ease;
 }
@@ -99,7 +99,7 @@
 }
 
 .statCard {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
   padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem);
   display: flex;
@@ -123,7 +123,7 @@
 
 .statLabel {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   font-weight: 500;
   text-align: center;
 }
@@ -141,7 +141,7 @@
   gap: 0.375rem;
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
 }
 
 .sectionBadge {
@@ -165,7 +165,7 @@
 }
 
 .remedyCard {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
   display: flex;
@@ -207,7 +207,7 @@
 .remedyName {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .mantraPreview {
@@ -219,7 +219,7 @@
 
 .remedyFrequency {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .streakBadge {
@@ -244,7 +244,7 @@
 .remedyProgressBar {
   flex: 1;
   height: clamp(0.25rem, 0.2rem + 0.25vw, 0.375rem);
-  background: var(--color-neutral-grey-100);
+  background: var(--color-border-light);
   border-radius: var(--radius-full);
   overflow: hidden;
 }
@@ -262,7 +262,7 @@
 
 .remedyProgressText {
   font-size: clamp(0.625rem, 0.55rem + 0.375vw, 0.75rem);
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
   font-weight: 500;
   flex-shrink: 0;
 }
@@ -356,7 +356,7 @@
 }
 
 .pujaCard {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
   box-shadow: var(--shadow-sm);
@@ -384,12 +384,12 @@
 .pujaName {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .pujaLocation {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .pujaStatusLabel {
@@ -417,8 +417,8 @@
 
 .prasadStatus {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-600);
-  background: var(--color-neutral-grey-50);
+  color: var(--color-text-secondary);
+  background: var(--color-input-bg);
   padding: 0.25rem 0.5rem;
   border-radius: var(--radius-sm);
   width: fit-content;
@@ -443,7 +443,7 @@
 
 /* --- Weekly Stats Card --- */
 .weeklyCard {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
   box-shadow: var(--shadow-sm);
@@ -468,7 +468,7 @@
 
 .weekDayLabel {
   font-size: clamp(0.5625rem, 0.5rem + 0.3125vw, 0.6875rem);
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
   font-weight: 500;
 }
 
@@ -476,7 +476,7 @@
   width: clamp(1.5rem, 1.25rem + 1.25vw, 2rem);
   height: clamp(1.5rem, 1.25rem + 1.25vw, 2rem);
   border-radius: 50%;
-  background: var(--color-neutral-grey-100);
+  background: var(--color-border-light);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -493,7 +493,7 @@
 
 .weekLabel {
   font-size: clamp(0.5625rem, 0.5rem + 0.3125vw, 0.6875rem);
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
   font-weight: 500;
   flex-shrink: 0;
   min-width: clamp(2.5rem, 2rem + 2.5vw, 3.5rem);
@@ -505,13 +505,13 @@
   flex-wrap: wrap;
   gap: clamp(0.75rem, 0.5rem + 1.25vw, 1.25rem);
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
-  border-top: 1px solid var(--color-neutral-grey-100);
+  color: var(--color-text-secondary);
+  border-top: 1px solid var(--color-border-light);
   padding-top: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
 }
 
 .weeklyStatsRow strong {
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 /* --- Empty State --- */
@@ -531,12 +531,12 @@
 .emptyTitle {
   font-size: var(--text-lg);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .emptyText {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   line-height: 1.6;
   max-width: 20rem;
 }

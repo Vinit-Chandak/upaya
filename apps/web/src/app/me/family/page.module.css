@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  background: var(--color-neutral-white);
+  background: var(--color-page-bg);
 }
 
 .mainContent {
@@ -33,14 +33,14 @@
 .headerTitle {
   font-size: var(--text-2xl);
   font-weight: 700;
-  color: var(--color-secondary-maroon);
+  color: var(--color-accent-gold);
   font-family: var(--font-devanagari);
   line-height: 1.35;
 }
 
 .headerSub {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   margin-top: var(--space-inline-gap);
 }
 
@@ -50,7 +50,7 @@
 .sectionTitle {
   font-size: var(--text-lg);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 /* ============================================
@@ -67,8 +67,8 @@
   display: flex;
   align-items: center;
   gap: var(--space-inline-gap);
-  background: var(--color-neutral-white);
-  border: 1px solid var(--color-neutral-grey-200);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
   box-shadow: var(--shadow-card);
@@ -114,7 +114,7 @@
 .memberName {
   font-size: var(--text-base);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -128,7 +128,7 @@
 
 .memberDob {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 /* ============================================
@@ -157,8 +157,8 @@
 .emptyState {
   text-align: center;
   padding: var(--space-section-gap) var(--space-card-padding);
-  background: var(--color-neutral-grey-50);
-  border: 1px dashed var(--color-neutral-grey-300);
+  background: var(--color-input-bg);
+  border: 1px dashed var(--color-border);
   border-radius: var(--radius-lg);
 }
 
@@ -171,13 +171,13 @@
 .emptyTitle {
   font-size: var(--text-lg);
   font-weight: 600;
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
   margin-bottom: 0.25rem;
 }
 
 .emptyText {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   margin-bottom: var(--space-component-gap);
 }
 
@@ -253,8 +253,8 @@
    ============================================ */
 .formSection {
   margin-top: var(--space-section-gap);
-  background: var(--color-neutral-white);
-  border: 1px solid var(--color-neutral-grey-200);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
   box-shadow: var(--shadow-card);
@@ -281,7 +281,7 @@
   height: 2rem;
   border-radius: 50%;
   font-size: var(--text-base);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   background: none;
   border: none;
   cursor: pointer;
@@ -289,7 +289,7 @@
 }
 
 .formCloseBtn:hover {
-  background: var(--color-neutral-grey-100);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .form {
@@ -307,12 +307,12 @@
 .formLabel {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
 }
 
 .formOptional {
   font-weight: 400;
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
   margin-left: 0.25rem;
 }
 
@@ -321,9 +321,9 @@
   width: 100%;
   padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) clamp(0.75rem, 0.5rem + 1.25vw, 1rem);
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-800);
-  background: var(--color-neutral-grey-50);
-  border: 1.5px solid var(--color-neutral-grey-200);
+  color: var(--color-text-primary);
+  background: var(--color-input-bg);
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-md);
   outline: none;
   transition:
@@ -338,7 +338,7 @@
 }
 
 .formInput::placeholder {
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
 }
 
 .formSelect {
@@ -369,7 +369,7 @@
 
 .checkboxText {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 /* ============================================

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import TopBar from '@/components/TopBar';
 import BottomTabBar from '@/components/BottomTabBar';
+import { Icon } from '@/components/icons';
 import styles from './page.module.css';
 import type { BookingStatus } from '@upaya/shared';
 
@@ -113,7 +114,7 @@ export default function OrdersListPage() {
           {/* Orders list */}
           {filteredOrders.length === 0 ? (
             <div className={styles.emptyState}>
-              <span className={styles.emptyIcon}>📋</span>
+              <Icon name="clipboard" size={48} color="var(--color-accent-gold)" />
               <p className={styles.emptyText}>
                 {language === 'hi' ? 'अभी कोई orders नहीं' : 'No orders yet'}
               </p>
@@ -131,7 +132,7 @@ export default function OrdersListPage() {
                 >
                   <div className={styles.orderCardHeader}>
                     <div className={styles.orderCardLeft}>
-                      <span className={styles.orderEmoji}>🪔</span>
+                      <Icon name="diya" size={24} color="var(--color-accent-gold)" />
                       <div className={styles.orderInfo}>
                         <span className={styles.orderPujaName}>
                           {language === 'hi' ? order.pujaNameHi : order.pujaName}

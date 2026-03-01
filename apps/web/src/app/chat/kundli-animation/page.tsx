@@ -2,6 +2,7 @@
 
 import { Suspense, useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Icon } from '@/components/icons';
 import styles from './page.module.css';
 
 // ---- Types ----
@@ -49,16 +50,28 @@ function generateStars(count: number): { top: string; left: string; size: number
 
 // ---- Planet definitions ----
 
+const PLANET_ICON_MAP: Record<string, string> = {
+  Sun: 'sun-full',
+  Moon: 'moon-crescent',
+  Mars: 'trident',
+  Mercury: 'mercury-glyph',
+  Jupiter: 'sparkles',
+  Venus: 'venus-glyph',
+  Saturn: 'hourglass-clock',
+  Rahu: 'sparkles',
+  Ketu: 'sparkles',
+};
+
 const PLANETS: PlanetData[] = [
-  { symbol: '☀️', name: 'Sun', house: 1, revealed: false },
-  { symbol: '🌙', name: 'Moon', house: 4, revealed: false },
-  { symbol: '♂️', name: 'Mars', house: 7, revealed: false },
-  { symbol: '☿', name: 'Mercury', house: 3, revealed: false },
-  { symbol: '♃', name: 'Jupiter', house: 2, revealed: false },
-  { symbol: '♀', name: 'Venus', house: 6, revealed: false },
-  { symbol: '♄', name: 'Saturn', house: 7, revealed: false },
-  { symbol: '☊', name: 'Rahu', house: 12, revealed: false },
-  { symbol: '☋', name: 'Ketu', house: 6, revealed: false },
+  { symbol: 'Su', name: 'Sun', house: 1, revealed: false },
+  { symbol: 'Mo', name: 'Moon', house: 4, revealed: false },
+  { symbol: 'Ma', name: 'Mars', house: 7, revealed: false },
+  { symbol: 'Me', name: 'Mercury', house: 3, revealed: false },
+  { symbol: 'Ju', name: 'Jupiter', house: 2, revealed: false },
+  { symbol: 'Ve', name: 'Venus', house: 6, revealed: false },
+  { symbol: 'Sa', name: 'Saturn', house: 7, revealed: false },
+  { symbol: 'Ra', name: 'Rahu', house: 12, revealed: false },
+  { symbol: 'Ke', name: 'Ketu', house: 6, revealed: false },
 ];
 
 // ---- Component ----
@@ -276,17 +289,17 @@ function KundliAnimationContent() {
         {/* Birth detail summary chips */}
         <div className={styles.birthSummary}>
           <span className={styles.birthSummaryItem}>
-            <span className={styles.birthSummaryIcon}>📅</span>
+            <span className={styles.birthSummaryIcon}><Icon name="calendar" size={14} color="var(--color-accent-gold)" /></span>
             {dob}
           </span>
           {tob && (
             <span className={styles.birthSummaryItem}>
-              <span className={styles.birthSummaryIcon}>🕐</span>
+              <span className={styles.birthSummaryIcon}><Icon name="clock" size={14} color="var(--color-accent-gold)" /></span>
               {tob}
             </span>
           )}
           <span className={styles.birthSummaryItem}>
-            <span className={styles.birthSummaryIcon}>📍</span>
+            <span className={styles.birthSummaryIcon}><Icon name="location-pin" size={14} color="var(--color-accent-gold)" /></span>
             {place}
           </span>
         </div>
@@ -298,7 +311,7 @@ function KundliAnimationContent() {
           <div className={styles.wheelInner} />
           <div className={styles.wheelCenter}>
             <span className={styles.wheelCenterSymbol}>
-              {phase === 4 ? '✨' : '🙏'}
+              {phase === 4 ? <Icon name="sparkles" size={24} color="var(--color-accent-gold)" /> : <Icon name="namaste-hands" size={24} color="var(--color-accent-gold)" />}
             </span>
           </div>
 
@@ -316,7 +329,7 @@ function KundliAnimationContent() {
                   animationDelay: `${i * 0.1}s`,
                 }}
               >
-                {planet.revealed ? planet.symbol : '?'}
+                {planet.revealed ? <Icon name={PLANET_ICON_MAP[planet.name] || 'sparkles'} size={16} color="var(--color-accent-gold)" /> : '?'}
               </div>
             );
           })}
@@ -372,7 +385,7 @@ function KundliAnimationContent() {
         {/* Phase 4: Complete */}
         {phase === 4 && (
           <div className={styles.completeSection}>
-            <span className={styles.completeIcon}>✨</span>
+            <span className={styles.completeIcon}><Icon name="sparkles" size={32} color="var(--color-accent-gold)" /></span>
             <h2 className={styles.completeTitle}>
               {lang === 'hi' ? 'Analysis Complete' : 'Analysis Complete'}
             </h2>

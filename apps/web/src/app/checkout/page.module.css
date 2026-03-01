@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  background: var(--color-neutral-off-white);
+  background: var(--color-page-bg);
 }
 
 .mainContent {
@@ -37,7 +37,7 @@
 .sectionTitle {
   font-size: var(--text-base);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 /* ============================================
@@ -53,8 +53,8 @@
   display: flex;
   align-items: flex-start;
   gap: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
-  background: var(--color-neutral-white);
-  border: 2px solid var(--color-neutral-grey-200);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
   cursor: pointer;
@@ -70,7 +70,7 @@
 .addressCardSelected {
   border-color: var(--color-primary-saffron);
   box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
-  background: var(--color-neutral-cream);
+  background: var(--color-surface);
 }
 
 .addressRadio {
@@ -99,7 +99,7 @@
 .addressName {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .defaultBadge {
@@ -113,13 +113,13 @@
 
 .addressLine {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   line-height: 1.4;
 }
 
 .addressPhone {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   margin-top: 0.125rem;
 }
 
@@ -133,7 +133,7 @@
   font-size: var(--text-sm);
   font-weight: 500;
   color: var(--color-primary-saffron);
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border: 1.5px dashed var(--color-primary-saffron-light);
   border-radius: var(--radius-lg);
   cursor: pointer;
@@ -156,7 +156,7 @@
   display: flex;
   flex-direction: column;
   gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
   box-shadow: var(--shadow-card);
@@ -168,7 +168,7 @@
   justify-content: space-between;
   gap: var(--space-inline-gap);
   padding: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem) 0;
-  border-bottom: 1px solid var(--color-neutral-grey-100);
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .orderItem:last-child {
@@ -197,7 +197,7 @@
 .orderItemName {
   font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
@@ -206,13 +206,13 @@
 
 .orderItemQty {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
 }
 
 .orderItemPrice {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   flex-shrink: 0;
 }
 
@@ -220,7 +220,7 @@
    Total Section
    ============================================ */
 .totalSection {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
   box-shadow: var(--shadow-card);
@@ -237,13 +237,13 @@
 
 .totalLabel {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
 }
 
 .totalValue {
   font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .totalValueFree {
@@ -255,20 +255,20 @@
 .totalDivider {
   width: 100%;
   height: 1px;
-  background: var(--color-neutral-grey-200);
+  background: var(--color-border);
   margin: clamp(0.25rem, 0.125rem + 0.625vw, 0.375rem) 0;
 }
 
 .totalLabelFinal {
   font-size: var(--text-base);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .totalValueFinal {
   font-size: var(--text-lg);
   font-weight: 700;
-  color: var(--color-neutral-grey-900);
+  color: var(--color-text-primary);
 }
 
 /* ============================================
@@ -336,7 +336,7 @@
   align-items: center;
   gap: 0.25rem;
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
 }
 
 .secureNote svg {
@@ -389,7 +389,7 @@
 
 .successText {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   line-height: 1.6;
   max-width: 24rem;
 }
@@ -397,8 +397,8 @@
 .successOrderId {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
-  background: var(--color-neutral-grey-50);
+  color: var(--color-text-primary);
+  background: var(--color-input-bg);
   padding: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem) clamp(0.75rem, 0.5rem + 1.25vw, 1.25rem);
   border-radius: var(--radius-full);
 }
@@ -407,7 +407,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-inline-gap);
-  background: var(--color-neutral-cream);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
   width: 100%;
@@ -421,13 +421,13 @@
 
 .successDeliveryTitle {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .successDeliveryDate {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .successActions {
@@ -467,7 +467,7 @@
   font-size: var(--text-base);
   font-weight: 600;
   color: var(--color-primary-saffron);
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border: 2px solid var(--color-primary-saffron-light);
   border-radius: var(--radius-button);
   text-decoration: none;

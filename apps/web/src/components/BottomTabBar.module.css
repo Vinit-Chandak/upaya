@@ -7,8 +7,8 @@
   align-items: center;
   justify-content: space-around;
   height: var(--tab-bar-height);
-  background: var(--color-neutral-white);
-  border-top: 1px solid var(--color-neutral-grey-100);
+  background: var(--color-page-bg);
+  border-top: 1px solid var(--color-border);
   position: sticky;
   bottom: 0;
   z-index: var(--z-sticky);
@@ -23,14 +23,14 @@
   gap: 0.125rem;
   flex: 1;
   padding: clamp(0.25rem, 0.2rem + 0.25vw, 0.5rem) 0;
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
   text-decoration: none;
   transition: color var(--transition-fast);
   -webkit-tap-highlight-color: transparent;
 }
 
 .tab:hover {
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
 }
 
 .tabActive {

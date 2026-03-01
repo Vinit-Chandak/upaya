@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 
 import Link from 'next/link';
 import TopBar from '@/components/TopBar';
+import { Icon } from '@/components/icons';
 import styles from './page.module.css';
 
 /* ============================================
@@ -27,7 +28,7 @@ interface OrderItem {
   nameEn: string;
   price: number;
   quantity: number;
-  emoji: string;
+  iconName: string;
 }
 
 /* ============================================
@@ -65,7 +66,7 @@ const ORDER_ITEMS: OrderItem[] = [
     nameEn: 'Blue Sapphire (Neelam)',
     price: 4999,
     quantity: 1,
-    emoji: '💎',
+    iconName: 'gemstone',
   },
   {
     id: 'p5',
@@ -73,7 +74,7 @@ const ORDER_ITEMS: OrderItem[] = [
     nameEn: '5 Mukhi Rudraksha',
     price: 999,
     quantity: 1,
-    emoji: '📿',
+    iconName: 'mala',
   },
   {
     id: 'p9',
@@ -81,7 +82,7 @@ const ORDER_ITEMS: OrderItem[] = [
     nameEn: 'Shree Yantra',
     price: 1999,
     quantity: 1,
-    emoji: '🔱',
+    iconName: 'trident',
   },
 ];
 
@@ -145,7 +146,7 @@ export default function CheckoutPage() {
             </p>
 
             <div className={styles.successDelivery}>
-              <span className={styles.successDeliveryIcon}>🚚</span>
+              <Icon name="truck" size={24} color="var(--color-accent-gold)" />
               <div>
                 <p className={styles.successDeliveryTitle}>
                   {language === 'hi' ? 'Expected Delivery' : 'Expected Delivery'}
@@ -186,7 +187,8 @@ export default function CheckoutPage() {
           {/* Delivery Address Section */}
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>
-              {language === 'hi' ? '📍 Delivery Address' : '📍 Delivery Address'}
+              <Icon name="location-pin" size={20} color="var(--color-accent-gold)" />{' '}
+              {language === 'hi' ? 'Delivery Address' : 'Delivery Address'}
             </h2>
 
             <div className={styles.addressList}>
@@ -237,14 +239,15 @@ export default function CheckoutPage() {
           {/* Order Summary Section */}
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>
-              {language === 'hi' ? '🛒 Order Summary' : '🛒 Order Summary'}
+              <Icon name="cart" size={20} color="var(--color-accent-gold)" />{' '}
+              {language === 'hi' ? 'Order Summary' : 'Order Summary'}
             </h2>
 
             <div className={styles.orderItemsList}>
               {ORDER_ITEMS.map((item) => (
                 <div key={item.id} className={styles.orderItem}>
                   <div className={styles.orderItemLeft}>
-                    <span className={styles.orderItemEmoji}>{item.emoji}</span>
+                    <Icon name={item.iconName} size={24} color="var(--color-accent-gold)" />
                     <div className={styles.orderItemDetail}>
                       <span className={styles.orderItemName}>
                         {language === 'hi' ? item.name : item.nameEn}

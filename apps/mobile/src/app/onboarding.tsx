@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, type ReactNode } from 'react';
 import {
   View,
   Text,
@@ -14,6 +14,18 @@ import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors, getTranslations } from '@upaya/shared';
 import { fp, wp, hp } from '../theme';
+import NamasteHands from '../components/icons/NamasteHands';
+import VenusGlyph from '../components/icons/VenusGlyph';
+import MercuryGlyph from '../components/icons/MercuryGlyph';
+import KundliChart from '../components/icons/KundliChart';
+import ScrollRemedy from '../components/icons/ScrollRemedy';
+import TempleSilhouette from '../components/icons/TempleSilhouette';
+import PlayVideo from '../components/icons/PlayVideo';
+import PrasadBox from '../components/icons/PrasadBox';
+import ShieldLock from '../components/icons/ShieldLock';
+import StarRating from '../components/icons/StarRating';
+import ArrowRight from '../components/icons/ArrowRight';
+import CelestialBackground from '../components/CelestialBackground/CelestialBackground';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -23,16 +35,24 @@ const ONBOARDING_SCREENS = [
   { id: 'trust' },
 ];
 
-const STEPS = [
-  { title: 'अपनी problem बताएं', titleEn: 'Tell your problem', desc: 'AI empathetically समझेगा', descEn: 'AI understands empathetically', icon: '💬' },
-  { title: 'AI आपकी कुंडली analyze करे', titleEn: 'AI analyzes your kundli', desc: 'Exact ग्रह और दोष ढूंढेगा', descEn: 'Finds exact planets and doshas', icon: '📊' },
-  { title: 'Personalized remedy plan', titleEn: 'Personalized remedy plan', desc: 'Specific मंत्र, temples, timing', descEn: 'Specific mantras, temples, timing', icon: '📜' },
-  { title: 'Temple पूजा + Video proof', titleEn: 'Temple puja + Video proof', desc: 'Real पूजा, video, प्रसाद', descEn: 'Real puja, video, prasad shipped', icon: '🛕' },
+interface Step {
+  title: string;
+  titleEn: string;
+  desc: string;
+  descEn: string;
+  icon: ReactNode;
+}
+
+const STEPS: Step[] = [
+  { title: 'अपनी problem बताएं', titleEn: 'Tell your problem', desc: 'AI empathetically समझेगा', descEn: 'AI understands empathetically', icon: <MercuryGlyph size={22} color="#D4A017" /> },
+  { title: 'AI आपकी कुंडली analyze करे', titleEn: 'AI analyzes your kundli', desc: 'Exact ग्रह और दोष ढूंढेगा', descEn: 'Finds exact planets and doshas', icon: <KundliChart size={22} color="#D4A017" /> },
+  { title: 'Personalized remedy plan', titleEn: 'Personalized remedy plan', desc: 'Specific मंत्र, temples, timing', descEn: 'Specific mantras, temples, timing', icon: <ScrollRemedy size={22} color="#FF8C00" /> },
+  { title: 'Temple पूजा + Video proof', titleEn: 'Temple puja + Video proof', desc: 'Real पूजा, video, प्रसाद', descEn: 'Real puja, video, prasad shipped', icon: <TempleSilhouette size={22} color="#FF8C00" /> },
 ];
 
 /**
  * Onboarding Screen (Phase 1.2)
- * 3 swipeable screens: Emotional Hook → How It Works → Trust & CTA
+ * 3 swipeable screens: Emotional Hook -> How It Works -> Trust & CTA
  * Stores onboarding_completed in AsyncStorage on completion.
  */
 export default function OnboardingScreen() {
@@ -113,7 +133,7 @@ export default function OnboardingScreen() {
         {/* Screen 1: Emotional Hook */}
         <View style={styles.page}>
           <View style={styles.illustrationCircle}>
-            <Text style={styles.illustrationEmoji}>🙏</Text>
+            <NamasteHands size={48} color="#FF8C00" />
           </View>
           <Text style={styles.pageTitle}>
             {language === 'hi'
@@ -121,13 +141,16 @@ export default function OnboardingScreen() {
               : "We've Helped People Like You"}
           </Text>
           <View style={styles.testimonialCard}>
-            <Text style={styles.testimonialName}>
-              💍 {language === 'hi' ? 'प्रिया, 28, लखनऊ' : 'Priya, 28, Lucknow'}
-            </Text>
+            <View style={styles.testimonialNameRow}>
+              <VenusGlyph size={16} color="#D4A017" />
+              <Text style={styles.testimonialName}>
+                {language === 'hi' ? 'प्रिया, 28, लखनऊ' : 'Priya, 28, Lucknow'}
+              </Text>
+            </View>
             <Text style={styles.testimonialText}>
               {language === 'hi'
-                ? '4 साल से शादी के रिश्ते आ के टूट रहे थे। सबने कहा मंगल दोष है, लेकिन कोई solution नहीं बताया।\n\nUpaya ने कुंडली analyze की → exact problem मिली → मंगलनाथ Temple में specific पूजा suggest की।\n\n5 महीने में रिश्ता पक्का हुआ। 🙏'
-                : "Marriage talks kept falling apart for 4 years. Everyone said it's Mangal Dosha but nobody gave a real solution.\n\nUpaya analyzed my chart, found the exact cause, and recommended a specific puja at Mangalnath Temple.\n\nGot married within 5 months. 🙏"}
+                ? '4 साल से शादी के रिश्ते आ के टूट रहे थे। सबने कहा मंगल दोष है, लेकिन कोई solution नहीं बताया।\n\nUpaya ने कुंडली analyze की → exact problem मिली → मंगलनाथ Temple में specific पूजा suggest की।\n\n5 महीने में रिश्ता पक्का हुआ।'
+                : "Marriage talks kept falling apart for 4 years. Everyone said it's Mangal Dosha but nobody gave a real solution.\n\nUpaya analyzed my chart, found the exact cause, and recommended a specific puja at Mangalnath Temple.\n\nGot married within 5 months."}
             </Text>
           </View>
         </View>
@@ -157,7 +180,7 @@ export default function OnboardingScreen() {
                   ]}
                 >
                   <View style={styles.stepIconCircle}>
-                    <Text style={styles.stepIcon}>{step.icon}</Text>
+                    {step.icon}
                   </View>
                   <View style={styles.stepContent}>
                     <Text style={styles.stepTitle}>
@@ -181,27 +204,34 @@ export default function OnboardingScreen() {
 
         {/* Screen 3: Trust & CTA */}
         <View style={styles.page}>
+          <CelestialBackground variant="subtle" />
           <Text style={styles.pageTitle}>
             {getTranslations(language).onboarding.screen3.title}
           </Text>
           <View style={styles.badgeGrid}>
-            {[
-              { icon: '📊', label: '50,000+', sublabel: language === 'hi' ? 'कुंडलियाँ analyzed' : 'Kundlis analyzed' },
-              { icon: '🛕', label: '100+', sublabel: language === 'hi' ? 'Temples verified' : 'Temples verified' },
-              { icon: '📹', label: language === 'hi' ? 'Video proof' : 'Video proof', sublabel: language === 'hi' ? 'हर पूजा का' : 'of every puja' },
-              { icon: '📦', label: language === 'hi' ? 'प्रसाद' : 'Prasad', sublabel: language === 'hi' ? 'delivered at home' : 'delivered home' },
-              { icon: '🔒', label: '100%', sublabel: 'Private & Secure' },
-              { icon: '🙏', label: 'Pandit', sublabel: 'verified' },
-            ].map((badge) => (
+            {([
+              { icon: <KundliChart size={22} color="#D4A017" />, label: '50,000+', sublabel: language === 'hi' ? 'कुंडलियाँ analyzed' : 'Kundlis analyzed' },
+              { icon: <TempleSilhouette size={22} color="#FF8C00" />, label: '100+', sublabel: language === 'hi' ? 'Temples verified' : 'Temples verified' },
+              { icon: <PlayVideo size={22} color="#FF8C00" />, label: language === 'hi' ? 'Video proof' : 'Video proof', sublabel: language === 'hi' ? 'हर पूजा का' : 'of every puja' },
+              { icon: <PrasadBox size={22} color="#FF8C00" />, label: language === 'hi' ? 'प्रसाद' : 'Prasad', sublabel: language === 'hi' ? 'delivered at home' : 'delivered home' },
+              { icon: <ShieldLock size={22} color="#10B981" />, label: '100%', sublabel: 'Private & Secure' },
+              { icon: <NamasteHands size={22} color="#FF8C00" />, label: 'Pandit', sublabel: 'verified' },
+            ] as const).map((badge) => (
               <View key={badge.sublabel} style={styles.badge}>
-                <Text style={styles.badgeIcon}>{badge.icon}</Text>
+                <View style={styles.badgeIconWrap}>{badge.icon}</View>
                 <Text style={styles.badgeLabel}>{badge.label}</Text>
                 <Text style={styles.badgeSublabel}>{badge.sublabel}</Text>
               </View>
             ))}
           </View>
           <View style={styles.miniTestimonial}>
-            <Text style={styles.stars}>&#11088;&#11088;&#11088;&#11088;&#11088;</Text>
+            <View style={styles.starsRow}>
+              <StarRating size={14} color="#D4A017" filled />
+              <StarRating size={14} color="#D4A017" filled />
+              <StarRating size={14} color="#D4A017" filled />
+              <StarRating size={14} color="#D4A017" filled />
+              <StarRating size={14} color="#D4A017" filled />
+            </View>
             <Text style={styles.miniText}>
               {language === 'hi'
                 ? '"पहली बार लगा कि किसी ने सच में समझा और सही रास्ता बताया"'
@@ -229,11 +259,18 @@ export default function OnboardingScreen() {
           onPress={goToNext}
           activeOpacity={0.8}
         >
-          <Text style={[styles.buttonText, currentPage === 2 && styles.buttonTextPrimary]}>
-            {currentPage < 2
-              ? (language === 'hi' ? 'आगे बढ़ें →' : 'Next →')
-              : (language === 'hi' ? '🙏 शुरू करें' : '🙏 Get Started')}
-          </Text>
+          {currentPage < 2 ? (
+            <Text style={[styles.buttonText, currentPage === 2 && styles.buttonTextPrimary]}>
+              {language === 'hi' ? 'आगे बढ़ें' : 'Next'}
+            </Text>
+          ) : (
+            <View style={styles.ctaButtonRow}>
+              <ArrowRight size={18} color="#FFFFFF" />
+              <Text style={[styles.buttonText, styles.buttonTextPrimary]}>
+                {language === 'hi' ? ' शुरू करें' : ' Get Started'}
+              </Text>
+            </View>
+          )}
         </TouchableOpacity>
         {currentPage === 2 && (
           <Text style={styles.ctaSub}>
@@ -250,7 +287,7 @@ export default function OnboardingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.darkTheme.pageBg,
   },
   skipButton: {
     position: 'absolute',
@@ -261,7 +298,7 @@ const styles = StyleSheet.create({
   },
   skipText: {
     fontSize: fp(14),
-    color: colors.neutral.grey500,
+    color: colors.darkTheme.textMuted,
   },
   scrollView: {
     flex: 1,
@@ -276,38 +313,40 @@ const styles = StyleSheet.create({
     fontSize: fp(22),
     fontWeight: '600',
     textAlign: 'center',
-    color: colors.neutral.grey800,
+    color: colors.darkTheme.textPrimary,
     marginBottom: hp(20),
   },
   illustrationCircle: {
     width: wp(120),
     height: wp(120),
     borderRadius: wp(60),
-    backgroundColor: colors.neutral.cream,
+    backgroundColor: colors.darkTheme.surface,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: hp(16),
   },
-  illustrationEmoji: {
-    fontSize: fp(48),
-  },
   testimonialCard: {
-    backgroundColor: colors.neutral.cream,
+    backgroundColor: colors.darkTheme.surface,
     borderRadius: wp(12),
     padding: wp(20),
     borderLeftWidth: 4,
     borderLeftColor: colors.accent.gold,
     width: '100%',
   },
+  testimonialNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: wp(6),
+    marginBottom: hp(8),
+  },
   testimonialName: {
     fontSize: fp(16),
     fontWeight: '600',
-    color: colors.neutral.grey800,
-    marginBottom: hp(8),
+    color: colors.darkTheme.textPrimary,
   },
   testimonialText: {
     fontSize: fp(15),
-    color: colors.neutral.grey700,
+    color: colors.darkTheme.textSecondary,
     lineHeight: fp(15) * 1.6,
   },
   stepsContainer: {
@@ -323,12 +362,9 @@ const styles = StyleSheet.create({
     width: wp(44),
     height: wp(44),
     borderRadius: wp(22),
-    backgroundColor: colors.neutral.cream,
+    backgroundColor: colors.darkTheme.surface,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  stepIcon: {
-    fontSize: fp(22),
   },
   stepContent: {
     flex: 1,
@@ -336,23 +372,23 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: fp(16),
     fontWeight: '600',
-    color: colors.neutral.grey800,
+    color: colors.darkTheme.textPrimary,
   },
   stepDesc: {
     fontSize: fp(13),
-    color: colors.neutral.grey500,
+    color: colors.darkTheme.textSecondary,
     marginTop: 2,
   },
   stepConnector: {
     width: 2,
     height: hp(18),
-    backgroundColor: colors.neutral.grey200,
+    backgroundColor: colors.darkTheme.border,
     marginLeft: wp(21),
     marginVertical: hp(4),
   },
   stepTagline: {
     fontSize: fp(14),
-    color: colors.neutral.grey600,
+    color: colors.darkTheme.textSecondary,
     textAlign: 'center',
     marginTop: hp(20),
     fontStyle: 'italic',
@@ -368,46 +404,46 @@ const styles = StyleSheet.create({
     width: (SCREEN_WIDTH - wp(24) * 2 - wp(10) * 2) / 3,
     alignItems: 'center',
     padding: wp(10),
-    backgroundColor: colors.neutral.grey50,
+    backgroundColor: colors.darkTheme.surface,
     borderRadius: wp(10),
   },
-  badgeIcon: {
-    fontSize: fp(22),
+  badgeIconWrap: {
     marginBottom: hp(2),
   },
   badgeLabel: {
     fontSize: fp(12),
     fontWeight: '600',
-    color: colors.neutral.grey800,
+    color: colors.darkTheme.textPrimary,
     textAlign: 'center',
   },
   badgeSublabel: {
     fontSize: fp(10),
-    color: colors.neutral.grey500,
+    color: colors.darkTheme.textSecondary,
     textAlign: 'center',
     lineHeight: fp(10) * 1.4,
     marginTop: 1,
   },
   miniTestimonial: {
-    backgroundColor: colors.neutral.cream,
+    backgroundColor: colors.darkTheme.surface,
     borderRadius: wp(12),
     padding: wp(16),
     width: '100%',
     alignItems: 'center',
   },
-  stars: {
-    fontSize: fp(14),
+  starsRow: {
+    flexDirection: 'row',
+    gap: 2,
     marginBottom: hp(8),
   },
   miniText: {
     fontSize: fp(14),
-    color: colors.neutral.grey700,
+    color: colors.darkTheme.textSecondary,
     textAlign: 'center',
     fontStyle: 'italic',
   },
   miniAuthor: {
     fontSize: fp(12),
-    color: colors.neutral.grey500,
+    color: colors.darkTheme.textMuted,
     marginTop: hp(8),
   },
   bottom: {
@@ -425,7 +461,7 @@ const styles = StyleSheet.create({
     height: wp(8),
     borderRadius: wp(4),
     borderWidth: 1.5,
-    borderColor: colors.neutral.grey300,
+    borderColor: colors.darkTheme.border,
     backgroundColor: 'transparent',
   },
   dotActive: {
@@ -453,8 +489,13 @@ const styles = StyleSheet.create({
   buttonTextPrimary: {
     color: colors.neutral.white,
   },
+  ctaButtonRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: wp(4),
+  },
   ctaSub: {
     fontSize: fp(12),
-    color: colors.neutral.grey400,
+    color: colors.darkTheme.textMuted,
   },
 });

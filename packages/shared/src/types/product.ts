@@ -61,12 +61,12 @@ export const PRODUCT_CATEGORIES: Array<{
   key: ProductCategory;
   label: string;
   labelHi: string;
-  emoji: string;
+  iconName: string;
 }> = [
-  { key: 'gemstones', label: 'Gemstones', labelHi: 'रत्न', emoji: '💎' },
-  { key: 'rudraksha', label: 'Rudraksha', labelHi: 'रुद्राक्ष', emoji: '📿' },
-  { key: 'yantras', label: 'Yantras', labelHi: 'यंत्र', emoji: '🔱' },
-  { key: 'remedy_kits', label: 'Remedy Kits', labelHi: 'Remedy Kits', emoji: '📦' },
-  { key: 'puja_items', label: 'Puja Items', labelHi: 'पूजा सामग्री', emoji: '🪔' },
-  { key: 'daan_seva', label: 'Daan Seva', labelHi: 'दान सेवा', emoji: '🎁' },
+  { key: 'gemstones', label: 'Gemstones', labelHi: 'रत्न', iconName: 'gemstone' },
+  { key: 'rudraksha', label: 'Rudraksha', labelHi: 'रुद्राक्ष', iconName: 'mala' },
+  { key: 'yantras', label: 'Yantras', labelHi: 'यंत्र', iconName: 'trident' },
+  { key: 'remedy_kits', label: 'Remedy Kits', labelHi: 'Remedy Kits', iconName: 'prasad-box' },
+  { key: 'puja_items', label: 'Puja Items', labelHi: 'पूजा सामग्री', iconName: 'diya' },
+  { key: 'daan_seva', label: 'Daan Seva', labelHi: 'दान सेवा', iconName: 'gift' },
 ];

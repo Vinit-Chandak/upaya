@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  background: var(--color-neutral-off-white);
+  background: var(--color-page-bg);
 }
 
 .mainContent {
@@ -28,8 +28,8 @@
    Step Indicators
    ============================================ */
 .stepIndicators {
-  background: var(--color-neutral-white);
-  border-bottom: 1px solid var(--color-neutral-grey-200);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: var(--top-bar-height);
   z-index: var(--z-sticky);
@@ -65,8 +65,8 @@
   justify-content: center;
   font-size: var(--text-xs);
   font-weight: 700;
-  background: var(--color-neutral-grey-200);
-  color: var(--color-neutral-grey-500);
+  background: var(--color-border);
+  color: var(--color-text-secondary);
   transition: all var(--transition-normal);
 }
 
@@ -83,7 +83,7 @@
 
 .stepLabel {
   font-size: clamp(0.625rem, 0.55rem + 0.375vw, 0.75rem);
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
   font-weight: 500;
   text-align: center;
   transition: color var(--transition-fast);
@@ -109,7 +109,7 @@
   left: 10%;
   right: 10%;
   height: 2px;
-  background: var(--color-neutral-grey-200);
+  background: var(--color-border);
   z-index: 0;
 }
 
@@ -132,12 +132,12 @@
 .stepTitle {
   font-size: var(--text-xl);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .stepSubtitle {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   line-height: 1.5;
   margin-top: -0.25rem;
 }
@@ -166,15 +166,15 @@
 .formLabel {
   font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
 }
 
 .formInput {
   width: 100%;
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-800);
-  background: var(--color-neutral-white);
-  border: 1.5px solid var(--color-neutral-grey-200);
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) clamp(0.75rem, 0.5rem + 1.25vw, 1rem);
   outline: none;
@@ -187,15 +187,15 @@
 }
 
 .formInput::placeholder {
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
 }
 
 .formSelect {
   width: 100%;
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-800);
-  background: var(--color-neutral-white);
-  border: 1.5px solid var(--color-neutral-grey-200);
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) clamp(0.75rem, 0.5rem + 1.25vw, 1rem);
   outline: none;
@@ -214,9 +214,9 @@
 .formTextarea {
   width: 100%;
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-800);
-  background: var(--color-neutral-white);
-  border: 1.5px solid var(--color-neutral-grey-200);
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) clamp(0.75rem, 0.5rem + 1.25vw, 1rem);
   outline: none;
@@ -231,7 +231,7 @@
 }
 
 .formTextarea::placeholder {
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
 }
 
 .formError {
@@ -250,8 +250,8 @@
 }
 
 .pujaFormCard {
-  background: var(--color-neutral-white);
-  border: 1.5px solid var(--color-neutral-grey-200);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-xl);
   padding: var(--space-card-padding);
   display: flex;
@@ -299,7 +299,7 @@
   font-size: var(--text-sm);
   font-weight: 600;
   color: var(--color-primary-saffron);
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border: 2px dashed var(--color-primary-saffron-light);
   border-radius: var(--radius-lg);
   padding: clamp(0.75rem, 0.625rem + 0.625vw, 1rem);
@@ -317,7 +317,7 @@
    Step 3: Pricing Table
    ============================================ */
 .pricingTable {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow: var(--shadow-card);
@@ -328,14 +328,14 @@
   grid-template-columns: 1fr auto auto;
   gap: var(--space-inline-gap);
   padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) var(--space-card-padding);
-  background: var(--color-neutral-grey-50);
-  border-bottom: 1px solid var(--color-neutral-grey-200);
+  background: var(--color-input-bg);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .pricingHeaderCell {
   font-size: var(--text-xs);
   font-weight: 700;
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
@@ -346,7 +346,7 @@
   gap: var(--space-inline-gap);
   align-items: center;
   padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) var(--space-card-padding);
-  border-bottom: 1px solid var(--color-neutral-grey-100);
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .pricingRow:last-child {
@@ -355,7 +355,7 @@
 
 .pricingCell {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   font-weight: 500;
   min-width: 0;
   overflow: hidden;
@@ -371,7 +371,7 @@
 
 .rupeePrefix {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
@@ -379,9 +379,9 @@
   width: clamp(4rem, 3.5rem + 2.5vw, 5.5rem);
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
-  background: var(--color-neutral-grey-50);
-  border: 1.5px solid var(--color-neutral-grey-200);
+  color: var(--color-text-primary);
+  background: var(--color-input-bg);
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: 0.25rem 0.5rem;
   outline: none;
@@ -416,7 +416,7 @@
 
 .pricingNoteText {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
   line-height: 1.5;
 }
 
@@ -432,7 +432,7 @@
 .photoSectionTitle {
   font-size: var(--text-sm);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .photoGrid {
@@ -448,8 +448,8 @@
   align-items: center;
   justify-content: center;
   gap: clamp(0.25rem, 0.2rem + 0.25vw, 0.375rem);
-  background: var(--color-neutral-grey-50);
-  border: 2px dashed var(--color-neutral-grey-300);
+  background: var(--color-input-bg);
+  border: 2px dashed var(--color-border);
   border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -461,12 +461,12 @@
 }
 
 .photoIcon {
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
 }
 
 .photoPlaceholderText {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
   font-weight: 500;
 }
 
@@ -474,7 +474,7 @@
    Step 5: Review Cards
    ============================================ */
 .reviewCard {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-xl);
   padding: var(--space-card-padding);
   box-shadow: var(--shadow-card);
@@ -483,13 +483,13 @@
 .reviewCardTitle {
   font-size: var(--text-base);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   margin-bottom: var(--space-component-gap);
 }
 
 .reviewCount {
   font-weight: 500;
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .reviewRows {
@@ -505,13 +505,13 @@
 }
 
 .reviewLabel {
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   flex-shrink: 0;
   min-width: clamp(4rem, 3.5rem + 2.5vw, 5.5rem);
 }
 
 .reviewValue {
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   font-weight: 500;
 }
 
@@ -527,7 +527,7 @@
   justify-content: space-between;
   gap: var(--space-inline-gap);
   padding: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem) 0;
-  border-bottom: 1px solid var(--color-neutral-grey-100);
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .reviewPujaItem:last-child {
@@ -536,7 +536,7 @@
 
 .reviewPujaName {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
   font-weight: 500;
   min-width: 0;
   overflow: hidden;
@@ -553,7 +553,7 @@
 
 .reviewEmpty {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
   font-style: italic;
 }
 
@@ -561,7 +561,7 @@
    Terms Section
    ============================================ */
 .termsSection {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-xl);
   padding: var(--space-card-padding);
   box-shadow: var(--shadow-card);
@@ -585,7 +585,7 @@
 
 .termsText {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
   line-height: 1.5;
 }
 
@@ -606,9 +606,9 @@
 .navButtonBack {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-600);
-  background: var(--color-neutral-white);
-  border: 1.5px solid var(--color-neutral-grey-200);
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-button);
   padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem) clamp(1rem, 0.75rem + 1.25vw, 1.5rem);
   cursor: pointer;
@@ -616,8 +616,8 @@
 }
 
 .navButtonBack:hover {
-  background: var(--color-neutral-grey-50);
-  border-color: var(--color-neutral-grey-300);
+  background: var(--color-input-bg);
+  border-color: var(--color-border);
 }
 
 .navButtonNext {
@@ -672,7 +672,7 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-xl);
   padding: var(--space-section-gap) var(--space-card-padding);
   box-shadow: var(--shadow-card);
@@ -693,7 +693,7 @@
 
 .successDesc {
   font-size: var(--text-base);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   line-height: 1.5;
   margin-bottom: var(--space-section-gap);
 }
@@ -704,7 +704,7 @@
   flex-direction: column;
   gap: clamp(0.375rem, 0.25rem + 0.625vw, 0.5rem);
   text-align: left;
-  background: var(--color-neutral-grey-50);
+  background: var(--color-input-bg);
   border-radius: var(--radius-lg);
   padding: var(--space-card-padding);
   margin-bottom: var(--space-section-gap);
@@ -717,13 +717,13 @@
 }
 
 .successLabel {
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   flex-shrink: 0;
   min-width: clamp(3.5rem, 3rem + 2.5vw, 5rem);
 }
 
 .successValue {
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   font-weight: 600;
 }
 

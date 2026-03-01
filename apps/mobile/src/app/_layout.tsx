@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { colors } from '@upaya/shared';
 
 export default function RootLayout() {
   return (
@@ -8,7 +9,7 @@ export default function RootLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: '#FFFFFF' },
+          contentStyle: { backgroundColor: colors.darkTheme.pageBg },
           animation: 'slide_from_right',
         }}
       >

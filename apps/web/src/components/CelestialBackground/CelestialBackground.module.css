@@ -1,0 +1,87 @@
+/* ============================================
+   Celestial Background — Twinkling Stars & Floating Planets
+   ============================================ */
+
+.container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* Stars */
+.star {
+  position: absolute;
+  border-radius: 50%;
+  animation: twinkle var(--twinkle-duration, 3s) ease-in-out infinite alternate;
+  animation-delay: var(--twinkle-delay, 0s);
+}
+
+/* Planets */
+.planet {
+  position: absolute;
+  border-radius: 50%;
+  animation: float var(--float-duration, 30s) ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
+}
+
+/* --- Splash variant: gold stars on dark gradient --- */
+.star[data-variant="splash"] {
+  background: var(--color-accent-gold, #D4A017);
+}
+
+.planet[data-variant="splash"] {
+  background: var(--planet-color, #D4A017);
+  box-shadow: 0 0 var(--glow-radius, 8px) var(--planet-color, #D4A017);
+}
+
+/* --- Subtle variant: saffron-toned stars on cream backgrounds --- */
+.star[data-variant="subtle"] {
+  background: var(--color-primary-saffron, #FF8C00);
+}
+
+.planet[data-variant="subtle"] {
+  background: var(--planet-color, #D4A017);
+  box-shadow: 0 0 var(--glow-radius, 4px) var(--planet-color, rgba(212,160,23,0.3));
+}
+
+/* --- Page variant: dim gold stars on dark purple backgrounds --- */
+.star[data-variant="page"] {
+  background: var(--color-accent-gold, #D4A017);
+}
+
+.planet[data-variant="page"] {
+  background: var(--planet-color, #D4A017);
+  box-shadow: 0 0 var(--glow-radius, 5px) var(--planet-color, rgba(212,160,23,0.2));
+}
+
+/* Animations */
+@keyframes twinkle {
+  0% {
+    opacity: var(--twinkle-min, 0.15);
+    transform: scale(1);
+  }
+  100% {
+    opacity: var(--twinkle-max, 0.5);
+    transform: scale(1.2);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(10px, -15px) scale(1.05);
+  }
+  50% {
+    transform: translate(-5px, -25px) scale(1);
+  }
+  75% {
+    transform: translate(15px, -10px) scale(1.03);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}

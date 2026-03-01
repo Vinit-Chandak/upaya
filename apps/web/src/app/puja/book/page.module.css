@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  background: var(--color-neutral-off-white);
+  background: var(--color-page-bg);
 }
 
 .mainContent {
@@ -17,9 +17,9 @@
 
 /* --- Step Indicator --- */
 .stepIndicator {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   padding: clamp(0.75rem, 0.5rem + 1.25vw, 1.25rem) var(--space-page-x);
-  border-bottom: 1px solid var(--color-neutral-grey-100);
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .stepRow {
@@ -46,9 +46,9 @@
   justify-content: center;
   font-size: var(--text-xs);
   font-weight: 600;
-  border: 2px solid var(--color-neutral-grey-200);
-  color: var(--color-neutral-grey-400);
-  background: var(--color-neutral-white);
+  border: 2px solid var(--color-border);
+  color: var(--color-text-muted);
+  background: var(--color-surface);
   transition: all var(--transition-normal);
 }
 
@@ -66,18 +66,18 @@
 
 .stepLabel {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
   font-weight: 500;
   transition: color var(--transition-normal);
 }
 
 .stepLabelActive {
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .stepProgress {
   height: 3px;
-  background: var(--color-neutral-grey-100);
+  background: var(--color-border-light);
   border-radius: var(--radius-full);
   overflow: hidden;
 }
@@ -105,9 +105,9 @@
 
 .stepDescription {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   line-height: 1.5;
-  background: var(--color-neutral-cream);
+  background: var(--color-surface);
   padding: var(--space-card-padding);
   border-radius: var(--radius-lg);
   border-left: 3px solid var(--color-accent-gold);
@@ -123,7 +123,7 @@
 .formLabel {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
 }
 
 .required {
@@ -134,9 +134,9 @@
 .formInput {
   padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem) clamp(0.75rem, 0.5rem + 1.25vw, 1rem);
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-800);
-  background: var(--color-neutral-white);
-  border: 1.5px solid var(--color-neutral-grey-200);
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-lg);
   outline: none;
   transition: border-color var(--transition-fast);
@@ -150,19 +150,19 @@
 
 .formInput:disabled {
   opacity: 0.5;
-  background: var(--color-neutral-grey-50);
+  background: var(--color-input-bg);
 }
 
 .formInput::placeholder {
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
 }
 
 .formTextarea {
   padding: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem) clamp(0.75rem, 0.5rem + 1.25vw, 1rem);
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-800);
-  background: var(--color-neutral-white);
-  border: 1.5px solid var(--color-neutral-grey-200);
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-lg);
   outline: none;
   resize: vertical;
@@ -178,12 +178,12 @@
 }
 
 .formTextarea::placeholder {
-  color: var(--color-neutral-grey-400);
+  color: var(--color-text-muted);
 }
 
 .formHint {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   font-style: italic;
 }
 
@@ -197,8 +197,8 @@
   top: 100%;
   left: 0;
   right: 0;
-  background: var(--color-neutral-white);
-  border: 1px solid var(--color-neutral-grey-200);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   z-index: var(--z-dropdown);
@@ -213,14 +213,14 @@
   text-align: left;
   padding: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem) clamp(0.75rem, 0.5rem + 1.25vw, 1rem);
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
   cursor: pointer;
   transition: background-color var(--transition-fast);
-  border-bottom: 1px solid var(--color-neutral-grey-50);
+  border-bottom: 1px solid var(--color-input-bg);
 }
 
 .gotraOption:hover {
-  background: var(--color-neutral-cream);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .gotraOption:last-child {
@@ -246,7 +246,7 @@
 
 .checkboxText {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
   line-height: 1.4;
 }
 
@@ -295,7 +295,7 @@
   gap: 0.375rem;
   font-size: var(--text-base);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .aiIcon {
@@ -307,8 +307,8 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--space-card-padding);
-  background: var(--color-neutral-white);
-  border: 2px solid var(--color-neutral-grey-200);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
   border-radius: var(--radius-lg);
   cursor: pointer;
   text-align: left;
@@ -328,7 +328,7 @@
 
 .dateCardRecommended {
   border-color: var(--color-accent-gold);
-  background: var(--color-neutral-cream);
+  background: var(--color-surface);
 }
 
 .dateCardRecommended.dateCardSelected {
@@ -345,12 +345,12 @@
 .dateLabel {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .dateDay {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .muhurtaBadge {
@@ -374,7 +374,7 @@
 }
 
 .muhurtaDotAvg {
-  background: var(--color-neutral-grey-300);
+  background: var(--color-border);
 }
 
 .otherDatesSection {
@@ -386,7 +386,7 @@
 .otherDatesTitle {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
 }
 
 .dateGrid {
@@ -406,12 +406,12 @@
   align-items: center;
   gap: 0.25rem;
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 /* --- Review & Pay --- */
 .summaryCard {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-xl);
   padding: var(--space-card-padding);
   box-shadow: var(--shadow-card);
@@ -423,7 +423,7 @@
 .summaryTitle {
   font-size: var(--text-base);
   font-weight: 700;
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
 }
 
 .summaryRow {
@@ -435,26 +435,26 @@
 
 .summaryLabel {
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
   flex-shrink: 0;
 }
 
 .summaryValue {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-800);
+  color: var(--color-text-primary);
   font-weight: 500;
   text-align: right;
 }
 
 .summaryDivider {
   height: 1px;
-  background: var(--color-neutral-grey-100);
+  background: var(--color-border-light);
 }
 
 .deliverablesTitle {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
 }
 
 .deliverableItem {
@@ -462,12 +462,12 @@
   align-items: center;
   gap: var(--space-inline-gap);
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-600);
+  color: var(--color-text-secondary);
 }
 
 /* --- Price Breakdown --- */
 .priceBreakdown {
-  background: var(--color-neutral-white);
+  background: var(--color-surface);
   border-radius: var(--radius-xl);
   padding: var(--space-card-padding);
   box-shadow: var(--shadow-card);
@@ -481,13 +481,13 @@
   justify-content: space-between;
   align-items: center;
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
 }
 
 .priceTotal {
   font-size: var(--text-base);
   font-weight: 700;
-  color: var(--color-secondary-maroon);
+  color: var(--color-accent-gold);
 }
 
 .freeTag {
@@ -497,7 +497,7 @@
 
 .priceDivider {
   height: 1px;
-  background: var(--color-neutral-grey-200);
+  background: var(--color-border);
 }
 
 /* --- Address Section --- */
@@ -516,7 +516,7 @@
 .addressTitle {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-neutral-grey-700);
+  color: var(--color-text-primary);
 }
 
 .changeButton {
@@ -530,11 +530,11 @@
 
 .addressText {
   font-size: var(--text-sm);
-  color: var(--color-neutral-grey-600);
-  background: var(--color-neutral-white);
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
   padding: var(--space-card-padding);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-neutral-grey-200);
+  border: 1px solid var(--color-border);
 }
 
 .addAddressButton {
@@ -587,7 +587,7 @@
   justify-content: center;
   gap: 0.25rem;
   font-size: var(--text-xs);
-  color: var(--color-neutral-grey-500);
+  color: var(--color-text-secondary);
 }
 
 .securityIcon {

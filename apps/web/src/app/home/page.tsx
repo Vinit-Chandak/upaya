@@ -1,19 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { PROBLEM_TYPES, getTranslations } from '@upaya/shared';
+import type { ProblemType } from '@upaya/shared';
 import TopBar from '@/components/TopBar';
 import BottomTabBar from '@/components/BottomTabBar';
+import ProblemTile from '@/components/ProblemTile/ProblemTile';
+import SunRise from '@/components/icons/SunRise';
+import SunFull from '@/components/icons/SunFull';
+import Diya from '@/components/icons/Diya';
+import MoonCrescent from '@/components/icons/MoonCrescent';
+import NamasteHands from '@/components/icons/NamasteHands';
 import styles from './page.module.css';
 
-function getTimeGreeting(language: 'hi' | 'en'): { emoji: string; text: string } {
+function getTimeGreeting(language: 'hi' | 'en'): { icon: ReactNode; text: string } {
   const t = getTranslations(language);
   const hour = new Date().getHours();
-  if (hour >= 5 && hour < 12) return { emoji: '🌅', text: t.greetings.morning };
-  if (hour >= 12 && hour < 17) return { emoji: '☀️', text: t.greetings.afternoon };
-  if (hour >= 17 && hour < 21) return { emoji: '🪔', text: t.greetings.evening };
-  return { emoji: '🌙', text: t.greetings.night };
+  if (hour >= 5 && hour < 12) return { icon: <SunRise size={48} color="#FF8C00" />, text: t.greetings.morning };
+  if (hour >= 12 && hour < 17) return { icon: <SunFull size={48} color="#FF8C00" />, text: t.greetings.afternoon };
+  if (hour >= 17 && hour < 21) return { icon: <Diya size={48} color="#D4A017" />, text: t.greetings.evening };
+  return { icon: <MoonCrescent size={48} color="#D4A017" />, text: t.greetings.night };
 }
 
 export default function HomePage() {
@@ -64,7 +71,7 @@ export default function HomePage() {
           <div className={styles.container}>
             {/* Time-based illustration */}
             <div className={styles.illustration}>
-              <span className={styles.illustrationEmoji}>{timeGreeting.emoji}</span>
+              <span className={styles.illustrationIcon}>{timeGreeting.icon}</span>
               <p className={styles.greetingText}>{timeGreeting.text}</p>
             </div>
 
@@ -74,19 +81,16 @@ export default function HomePage() {
               <p className={styles.mainPromptSub}>{getTranslations(language).home.mainPromptSub}</p>
             </div>
 
-            {/* Problem chips */}
+            {/* Problem tiles */}
             <div className={styles.chipGrid}>
               {Object.entries(PROBLEM_TYPES).map(([key, info]) => (
-                <button
+                <ProblemTile
                   key={key}
-                  className={styles.chip}
+                  problemKey={key as ProblemType}
+                  label={language === 'hi' ? info.hi : info.en}
+                  iconName={info.iconName}
                   onClick={() => handleChipClick(key)}
-                >
-                  <span className={styles.chipEmoji}>{info.emoji}</span>
-                  <span className={styles.chipTextPrimary}>
-                    {language === 'hi' ? info.hi : info.en}
-                  </span>
-                </button>
+                />
               ))}
             </div>
           </div>
@@ -145,9 +149,11 @@ export default function HomePage() {
               <>
                 <div className={styles.welcomeSection}>
                   <h1 className={styles.welcomeText}>
+                    <span className={styles.welcomeIcon}><NamasteHands size={24} color="#FF8C00" /></span>
+                    {' '}
                     {userName
                       ? t.home.greeting.replace('{{name}}', userName)
-                      : (language === 'hi' ? 'फिर से स्वागत है 🙏' : 'Welcome back 🙏')}
+                      : t.home.welcomeBack}
                   </h1>
                 </div>
 

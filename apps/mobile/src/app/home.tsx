@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import {
   View,
   Text,
@@ -13,21 +13,39 @@ import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors, PROBLEM_TYPES, getTranslations } from '@upaya/shared';
 import { fp, wp, hp } from '../theme';
+import { Icon } from '../components/icons';
+import ShriYantra from '../components/icons/ShriYantra';
+import GlobeIcon from '../components/icons/GlobeIcon';
+import BellIcon from '../components/icons/BellIcon';
+import SunRise from '../components/icons/SunRise';
+import SunFull from '../components/icons/SunFull';
+import Diya from '../components/icons/Diya';
+import MoonCrescent from '../components/icons/MoonCrescent';
+import NamasteHands from '../components/icons/NamasteHands';
+import MalaIcon from '../components/icons/MalaIcon';
+import HomeTabIcon from '../components/icons/HomeTabIcon';
+import TempleSilhouette from '../components/icons/TempleSilhouette';
+import UserProfileIcon from '../components/icons/UserProfileIcon';
+import MicrophoneIcon from '../components/icons/MicrophoneIcon';
+import SendIcon from '../components/icons/SendIcon';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const TAB_KEYS = ['home', 'remedies', 'explore', 'me'] as const;
-const TAB_ICONS: Record<string, string> = {
-  home: '🏠', remedies: '📿', explore: '🛕', me: '👤',
+const TAB_ICON_MAP: Record<string, (props: { color: string }) => ReactNode> = {
+  home: ({ color }) => <HomeTabIcon size={20} color={color} />,
+  remedies: ({ color }) => <MalaIcon size={20} color={color} />,
+  explore: ({ color }) => <TempleSilhouette size={20} color={color} />,
+  me: ({ color }) => <UserProfileIcon size={20} color={color} />,
 };
 
-function getTimeGreeting(language: 'hi' | 'en'): { emoji: string; text: string } {
+function getTimeGreeting(language: 'hi' | 'en'): { icon: ReactNode; text: string } {
   const t = getTranslations(language);
   const hour = new Date().getHours();
-  if (hour >= 5 && hour < 12) return { emoji: '🌅', text: t.greetings.morning };
-  if (hour >= 12 && hour < 17) return { emoji: '☀️', text: t.greetings.afternoon };
-  if (hour >= 17 && hour < 21) return { emoji: '🪔', text: t.greetings.evening };
-  return { emoji: '🌙', text: t.greetings.night };
+  if (hour >= 5 && hour < 12) return { icon: <SunRise size={48} color="#FF8C00" />, text: t.greetings.morning };
+  if (hour >= 12 && hour < 17) return { icon: <SunFull size={48} color="#FF8C00" />, text: t.greetings.afternoon };
+  if (hour >= 17 && hour < 21) return { icon: <Diya size={48} color="#D4A017" />, text: t.greetings.evening };
+  return { icon: <MoonCrescent size={48} color="#D4A017" />, text: t.greetings.night };
 }
 
 /**
@@ -86,15 +104,15 @@ export default function HomeScreen() {
       {/* Top Bar */}
       <View style={styles.topBar}>
         <View style={styles.topBarLeft}>
-          <Text style={styles.topBarSymbol}>&#10048;</Text>
+          <ShriYantra size={14} color={colors.accent.gold} />
           <Text style={styles.topBarLogo}>UPAYA</Text>
         </View>
         <View style={styles.topBarRight}>
           <TouchableOpacity style={styles.topBarIcon} onPress={toggleLanguage}>
-            <Text style={styles.topBarIconText}>🌐</Text>
+            <GlobeIcon size={18} color={colors.darkTheme.textSecondary} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.topBarIcon}>
-            <Text style={styles.topBarIconText}>🔔</Text>
+            <BellIcon size={18} color={colors.darkTheme.textSecondary} />
           </TouchableOpacity>
         </View>
       </View>
@@ -111,7 +129,7 @@ export default function HomeScreen() {
           <>
             {/* Time-based illustration */}
             <View style={styles.illustration}>
-              <Text style={styles.illustrationEmoji}>{timeGreeting.emoji}</Text>
+              <View style={styles.illustrationIcon}>{timeGreeting.icon}</View>
               <Text style={styles.greetingText}>{timeGreeting.text}</Text>
             </View>
 
@@ -121,36 +139,47 @@ export default function HomeScreen() {
               <Text style={styles.mainPromptSub}>{t.home.mainPromptSub}</Text>
             </View>
 
-            {/* Problem chips */}
+            {/* Problem tiles */}
             <View style={styles.chipGrid}>
-              {Object.entries(PROBLEM_TYPES).map(([key, info]) => (
-                <TouchableOpacity
-                  key={key}
-                  style={[
-                    styles.chip,
-                    { width: chipWidth },
-                    key === 'get_kundli' && styles.chipGold,
-                  ]}
-                  activeOpacity={0.8}
-                  onPress={() => handleChipPress(key)}
-                >
-                  <Text style={styles.chipEmoji}>{info.emoji}</Text>
-                  <Text style={styles.chipTextPrimary}>
-                    {language === 'hi' ? info.hi : info.en}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+              {Object.entries(PROBLEM_TYPES).map(([key, info]) => {
+                const tileColor = colors.tiles[key as keyof typeof colors.tiles];
+                return (
+                  <TouchableOpacity
+                    key={key}
+                    style={[
+                      styles.tile,
+                      { width: chipWidth, backgroundColor: tileColor?.bg || colors.darkTheme.surface },
+                    ]}
+                    activeOpacity={0.85}
+                    onPress={() => handleChipPress(key)}
+                  >
+                    {/* Background decoration art */}
+                    <View style={styles.tileDecoration}>
+                      <Icon name={info.iconName} size={90} color={tileColor?.text || '#D4A017'} />
+                    </View>
+                    {/* Bottom-left text */}
+                    <View style={styles.tileTextArea}>
+                      <Text style={[styles.tileTitle, { color: tileColor?.text || colors.darkTheme.textPrimary }]}>
+                        {language === 'hi' ? info.hi : info.en}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
           </>
         ) : (
           /* Returning User View */
           <>
-            <Text style={styles.welcomeText}>{t.home.welcomeBack}</Text>
+            <View style={styles.welcomeRow}>
+              <NamasteHands size={24} color="#FF8C00" />
+              <Text style={styles.welcomeText}>{t.home.welcomeBack}</Text>
+            </View>
 
             {/* Active Remedy Plan */}
             <View style={styles.card}>
               <View style={styles.cardHeader}>
-                <Text style={styles.cardIcon}>📿</Text>
+                <MalaIcon size={18} color="#FF8C00" />
                 <Text style={styles.cardTitle}>{t.home.returningUser.activeProtocol}</Text>
               </View>
               <View style={styles.progressBar}>
@@ -161,7 +190,7 @@ export default function HomeScreen() {
             {/* Transit Alert */}
             <View style={styles.alertCard}>
               <View style={styles.cardHeader}>
-                <Text style={styles.cardIcon}>⚡</Text>
+                <SunFull size={18} color="#F59E0B" />
                 <Text style={styles.cardTitle}>{t.home.returningUser.transitAlert}</Text>
               </View>
             </View>
@@ -192,7 +221,7 @@ export default function HomeScreen() {
             <TextInput
               style={styles.input}
               placeholder={t.home.inputPlaceholder}
-              placeholderTextColor={colors.neutral.grey400}
+              placeholderTextColor={colors.darkTheme.textMuted}
               value={inputValue}
               onChangeText={setInputValue}
               onSubmitEditing={handleSendMessage}
@@ -200,11 +229,11 @@ export default function HomeScreen() {
             />
             {inputValue.trim() ? (
               <TouchableOpacity style={styles.sendButton} onPress={handleSendMessage}>
-                <Text style={styles.sendIcon}>➤</Text>
+                <SendIcon size={16} color={colors.neutral.white} />
               </TouchableOpacity>
             ) : (
               <TouchableOpacity style={styles.micButton}>
-                <Text style={styles.micIcon}>🎙</Text>
+                <MicrophoneIcon size={18} color={colors.darkTheme.textMuted} />
               </TouchableOpacity>
             )}
           </View>
@@ -213,21 +242,25 @@ export default function HomeScreen() {
 
       {/* Bottom Tab Bar */}
       <View style={styles.tabBar}>
-        {TAB_KEYS.map((key) => (
-          <TouchableOpacity
-            key={key}
-            style={styles.tab}
-            activeOpacity={0.7}
-            onPress={() => setActiveTab(key)}
-          >
-            <Text style={[styles.tabIcon, activeTab === key && styles.tabIconActive]}>
-              {TAB_ICONS[key]}
-            </Text>
-            <Text style={[styles.tabLabel, activeTab === key && styles.tabLabelActive]}>
-              {t.tabs[key as keyof typeof t.tabs]}
-            </Text>
-          </TouchableOpacity>
-        ))}
+        {TAB_KEYS.map((key) => {
+          const isActive = activeTab === key;
+          const iconColor = isActive ? colors.primary.saffron : colors.darkTheme.textMuted;
+          return (
+            <TouchableOpacity
+              key={key}
+              style={styles.tab}
+              activeOpacity={0.7}
+              onPress={() => setActiveTab(key)}
+            >
+              <View style={isActive ? undefined : styles.tabIconInactive}>
+                {TAB_ICON_MAP[key]({ color: iconColor })}
+              </View>
+              <Text style={[styles.tabLabel, isActive && styles.tabLabelActive]}>
+                {t.tabs[key as keyof typeof t.tabs]}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
     </View>
   );
@@ -236,7 +269,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.darkTheme.pageBg,
   },
 
   /* Top Bar */
@@ -247,24 +280,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(16),
     paddingTop: Platform.OS === 'ios' ? hp(50) : hp(30),
     paddingBottom: hp(8),
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.darkTheme.pageBg,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.neutral.grey100,
+    borderBottomColor: colors.darkTheme.border,
   },
   topBarLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: wp(4),
   },
-  topBarSymbol: {
-    fontSize: fp(14),
-    color: colors.accent.gold,
-  },
   topBarLogo: {
     fontSize: fp(16),
     fontWeight: '700',
     letterSpacing: 2,
-    color: colors.secondary.maroon,
+    color: colors.accent.gold,
   },
   topBarRight: {
     flexDirection: 'row',
@@ -273,9 +302,6 @@ const styles = StyleSheet.create({
   },
   topBarIcon: {
     padding: wp(6),
-  },
-  topBarIconText: {
-    fontSize: fp(18),
   },
 
   /* Content */
@@ -294,12 +320,13 @@ const styles = StyleSheet.create({
     paddingTop: hp(24),
     paddingBottom: hp(8),
   },
-  illustrationEmoji: {
-    fontSize: fp(48),
+  illustrationIcon: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   greetingText: {
     fontSize: fp(16),
-    color: colors.neutral.grey500,
+    color: colors.darkTheme.textSecondary,
     fontWeight: '500',
   },
 
@@ -311,58 +338,54 @@ const styles = StyleSheet.create({
   mainPrompt: {
     fontSize: fp(22),
     fontWeight: '600',
-    color: colors.neutral.grey800,
+    color: colors.darkTheme.textPrimary,
     textAlign: 'center',
     lineHeight: fp(22) * 1.35,
   },
   mainPromptSub: {
     fontSize: fp(14),
-    color: colors.neutral.grey500,
+    color: colors.darkTheme.textSecondary,
     marginTop: hp(4),
     textAlign: 'center',
   },
 
-  /* First-Time: Problem Chips */
+  /* First-Time: Problem Tiles */
   chipGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: wp(10),
     justifyContent: 'center',
   },
-  chip: {
-    alignItems: 'center',
-    gap: hp(3),
-    paddingVertical: hp(14),
-    paddingHorizontal: wp(8),
-    backgroundColor: colors.neutral.white,
-    borderWidth: 1.5,
-    borderColor: colors.neutral.grey200,
-    borderRadius: wp(12),
+  tile: {
+    position: 'relative' as const,
+    overflow: 'hidden' as const,
+    height: hp(120),
+    borderRadius: wp(14),
   },
-  chipGold: {
-    borderColor: colors.accent.gold,
-    backgroundColor: '#FFF8F0',
+  tileDecoration: {
+    position: 'absolute' as const,
+    top: -6,
+    right: -6,
+    opacity: 0.25,
   },
-  chipEmoji: {
-    fontSize: fp(24),
+  tileTextArea: {
+    position: 'absolute' as const,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: wp(12),
+    paddingBottom: hp(12),
   },
-  chipTextPrimary: {
-    fontSize: fp(13),
-    fontWeight: '500',
-    color: colors.neutral.grey800,
-    textAlign: 'center',
-  },
-  chipTextSecondary: {
-    fontSize: fp(11),
-    color: colors.neutral.grey500,
-    textAlign: 'center',
+  tileTitle: {
+    fontSize: fp(15),
+    fontWeight: '700',
   },
 
   /* Input Bar */
   inputBarWrapper: {
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.darkTheme.pageBg,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.neutral.grey100,
+    borderTopColor: colors.darkTheme.border,
     paddingHorizontal: wp(16),
     paddingVertical: hp(8),
   },
@@ -370,9 +393,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: wp(8),
-    backgroundColor: colors.neutral.grey50,
+    backgroundColor: colors.darkTheme.inputBg,
     borderWidth: 1.5,
-    borderColor: colors.neutral.grey200,
+    borderColor: colors.darkTheme.inputBorder,
     borderRadius: wp(24),
     paddingHorizontal: wp(16),
     paddingVertical: hp(4),
@@ -380,7 +403,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: fp(14),
-    color: colors.neutral.grey800,
+    color: colors.darkTheme.textPrimary,
     paddingVertical: hp(8),
   },
   sendButton: {
@@ -391,10 +414,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  sendIcon: {
-    fontSize: fp(16),
-    color: colors.neutral.white,
-  },
   micButton: {
     width: wp(36),
     height: wp(36),
@@ -402,18 +421,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  micIcon: {
-    fontSize: fp(18),
-  },
 
   /* Bottom Tab Bar */
   tabBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.darkTheme.pageBg,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.neutral.grey100,
+    borderTopColor: colors.darkTheme.border,
     paddingTop: hp(6),
     paddingBottom: Platform.OS === 'ios' ? hp(24) : hp(10),
   },
@@ -423,17 +439,13 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: hp(2),
   },
-  tabIcon: {
-    fontSize: fp(20),
+  tabIconInactive: {
     opacity: 0.5,
-  },
-  tabIconActive: {
-    opacity: 1,
   },
   tabLabel: {
     fontSize: fp(10),
     fontWeight: '500',
-    color: colors.neutral.grey400,
+    color: colors.darkTheme.textMuted,
   },
   tabLabelActive: {
     color: colors.primary.saffron,
@@ -441,25 +453,30 @@ const styles = StyleSheet.create({
   },
 
   /* Returning User: Welcome */
+  welcomeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: wp(8),
+    paddingTop: hp(20),
+    marginBottom: hp(16),
+  },
   welcomeText: {
     fontSize: fp(24),
     fontWeight: '600',
-    color: colors.neutral.grey800,
-    paddingTop: hp(20),
-    marginBottom: hp(16),
+    color: colors.darkTheme.textPrimary,
   },
 
   /* Returning User: Cards */
   card: {
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.darkTheme.surface,
     borderWidth: 1,
-    borderColor: colors.neutral.grey200,
+    borderColor: colors.darkTheme.border,
     borderRadius: wp(12),
     padding: wp(16),
     marginBottom: hp(12),
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
+    shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 2,
   },
@@ -469,18 +486,15 @@ const styles = StyleSheet.create({
     gap: wp(8),
     marginBottom: hp(8),
   },
-  cardIcon: {
-    fontSize: fp(18),
-  },
   cardTitle: {
     fontSize: fp(16),
     fontWeight: '600',
-    color: colors.neutral.grey800,
+    color: colors.darkTheme.textPrimary,
   },
   progressBar: {
     width: '100%',
     height: hp(6),
-    backgroundColor: colors.neutral.grey100,
+    backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: hp(3),
     overflow: 'hidden',
     marginBottom: hp(6),
@@ -490,30 +504,21 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary.saffron,
     borderRadius: hp(3),
   },
-  cardMeta: {
-    fontSize: fp(12),
-    color: colors.neutral.grey500,
-  },
 
   alertCard: {
-    backgroundColor: '#FEF3C7',
+    backgroundColor: 'rgba(245,158,11,0.1)',
     borderWidth: 1,
     borderColor: 'rgba(245, 158, 11, 0.3)',
     borderRadius: wp(12),
     padding: wp(16),
     marginBottom: hp(16),
   },
-  alertText: {
-    fontSize: fp(14),
-    color: colors.neutral.grey700,
-    marginTop: hp(4),
-  },
 
   /* Returning User: Recent */
   sectionTitle: {
     fontSize: fp(16),
     fontWeight: '600',
-    color: colors.neutral.grey800,
+    color: colors.darkTheme.textPrimary,
     marginBottom: hp(12),
   },
   emptyState: {
@@ -522,7 +527,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: fp(14),
-    color: colors.neutral.grey400,
+    color: colors.darkTheme.textMuted,
   },
 
   /* Returning User: CTAs */

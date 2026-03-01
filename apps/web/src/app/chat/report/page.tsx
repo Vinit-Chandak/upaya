@@ -2,6 +2,7 @@
 
 import { Suspense, useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Icon } from '@/components/icons';
 import styles from './page.module.css';
 
 // ---- Types ----
@@ -259,10 +260,10 @@ function generateReportData(problemType: string, language: 'hi' | 'en') {
 // ---- Helpers ----
 
 const REMEDY_TYPE_ICONS: Record<string, string> = {
-  mantra: '\uD83D\uDCFF',
-  fasting: '\uD83C\uDF7D\uFE0F',
-  daan: '\uD83C\uDF81',
-  daily_practice: '\uD83E\uDDD8',
+  mantra: 'mala',
+  fasting: 'diya',
+  daan: 'gift',
+  daily_practice: 'meditation',
 };
 
 // ---- Component ----
@@ -352,7 +353,7 @@ function ReportContent() {
       {/* Report header */}
       <div className={styles.reportHeader}>
         <div className={styles.reportHeaderInner}>
-          <span className={styles.reportHeaderIcon}>📜</span>
+          <span className={styles.reportHeaderIcon}><Icon name="scroll-remedy" size={24} color="var(--color-accent-gold)" /></span>
           <h1 className={styles.reportTitle}>
             {isHi ? 'COMPLETE REMEDY PLAN' : 'COMPLETE REMEDY PLAN'}
           </h1>
@@ -402,7 +403,7 @@ function ReportContent() {
                   {/* Simplified kundli diamond grid */}
                   <div className={styles.kundliHouse} data-house="1" style={{ top: '0%', left: '25%', width: '50%', height: '25%' }}>
                     <span className={styles.houseNum}>1</span>
-                    <span className={styles.housePlanet}>☀️</span>
+                    <span className={styles.housePlanet}><Icon name="sun-full" size={14} color="var(--color-accent-gold)" /></span>
                   </div>
                   <div className={styles.kundliHouse} data-house="2" style={{ top: '0%', left: '75%', width: '25%', height: '25%' }}>
                     <span className={styles.houseNum}>2</span>
@@ -414,7 +415,7 @@ function ReportContent() {
                   </div>
                   <div className={styles.kundliHouse} data-house="4" style={{ top: '25%', left: '25%', width: '50%', height: '25%' }}>
                     <span className={styles.houseNum}>4</span>
-                    <span className={styles.housePlanet}>🌙</span>
+                    <span className={styles.housePlanet}><Icon name="moon-crescent" size={14} color="var(--color-accent-gold)" /></span>
                   </div>
                   <div className={styles.kundliHouse} data-house="5" style={{ top: '50%', left: '75%', width: '25%', height: '25%' }}>
                     <span className={styles.houseNum}>5</span>
@@ -425,7 +426,7 @@ function ReportContent() {
                   </div>
                   <div className={`${styles.kundliHouse} ${styles.problemHouse}`} data-house="7" style={{ top: '50%', left: '25%', width: '50%', height: '25%' }}>
                     <span className={styles.houseNum}>7</span>
-                    <span className={styles.housePlanet}>♂️♄</span>
+                    <span className={styles.housePlanet}>Ma Sa</span>
                     <span className={styles.problemLabel}>{isHi ? 'PROBLEM ZONE' : 'PROBLEM ZONE'}</span>
                   </div>
                   <div className={styles.kundliHouse} data-house="8" style={{ top: '75%', left: '25%', width: '50%', height: '25%' }}>
@@ -513,7 +514,7 @@ function ReportContent() {
                   <div key={remedy.id} className={`${styles.remedyItem} ${styles.remedyItemFree}`}>
                     <div className={styles.remedyItemHeader}>
                       <span className={styles.remedyItemNum}>{i + 1}.</span>
-                      <span>{REMEDY_TYPE_ICONS[remedy.type] || '📿'}</span>
+                      <span><Icon name={REMEDY_TYPE_ICONS[remedy.type] || 'mala'} size={16} color="var(--color-accent-gold)" /></span>
                       <span className={styles.remedyItemName}>{remedy.name}</span>
                     </div>
                     {remedy.mantraText && (
@@ -529,7 +530,7 @@ function ReportContent() {
                     <div className={styles.remedyItemActions}>
                       {remedy.mantraText && (
                         <button className={styles.miniButton}>
-                          ▶️ {isHi ? 'Listen' : 'Listen'}
+                          <Icon name="play-video" size={14} color="currentColor" /> {isHi ? 'Listen' : 'Listen'}
                         </button>
                       )}
                       <button
@@ -537,7 +538,7 @@ function ReportContent() {
                         onClick={() => handleAddToTracker(remedy.id)}
                         disabled={trackerAdded.has(remedy.id)}
                       >
-                        {trackerAdded.has(remedy.id) ? '✅ Added' : `➕ ${isHi ? 'Tracker' : 'Tracker'}`}
+                        {trackerAdded.has(remedy.id) ? <><Icon name="sparkles" size={14} color="var(--color-success, #22c55e)" /> Added</> : <><span>+</span> {isHi ? 'Tracker' : 'Tracker'}</>}
                       </button>
                     </div>
                   </div>
@@ -554,7 +555,7 @@ function ReportContent() {
                 {report.pujas.map((puja) => (
                   <div key={puja.id} className={`${styles.remedyItem} ${styles.remedyItemPuja}`}>
                     <div className={styles.remedyItemHeader}>
-                      <span>🛕</span>
+                      <span><Icon name="temple-silhouette" size={16} color="var(--color-accent-gold)" /></span>
                       <span className={styles.remedyItemName}>{puja.name}</span>
                     </div>
                     <p className={styles.remedyItemDetail}>
@@ -565,7 +566,7 @@ function ReportContent() {
                       {isHi ? 'Best date:' : 'Best date:'} {puja.bestDate}
                     </p>
                     <button className={styles.bookPujaButton}>
-                      🛕 {isHi ? 'Book This Puja' : 'Book This Puja'} — ₹{puja.price.toLocaleString()}
+                      <Icon name="temple-silhouette" size={14} color="currentColor" /> {isHi ? 'Book This Puja' : 'Book This Puja'} — ₹{puja.price.toLocaleString()}
                     </button>
                   </div>
                 ))}
@@ -581,7 +582,7 @@ function ReportContent() {
                 {report.products.map((product) => (
                   <div key={product.id} className={`${styles.remedyItem} ${styles.remedyItemProduct}`}>
                     <div className={styles.remedyItemHeader}>
-                      <span>💎</span>
+                      <span><Icon name="gemstone" size={16} color="var(--color-accent-gold)" /></span>
                       <span className={styles.remedyItemName}>{product.name}</span>
                     </div>
                     <p className={styles.remedyItemDetail}>{product.description}</p>
@@ -589,7 +590,7 @@ function ReportContent() {
                       ₹{product.price.toLocaleString()} — {product.badge}
                     </p>
                     <button className={styles.viewStoreButton}>
-                      🛒 {isHi ? 'View in Siddha Store' : 'View in Siddha Store'}
+                      <Icon name="cart" size={14} color="currentColor" /> {isHi ? 'View in Siddha Store' : 'View in Siddha Store'}
                     </button>
                   </div>
                 ))}
@@ -609,7 +610,7 @@ function ReportContent() {
               {report.pujas.map((puja) => (
                 <div key={puja.id} className={styles.templeCard}>
                   <div className={styles.templeImagePlaceholder}>
-                    <span>🛕</span>
+                    <span><Icon name="temple-silhouette" size={32} color="var(--color-accent-gold)" /></span>
                   </div>
                   <div className={styles.templeInfo}>
                     <h3 className={styles.templeName}>{puja.name}</h3>
@@ -635,15 +636,15 @@ function ReportContent() {
                         isHi ? 'Digital completion certificate' : 'Digital completion certificate',
                       ].map((item, i) => (
                         <div key={i} className={styles.templeInclusionItem}>
-                          <span>✅</span>
+                          <span><Icon name="sparkles" size={14} color="var(--color-success, #22c55e)" /></span>
                           <span>{item}</span>
                         </div>
                       ))}
                     </div>
 
                     <div className={styles.templeDelivery}>
-                      <span>📹 {isHi ? 'Video: 3-5 days' : 'Video: 3-5 days'}</span>
-                      <span>📦 {isHi ? 'Prasad: 7-10 days (free shipping)' : 'Prasad: 7-10 days (free shipping)'}</span>
+                      <span><Icon name="video" size={14} color="currentColor" /> {isHi ? 'Video: 3-5 days' : 'Video: 3-5 days'}</span>
+                      <span><Icon name="prasad-box" size={14} color="currentColor" /> {isHi ? 'Prasad: 7-10 days (free shipping)' : 'Prasad: 7-10 days (free shipping)'}</span>
                     </div>
 
                     <button className={styles.bookPujaButtonLarge}>
@@ -704,7 +705,7 @@ function ReportContent() {
 
               {/* Disclaimer */}
               <div className={styles.disclaimer}>
-                <span className={styles.disclaimerIcon}>⏳</span>
+                <span className={styles.disclaimerIcon}><Icon name="hourglass-clock" size={18} color="currentColor" /></span>
                 <p>
                   {isHi
                     ? '"Remedies negative planetary influences ki intensity kam karne ka kaam karti hain. Yeh traditional Vedic practices hain jo faith aur discipline ke saath ki jaati hain. Results individual ke hisaab se vary karte hain. Yeh specific outcomes ki guarantee nahi hai."'
@@ -724,9 +725,9 @@ function ReportContent() {
               disabled={protocolStarted}
             >
               {protocolStarted ? (
-                <>✅ {isHi ? 'Protocol Started!' : 'Protocol Started!'}</>
+                <><Icon name="sparkles" size={16} color="var(--color-success, #22c55e)" /> {isHi ? 'Protocol Started!' : 'Protocol Started!'}</>
               ) : (
-                <>📿 {isHi ? 'Start My 9-Week Protocol' : 'Start My 9-Week Protocol'}</>
+                <><Icon name="mala" size={16} color="currentColor" /> {isHi ? 'Start My 9-Week Protocol' : 'Start My 9-Week Protocol'}</>
               )}
               {!protocolStarted && (
                 <span className={styles.startProtocolSub}>
@@ -755,7 +756,7 @@ function ReportContent() {
             </div>
 
             <button className={styles.askAiButton} onClick={() => router.push(`/chat?problem=${problemType}`)}>
-              💬 {isHi ? 'Ask AI about this report' : 'Ask AI about this report'}
+              <Icon name="chat-bubble" size={16} color="currentColor" /> {isHi ? 'Ask AI about this report' : 'Ask AI about this report'}
             </button>
           </div>
 
@@ -767,7 +768,7 @@ function ReportContent() {
                 : 'My kundli revealed a dosha — check your kundli for free too!'}
             </p>
             <button className={styles.shareCardButton} onClick={handleShare}>
-              📤 {isHi ? 'Share करें' : 'Share'}
+              <Icon name="share" size={14} color="currentColor" /> {isHi ? 'Share करें' : 'Share'}
             </button>
           </div>
 

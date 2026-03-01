@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import TopBar from '@/components/TopBar';
 import BottomTabBar from '@/components/BottomTabBar';
+import { Icon } from '@/components/icons';
 import styles from './page.module.css';
 
 function addDays(dateStr: string, days: number): string {
@@ -79,7 +80,7 @@ function ConfirmationContent() {
               <div className={styles.timelineItem}>
                 <div className={`${styles.timelineDot} ${styles.timelineDotActive}`} />
                 <div className={styles.timelineContent}>
-                  <span className={styles.timelineIcon}>🪔</span>
+                  <Icon name="diya" size={20} color="var(--color-accent-gold)" />
                   <div className={styles.timelineText}>
                     <span className={styles.timelineDate}>{pujaDateLabel || pujaDate}</span>
                     <span className={styles.timelineDesc}>
@@ -94,7 +95,7 @@ function ConfirmationContent() {
               <div className={styles.timelineItem}>
                 <div className={styles.timelineDot} />
                 <div className={styles.timelineContent}>
-                  <span className={styles.timelineIcon}>🎥</span>
+                  <Icon name="video" size={20} color="var(--color-accent-gold)" />
                   <div className={styles.timelineText}>
                     <span className={styles.timelineDate}>~{videoDate}</span>
                     <span className={styles.timelineDesc}>
@@ -109,7 +110,7 @@ function ConfirmationContent() {
               <div className={styles.timelineItem}>
                 <div className={styles.timelineDot} />
                 <div className={styles.timelineContent}>
-                  <span className={styles.timelineIcon}>📦</span>
+                  <Icon name="prasad-box" size={20} color="var(--color-accent-gold)" />
                   <div className={styles.timelineText}>
                     <span className={styles.timelineDate}>~{prasadDate}</span>
                     <span className={styles.timelineDesc}>
@@ -125,7 +126,7 @@ function ConfirmationContent() {
 
           {/* Continue remedies reminder */}
           <div className={styles.reminderCard}>
-            <span className={styles.reminderIcon}>📿</span>
+            <Icon name="mala" size={24} color="var(--color-accent-gold)" />
             <p className={styles.reminderText}>
               {language === 'hi'
                 ? 'अपने plan की बाकी remedies जारी रखें — mantras, fasting, daily practices'
